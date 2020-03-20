@@ -11,7 +11,7 @@ library(sf)
 library(sp)
 library(lwgeom)
 
-sp::
+
 #---------------------- import census tracts
 # 1) define function for potential furture use
 census_sf_fun <- function(geography_type="tract", acs_year=2018) {
@@ -33,13 +33,14 @@ nyc_census_tracts <- census_sf_fun(geography_type = "tract", acs_year = 2018)
 #---------------------- import pre-computed times
 # 1) import transit times from the transit_walk subfoder
 #    -> there is a separate file for each borough
-data_dir <- "./ccc_nyc_shiny/data/uofc_precomputed_times/transit_walk"
+data_dir <- "./data/uofc_precomputed_times/transit_walk"
 csv_files <- fs::dir_ls(data_dir)
 nyc_trvl_times <- csv_files %>% 
   map_dfr(readr::read_csv, col_types = "ccd") %>%
   # 36 is the FIPS code for NY state (first two digits), the 3-5th digits represent the 
   # county.
   filter(., str_sub(destination, 1, 5) %in% c("36061", "36047", "36081", "36085", "36005"))
+
 
 # fix 0 minute travel times to 1 minute
 nyc_trvl_times <- nyc_trvl_times %>% mutate(., minutes = if_else(condition = minutes == 0, 
@@ -54,7 +55,7 @@ resource_ct_geoid_sf <- nyc_just_geoid_geom_sf # for use later to add in resourc
 #--------------------- import resource of interest
 # 1) nyc food retail
 # ---> OPEN -> LIST URL SOURCE OF INFORMATION 
-nyc_food_retail <- read_csv("./ccc_nyc_shiny/data/resources/retail_food/Retail_Food_Stores.csv")%>% 
+nyc_food_retail <- read_csv("./data/resources/retail_food/Retail_Food_Stores.csv")%>% 
   filter(., County %in% c("New York", "Bronx", "Queens", "Kings", "Richmond"), `Square Footage` > 1000)%>%
   separate(., col = Location, into = c("street_address", "city_state", "lat_long"),sep = "\n") %>% 
   filter(., !is.na(lat_long)) %>% 
@@ -66,15 +67,17 @@ nyc_food_retail <- read_csv("./ccc_nyc_shiny/data/resources/retail_food/Retail_F
 
 #--------------------- map resources to census areas
 # this numeric vector is ordered the same as the rows on the nyc_just_geoid_geom_sf
-resource_by_geoid_ct <- st_intersects(x=nyc_just_geoid_geom_sf, y=nyc_food_retail, sparse = FALSE) %>%
+resource_by_geoid_ct <- st_intersects(x=nyc_just_geoid_geom_sf, 
+                                      y=nyc_food_retail, sparse = FALSE) %>%
   apply(., 1, sum)
+
 
 resource_ct_geoid_sf$category <- "food retail"
 
 resource_ct_geoid_sf$count <- resource_by_geoid_ct
 
 colnames(resource_ct_geoid_sf) <- c("resource_geoid", "geometry", "category", "resource_count")
-
+resource_ct_geoid_sf
 
 # -------------------- compute access score via distance weighting against number of resources
 breaks <- c(0, 10, 20, 30, 40, 50, 60)
@@ -97,13 +100,26 @@ access_score_by_geoid <- access_score_by_geoid %>% filter(., !is.na(category))
 # length(unique(nyc_trvl_times$destination))
 
 # -------------------- build map with access score information
-pal <- colorNumeric("viridis", domain = access_score_by_geoid$weighted_score)
-labels <- sprintf(
-  "<strong>%s</strong><br/>%g access score",
-  access_score_by_geoid$GEOID, access_score_by_geoid$weighted_score
-) %>% lapply(htmltools::HTML) 
+pal_pop <- colorNumeric("viridis", domain = ny_census_tracts_wo_water$estimate)
 
-ny_census_tracts_wo_water %>% 
+pal <- colorNumeric("viridis", domain = access_score_by_geoid$weighted_score)
+# labels <- sprintf(
+#   "<strong>%s</strong><br/>%g access score",
+#   access_score_by_geoid$GEOID, access_score_by_geoid$weighted_score
+# ) %>% lapply(htmltools::HTML) 
+
+# nyc_census_no_wtr <- 
+st_erase <- function(x, y) {
+  sf::st_difference(x, sf::st_union(y))
+}
+
+ny_water <- tigris::area_water("NY", "New York", class = "sf")
+ny_water <- sf::st_transform(ny_water, crs=4326)
+
+
+ny_census_tracts_wo_water <- st_erase(nyc_census_tracts, ny_water)
+
+access_score_map <- ny_census_tracts_wo_water %>% 
   as_tibble() %>% filter(., estimate != 0) %>% 
   left_join(x = ., y = access_score_by_geoid, by="GEOID") %>% 
   replace_na(list(category = "", weighted_score = 0)) %>% st_as_sf() %>% 
@@ -118,40 +134,21 @@ ny_census_tracts_wo_water %>%
               color = "white",
               dashArray = "3", 
               fillOpacity = 0.7, 
-              highlight = highlightOptions(
+              highlight = highlightOptions( 
                 weight = 5,
                 color = '#666',
                 dashArray = "",
                 fillOpacity = 0.7,
-                bringToFront = TRUE),
-              label = labels,
-              labelOptions = labelOptions(
-                style = list("font-weight" = "normal", padding = "3px 8px"),
-                textsize = "15px",
-                direction = "auto")
+                bringToFront = TRUE)#,
+              # label = labels,
+              # labelOptions = labelOptions(
+              #   style = list("font-weight" = "normal", padding = "3px 8px"),
+              #   textsize = "15px",
+              #   direction = "auto")
               ) %>% 
   addLegend(pal = pal, values = ~weighted_score, opacity = 0.7, title = "Access Score", 
             position = "bottomright")
                
 
-access_score_by_geoid %>% ggplot(., mapping = aes(x = weighted_score)) + 
-  geom_histogram()
-
-access_score_by_geoid %>% filter(., is.na(weighted_score))
-summary(access_score_by_geoid)
-
-nyc_trvl_times %>% filter(., minutes == 0)
-
-# nyc_census_no_wtr <- 
-st_erase <- function(x, y) {
-  sf::st_difference(x, sf::st_union(y))
-}
-
-ny_water <- tigris::area_water("NY", "New York", class = "sf")
-ny_water <- sf::st_transform(ny_water, crs=4326)
-
-
-ny_census_tracts_wo_water <- st_erase(nyc_census_tracts, ny_water)
-ny_census_tracts_wo_water
 
 
