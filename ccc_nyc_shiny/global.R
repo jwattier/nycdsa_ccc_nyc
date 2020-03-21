@@ -7,6 +7,7 @@ library(tidycensus)
 library(tidyverse)
 library(tigris)
 library(tmap)
+library(shiny)
 library(sf)
 library(sp)
 library(lwgeom)
@@ -109,6 +110,8 @@ new_row <- tibble(
 )
 
 resource_ct_by_geoid <- dplyr::bind_rows(resource_ct_by_geoid, new_row)
+
+resouse_categories <- unique(resource_ct_by_geoid$category)
 
 # -------------------- compute access score via distance weighting against number of resources
 breaks <- c(0, 10, 20, 30, 40, 50, 60)
