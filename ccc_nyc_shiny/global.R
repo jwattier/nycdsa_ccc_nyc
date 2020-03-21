@@ -11,6 +11,14 @@ library(sf)
 library(sp)
 library(lwgeom)
 
+options(tigris_use_cache = TRUE)
+
+#parent_path = "./ccc_nyc_shiny/"
+parent_path = "./"
+
+file_path = paste0(parent_path, "data/resources/early_childhood")
+file_name = "/ccc_nyc_early_childhood_centers.xlsx"
+
 
 #---------------------- import census tracts
 # 1) define function for potential furture use
@@ -33,7 +41,7 @@ nyc_census_tracts <- census_sf_fun(geography_type = "tract", acs_year = 2018)
 #---------------------- import pre-computed times
 # 1) import transit times from the transit_walk subfoder
 #    -> there is a separate file for each borough
-data_dir <- "./data/uofc_precomputed_times/transit_walk"
+data_dir <- paste0(parent_path, "data/uofc_precomputed_times/transit_walk")
 csv_files <- fs::dir_ls(data_dir)
 nyc_trvl_times <- csv_files %>% 
   map_dfr(readr::read_csv, col_types = "ccd") %>%
@@ -55,7 +63,7 @@ resource_ct_geoid_sf <- nyc_just_geoid_geom_sf # for use later to add in resourc
 #--------------------- import resource of interest
 # 1) nyc food retail
 # ---> OPEN -> LIST URL SOURCE OF INFORMATION 
-nyc_food_retail <- read_csv("./data/resources/retail_food/Retail_Food_Stores.csv")%>% 
+nyc_food_retail <- read_csv(paste0(parent_path, "data/resources/retail_food/Retail_Food_Stores.csv"))%>% 
   filter(., County %in% c("New York", "Bronx", "Queens", "Kings", "Richmond"), `Square Footage` > 1000)%>%
   separate(., col = Location, into = c("street_address", "city_state", "lat_long"),sep = "\n") %>% 
   filter(., !is.na(lat_long)) %>% 
@@ -63,6 +71,15 @@ nyc_food_retail <- read_csv("./data/resources/retail_food/Retail_Food_Stores.csv
   mutate(., long = str_replace(long, "\\(", ""), lat = str_replace(lat, "\\)", "")) %>% 
   mutate(., lat_nbr = as.numeric(lat), long_nbr = as.numeric(long)) %>% 
   st_as_sf(., coords = c("lat_nbr", "long_nbr"), crs=4326, agr = "constant")
+
+
+# 2) early childhood centers
+early_chood_ctrs_sf <-readxl::read_xlsx(
+  path = paste0(file_path, file_name),
+  col_types = c("text", "numeric", "numeric", "numeric", "numeric", "numeric",
+                "text", "text", "numeric", "numeric", "numeric", "numeric", "text",
+                "text", "text", "text", "text")
+) %>% st_as_sf(., coords = c("Long", "Lat"), crs = 4326)
 
 
 #--------------------- map resources to census areas
@@ -76,25 +93,43 @@ resource_ct_geoid_sf$category <- "food retail"
 
 resource_ct_geoid_sf$count <- resource_by_geoid_ct
 
-colnames(resource_ct_geoid_sf) <- c("resource_geoid", "geometry", "category", "resource_count")
+colnames(resource_ct_geoid_sf) <- c("resource_geoid", "geometry", "category", "count")
 resource_ct_geoid_sf
+
+early_cc_by_geoid_ct <- st_intersects(x=nyc_just_geoid_geom_sf,
+                                      y=early_chood_ctrs_sf, sparse = FALSE) %>% apply(., 1, sum)
+
+resource_ct_by_geoid <- resource_ct_geoid_sf %>% as_tibble(.) %>% select(., resource_geoid,
+                                                                         category, count)
+
+new_row <- tibble(
+  resource_geoid = nyc_just_geoid_geom_sf$GEOID,
+  category = rep("early childhood centers", length.out = nrow(nyc_just_geoid_geom_sf)),
+  count = early_cc_by_geoid_ct
+)
+
+resource_ct_by_geoid <- dplyr::bind_rows(resource_ct_by_geoid, new_row)
 
 # -------------------- compute access score via distance weighting against number of resources
 breaks <- c(0, 10, 20, 30, 40, 50, 60)
 tags <- c("0-10", "10-20", "20-30", "30-40", "40-50", "50-60 mins")
 
-access_score_by_geoid <- nyc_census_tracts %>% 
-  as_tibble() %>% #converting geometry object to normal tibble to allow easier combining with tvl times
-  left_join(x=., y=nyc_trvl_times, by = c("GEOID" = "origin")) %>% 
-  left_join(x=., y=resource_ct_geoid_sf, by = c("destination" = "resource_geoid")) %>% 
-  # mutate(.,  minutes_bin = cut(minutes, breaks = breaks, include.lowest = TRUE, right = FALSE, labels = tags)) %>% 
-  mutate(., weighted_score = resource_count / minutes) %>% 
+nyc_trvl_times_adj <- nyc_trvl_times %>%  filter(., minutes < 60)
+
+just_geoids <- nyc_just_geoid_geom_sf %>% as_tibble() %>% select(., GEOID)
+
+access_score_by_geoid <- 
+  just_geoids %>% 
+  left_join(., nyc_trvl_times_adj, by = c("GEOID" = "origin")) %>% 
+  left_join(., y=resource_ct_by_geoid, by = c("destination" = "resource_geoid")) %>%
+  mutate(., weighted_score = count / minutes) %>% 
   group_by(GEOID, category) %>% 
   summarise(weighted_score = sum(weighted_score))
 
 ### TO DO -> LOOK INTO WHY THERE'S A NA ROW re: category/access score
-access_score_by_geoid <- access_score_by_geoid %>% filter(., !is.na(category))
-    
+#access_score_by_geoid <- 
+access_score_by_geoid$weighted_score <- access_score_by_geoid$weighted_score %>% replace_na(0)
+summary(access_score_by_geoid)
 # nrow(resource_ct_geoid_sf)
 # length(unique(nyc_trvl_times$origin))
 # length(unique(nyc_trvl_times$destination))
@@ -102,7 +137,8 @@ access_score_by_geoid <- access_score_by_geoid %>% filter(., !is.na(category))
 # -------------------- build map with access score information
 pal_pop <- colorNumeric("viridis", domain = ny_census_tracts_wo_water$estimate)
 
-pal <- colorNumeric("viridis", domain = access_score_by_geoid$weighted_score)
+access_score_4_pal <- access_score_by_geoid %>% filter(., category == "early childhood center")
+pal <- colorNumeric("viridis", domain = access_score_4_pal$weighted_score)
 # labels <- sprintf(
 #   "<strong>%s</strong><br/>%g access score",
 #   access_score_by_geoid$GEOID, access_score_by_geoid$weighted_score
@@ -122,7 +158,9 @@ ny_census_tracts_wo_water <- st_erase(nyc_census_tracts, ny_water)
 access_score_map <- ny_census_tracts_wo_water %>% 
   as_tibble() %>% filter(., estimate != 0) %>% 
   left_join(x = ., y = access_score_by_geoid, by="GEOID") %>% 
-  replace_na(list(category = "", weighted_score = 0)) %>% st_as_sf() %>% 
+  filter(., category == "early childhood centers") %>% 
+  replace_na(., list(category = "", weighted_score = 0)) %>% 
+  st_as_sf() %>% 
   leaflet() %>% 
   setView(lat = 40.7128, lng = -74.0060, zoom = 10) %>% 
   addProviderTiles("CartoDB.Positron") %>% 
