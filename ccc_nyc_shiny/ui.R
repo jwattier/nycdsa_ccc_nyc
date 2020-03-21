@@ -25,7 +25,12 @@ shinyUI(fluidPage(
 
         # Show a plot of the generated distribution
         mainPanel(
-            leafletOutput("accessMap")
+            h4("Heatmap of Accessiblity"),
+            leafletOutput("accessMap"),
+            
+            # Output is a display of the allocations percentages should that option be selected
+            h4("Category Percentages"),
+            dataTableOutput("perc_table")
         )
     )
 ))

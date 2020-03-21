@@ -111,7 +111,21 @@ new_row <- tibble(
 
 resource_ct_by_geoid <- dplyr::bind_rows(resource_ct_by_geoid, new_row)
 
-resouse_categories <- unique(resource_ct_by_geoid$category)
+resouse_categories <- c(unique(resource_ct_by_geoid$category),"overall")
+
+# Import resource percentages
+category_percents <- readr::read_csv(paste0(parent_path, "input/category_percents/category_percents.csv"))
+
+#invoke in-case user provided percentages do not add up to 0
+if (sum(category_percents$percent) != 1){
+  
+  number_of_categories <- n_distinct(resource_ct_by_geoid$category)
+  
+  tibble(
+    category = unique(resource_ct_by_geoid$category),
+    percent = rep((1 / number_of_categories), length.out = number_of_categories)
+  )
+}
 
 # -------------------- compute access score via distance weighting against number of resources
 breaks <- c(0, 10, 20, 30, 40, 50, 60)
@@ -132,22 +146,14 @@ access_score_by_geoid <-
 ### TO DO -> LOOK INTO WHY THERE'S A NA ROW re: category/access score
 #access_score_by_geoid <- 
 access_score_by_geoid$weighted_score <- access_score_by_geoid$weighted_score %>% replace_na(0)
-summary(access_score_by_geoid)
-# nrow(resource_ct_geoid_sf)
-# length(unique(nyc_trvl_times$origin))
-# length(unique(nyc_trvl_times$destination))
+
 
 # -------------------- build map with access score information
 pal_pop <- colorNumeric("viridis", domain = ny_census_tracts_wo_water$estimate)
 
 access_score_4_pal <- access_score_by_geoid %>% filter(., category == "early childhood center")
 pal <- colorNumeric("viridis", domain = access_score_4_pal$weighted_score)
-# labels <- sprintf(
-#   "<strong>%s</strong><br/>%g access score",
-#   access_score_by_geoid$GEOID, access_score_by_geoid$weighted_score
-# ) %>% lapply(htmltools::HTML) 
 
-# nyc_census_no_wtr <- 
 st_erase <- function(x, y) {
   sf::st_difference(x, sf::st_union(y))
 }
@@ -158,38 +164,7 @@ ny_water <- sf::st_transform(ny_water, crs=4326)
 
 ny_census_tracts_wo_water <- st_erase(nyc_census_tracts, ny_water)
 
-access_score_map <- ny_census_tracts_wo_water %>% 
-  as_tibble() %>% filter(., estimate != 0) %>% 
-  left_join(x = ., y = access_score_by_geoid, by="GEOID") %>% 
-  filter(., category == "early childhood centers") %>% 
-  replace_na(., list(category = "", weighted_score = 0)) %>% 
-  st_as_sf() %>% 
-  leaflet() %>% 
-  setView(lat = 40.7128, lng = -74.0060, zoom = 10) %>% 
-  addProviderTiles("CartoDB.Positron") %>% 
-  addPolygons(
-              fillColor = ~pal(weighted_score),
-              stroke = FALSE, 
-              weight = 2,
-              opacity = 1,
-              color = "white",
-              dashArray = "3", 
-              fillOpacity = 0.7, 
-              highlight = highlightOptions( 
-                weight = 5,
-                color = '#666',
-                dashArray = "",
-                fillOpacity = 0.7,
-                bringToFront = TRUE)#,
-              # label = labels,
-              # labelOptions = labelOptions(
-              #   style = list("font-weight" = "normal", padding = "3px 8px"),
-              #   textsize = "15px",
-              #   direction = "auto")
-              ) %>% 
-  addLegend(pal = pal, values = ~weighted_score, opacity = 0.7, title = "Access Score", 
-            position = "bottomright")
-               
+
 
 
 
