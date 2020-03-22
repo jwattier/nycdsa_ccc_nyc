@@ -50,15 +50,15 @@ shinyServer(function(input, output, session) {
     })
   
   ### Data for the exploratory tab
-  # observe({
-  #   nta_codes <- unique(nyc_just_geoid_geom_sf %>% 
-  #                         filter(nyc_just_geoid_geom_sf$borough_name) %>% .$nta_code)
-  #   updateSelectizeInput(
-  #     session = ssession,
-  #     inputId = "nta",
-  #     choices = nta_codes,
-  #     selected = nta_codes[1]
-  #   )
-  # })
-    
+  observe({
+    nta_codes <- unique(nyc_just_geoid_geom_sf %>%
+                          filter(nyc_just_geoid_geom_sf$borough_name == input$borough) %>% .$nta_code)
+    updateSelectizeInput(
+      session = session,
+      inputId = "nta",
+      choices = nta_codes,
+      selected = nta_codes[1]
+    )
+  })
+
 })
