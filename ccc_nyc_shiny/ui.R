@@ -16,10 +16,11 @@ shinyUI(dashboardPage(
     dashboardSidebar(
         sidebarMenu(
             menuItem(text = "Map", tabName = "map", icon = icon("map")),
-            menuItem(text = "Explore", tabName = "explore", icon = icon("chart-area")),
             selectizeInput(inputId="select_category",
                            label="Resource Category:",
                            choices = resouse_categories),
+            menuItem(text = "Explore", tabName = "explore", icon = icon("chart-area")),
+
             selectizeInput(inputId="borough",
                            label="Borough:",
                            choices = unique(nyc_just_geoid_geom_sf$borough_name)),
@@ -31,23 +32,30 @@ shinyUI(dashboardPage(
     dashboardBody(
         tabItems(
             tabItem(tabName = "map",
-                    fluidPage(
-                        h4("Heatmap of Accessiblity"),
-                        leafletOutput("accessMap"),
-                        br(),
-                        # Output is a display of the allocations percentages should that option be selected
-                        h4("Category Percentages"),
+                    fluidRow(
+                        box(
+                            width = 8, status = "info", solidHeader = TRUE,
+                            title = "Access Score NYC", 
+                            leafletOutput("accessMap", width = "100%", height = 600)
+                        ),
+                        box(
+                            # Output is a display of the allocations percentages should that option be selected
+                        width = 4, status = "info", title = "Percent Splits for Overall Score",
                         DT::dataTableOutput("perc_table")
+                        )
                         )
                     ),
             tabItem(tabName = "explore",
-                    fluidPage(
-                        h4("Exploration of Specific Areas"),
-                        br(),
-                        leafletOutput("popMap")
+                    fluidRow(
+                        valueBoxOutput("population")
+                    ),
+                    fluidRow(
+                        box(
+                            leafletOutput("popMap")
+                            )
                         )
                     )
             )
+            )
         )
-    )
 )

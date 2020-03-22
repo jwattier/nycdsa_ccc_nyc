@@ -65,11 +65,25 @@ shinyServer(function(input, output, session) {
       selected = nta_codes[1]
     )
     
-    output$popMap <- renderLeaflet({
+    filteredArea <- reactive({
       nyc_just_geoid_geom_sf %>% 
         as_tibble() %>% 
         filter(., borough_name == input$borough) %>% select(., GEOID) %>% 
-        inner_join(., ny_census_tracts_wo_water) %>% 
+        inner_join(., ny_census_tracts_wo_water)
+    })
+    
+    filteredPopulation <- filteredArea() %>% summarise(population = sum(estimate))
+    
+    output$population <- renderValueBox({
+      valueBox(
+        value = filteredPopulation,
+        subtitle = "Total Area Population",
+        icon = icon("user-check")
+      )
+    })
+    
+    output$popMap <- renderLeaflet({
+      filteredArea() %>% 
         st_as_sf() %>% 
         leaflet() %>% 
         addProviderTiles("CartoDB.Positron") %>% 
