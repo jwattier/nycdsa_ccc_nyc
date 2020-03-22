@@ -1,5 +1,6 @@
 # import needed libraries
 library(opentripplanner)
+library(DT)
 library(htmltools)
 library(leaflet)
 library(leaflet.providers)

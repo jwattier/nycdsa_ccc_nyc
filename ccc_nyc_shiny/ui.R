@@ -30,7 +30,7 @@ shinyUI(fluidPage(
             
             # Output is a display of the allocations percentages should that option be selected
             h4("Category Percentages"),
-            dataTableOutput("perc_table")
+            DT::dataTableOutput("perc_table")
         )
     )
 ))
