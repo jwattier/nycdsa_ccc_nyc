@@ -47,8 +47,18 @@ shinyServer(function(input, output, session) {
       ) %>%
       addLegend(pal = pal, values = ~weighted_score, opacity = 0.7, title = "Access Score",
                 position = "bottomright")
-
-
     })
-
+  
+  ### Data for the exploratory tab
+  # observe({
+  #   nta_codes <- unique(nyc_just_geoid_geom_sf %>% 
+  #                         filter(nyc_just_geoid_geom_sf$borough_name) %>% .$nta_code)
+  #   updateSelectizeInput(
+  #     session = ssession,
+  #     inputId = "nta",
+  #     choices = nta_codes,
+  #     selected = nta_codes[1]
+  #   )
+  # })
+    
 })

@@ -21,9 +21,6 @@ options(tigris_use_cache = TRUE)
 #parent_path = "./ccc_nyc_shiny/"
 parent_path = "./"
 
-file_path = paste0(parent_path, "data/resources/early_childhood")
-file_name = "/ccc_nyc_early_childhood_centers.xlsx"
-
 
 #---------------------- import census tracts
 # 1) define function for potential furture use
@@ -64,6 +61,17 @@ nyc_trvl_times <- nyc_trvl_times %>% mutate(., minutes = if_else(condition = min
 nyc_just_geoid_geom_sf <- nyc_census_tracts %>% select(., GEOID, geometry)
 resource_ct_geoid_sf <- nyc_just_geoid_geom_sf # for use later to add in resource counts
 
+# 3) add to the "just geoid" tibble in order to include information on NTA, PUMA and borough linkage
+file_path = paste0(parent_path, "data/nyc_geo")
+file_name = "/nyc2010census_tract_nta_equiv.xlsx"
+
+census_tract_to_nta_mapping <- readxl::read_xlsx(paste0(file_path, file_name))
+
+
+nyc_just_geoid_geom_sf <- nyc_just_geoid_geom_sf %>% 
+  mutate(., fips_county_code = str_sub(GEOID, start = 3, end = 5)
+           ,census_tract_2010 = str_sub(GEOID, start = 6)) %>% 
+  left_join(., y = census_tract_to_nta,by = c("fips_county_code", "census_tract_2010"))
 
 #--------------------- import resource of interest
 # 1) nyc food retail
@@ -79,6 +87,9 @@ nyc_food_retail <- read_csv(paste0(parent_path, "data/resources/retail_food/Reta
 
 
 # 2) early childhood centers
+file_path = paste0(parent_path, "data/resources/early_childhood")
+file_name = "/ccc_nyc_early_childhood_centers.xlsx"
+
 early_chood_ctrs_sf <-readxl::read_xlsx(
   path = paste0(file_path, file_name),
   col_types = c("text", "numeric", "numeric", "numeric", "numeric", "numeric",

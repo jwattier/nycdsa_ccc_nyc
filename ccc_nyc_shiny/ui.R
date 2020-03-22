@@ -19,7 +19,13 @@ shinyUI(dashboardPage(
             menuItem(text = "Explore", tabName = "explore", icon = icon("chart-area")),
             selectizeInput(inputId="select_category",
                            label="Resource Category:",
-                           choices = resouse_categories)
+                           choices = resouse_categories),
+            selectizeInput(inputId="borough",
+                           label="Borough:",
+                           choices = unique(nyc_just_geoid_geom_sf$borough_name)),
+            selectizeInput(inputId="nta",
+                           label="NTA:",
+                           choices = unique(nyc_just_geoid_geom_sf$nta_code))
             )
         ),
     dashboardBody(
