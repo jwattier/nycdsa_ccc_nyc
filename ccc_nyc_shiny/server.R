@@ -11,6 +11,8 @@ library(shiny)
 
 shinyServer(function(input, output, session) {
   
+  # I. first page visualizations
+  
   output$perc_table <- DT::renderDataTable({
     DT::datatable(category_percents)
     })
@@ -49,16 +51,54 @@ shinyServer(function(input, output, session) {
                 position = "bottomright")
     })
   
+  # II. Second page visualizations 
+  
   ### Data for the exploratory tab
   observe({
     nta_codes <- unique(nyc_just_geoid_geom_sf %>%
-                          filter(nyc_just_geoid_geom_sf$borough_name == input$borough) %>% .$nta_code)
+                          filter(nyc_just_geoid_geom_sf$borough_name == input$borough) %>% 
+                            .$nta_code)
     updateSelectizeInput(
       session = session,
       inputId = "nta",
       choices = nta_codes,
       selected = nta_codes[1]
     )
+    
+    output$popMap <- renderLeaflet({
+      nyc_just_geoid_geom_sf %>% 
+        as_tibble() %>% 
+        filter(., borough_name == input$borough) %>% select(., GEOID) %>% 
+        inner_join(., ny_census_tracts_wo_water) %>% 
+        st_as_sf() %>% 
+        leaflet() %>% 
+        addProviderTiles("CartoDB.Positron") %>% 
+        setView(lat = 40.7128, lng = -74.0060, zoom = 10) %>%
+        addPolygons(
+          fillColor = ~pal_pop(estimate),
+          stroke = FALSE,
+          weight = 2,
+          opacity = 1,
+          color = "white",
+          dashArray = "3",
+          fillOpacity = 0.7,
+          highlight = highlightOptions(
+            weight = 5,
+            color = '#666',
+            dashArray = "",
+            fillOpacity = 0.7,
+            bringToFront = TRUE)#,
+          # label = labels,
+          # labelOptions = labelOptions(
+          #   style = list("font-weight" = "normal", padding = "3px 8px"),
+          #   textsize = "15px",
+          #   direction = "auto")
+        ) %>%
+        addLegend(pal = pal_pop, values = ~estimate, opacity = 0.7, title = "Population",
+                  position = "bottomright")
+    })
   })
+  
+  
 
 })

@@ -29,16 +29,25 @@ shinyUI(dashboardPage(
             )
         ),
     dashboardBody(
-        tabItem(tabName = "map",
-                    h4("Heatmap of Accessiblity"),
-                    leafletOutput("accessMap"),
-                    
-                    # Output is a display of the allocations percentages should that option be selected
-                    h4("Category Percentages"),
-                    DT::dataTableOutput("perc_table")
-                ),
-        tabItem(tabName = "explore",
-                )
+        tabItems(
+            tabItem(tabName = "map",
+                    fluidPage(
+                        h4("Heatmap of Accessiblity"),
+                        leafletOutput("accessMap"),
+                        br(),
+                        # Output is a display of the allocations percentages should that option be selected
+                        h4("Category Percentages"),
+                        DT::dataTableOutput("perc_table")
+                        )
+                    ),
+            tabItem(tabName = "explore",
+                    fluidPage(
+                        h4("Exploration of Specific Areas"),
+                        br(),
+                        leafletOutput("popMap")
+                        )
+                    )
+            )
         )
     )
 )
