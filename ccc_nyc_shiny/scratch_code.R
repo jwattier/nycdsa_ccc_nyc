@@ -52,3 +52,16 @@ tibble(
 readr::read_csv("./ccc_nyc_shiny/input/category_percents/category_percents.csv")
 
 length(c("overall", unique(access_score_by_geoid$category)))
+
+parent_path = "./ccc_nyc_shiny/"
+file_path = paste0(parent_path, "data/nyc_geo")
+file_name = "/nyc2010census_tract_nta_equiv.xlsx"
+census_tract_to_nta <- readxl::read_xlsx(paste0(file_path, file_name))
+
+?stringr::str_sub()
+
+nyc_just_geoid_geom_sf %>% mutate(., fips_county_code = str_sub(GEOID, start = 3, end = 5)
+                                  ,census_tract_2010 = str_sub(GEOID, start = 6)) %>% 
+  left_join(., y = census_tract_to_nta,by = c("fips_county_code", "census_tract_2010"))
+
+  
