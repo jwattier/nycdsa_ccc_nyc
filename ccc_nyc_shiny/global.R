@@ -16,11 +16,16 @@ library(sf)
 library(sp)
 library(lwgeom)
 
+
+# 
+# census_api_key("9b7b36ca21156e2f5e04583421016793d575d7b0")
+
 options(tigris_use_cache = TRUE)
 
 #parent_path = "./ccc_nyc_shiny/"
 parent_path = "./"
 
+source(paste0(parent_path, "helpers.R"))
 
 #---------------------- import census tracts
 # 1) define function for potential furture use
@@ -71,7 +76,7 @@ census_tract_to_nta_mapping <- readxl::read_xlsx(paste0(file_path, file_name))
 nyc_just_geoid_geom_sf <- nyc_just_geoid_geom_sf %>% 
   mutate(., fips_county_code = str_sub(GEOID, start = 3, end = 5)
            ,census_tract_2010 = str_sub(GEOID, start = 6)) %>% 
-  left_join(., y = census_tract_to_nta,by = c("fips_county_code", "census_tract_2010"))
+  left_join(., y = census_tract_to_nta_mapping,by = c("fips_county_code", "census_tract_2010"))
 
 #--------------------- import resource of interest
 # 1) nyc food retail
@@ -85,6 +90,8 @@ nyc_food_retail <- read_csv(paste0(parent_path, "data/resources/retail_food/Reta
   mutate(., lat_nbr = as.numeric(lat), long_nbr = as.numeric(long)) %>% 
   st_as_sf(., coords = c("lat_nbr", "long_nbr"), crs=4326, agr = "constant")
 
+resource_sf <- add_resource(nyc_food_retail, name_col = 'DBA Name', type_col = 'Operation Type', capacity_amt_col = 'Square Footage',
+                            capacity_unit_col = "sqft", geom_col = "geometry", current_resource_tbl = NULL)
 
 # 2) early childhood centers
 file_path = paste0(parent_path, "data/resources/early_childhood")
@@ -97,6 +104,9 @@ early_chood_ctrs_sf <-readxl::read_xlsx(
                 "text", "text", "text", "text")
 ) %>% st_as_sf(., coords = c("Long", "Lat"), crs = 4326)
 
+resource_sf <- add_resource(new_resource_tbl = early_chood_ctrs_sf, name_col = 'Address', type_col = "SiteType",
+                            capacity_amt_col = "Total Enrollment", capacity_unit_col = "enrollment", 
+                            current_resource_tbl = resource_sf)
 
 #--------------------- map resources to census areas
 # this numeric vector is ordered the same as the rows on the nyc_just_geoid_geom_sf
@@ -162,6 +172,13 @@ access_score_by_geoid <-
 #access_score_by_geoid <- 
 access_score_by_geoid$weighted_score <- access_score_by_geoid$weighted_score %>% replace_na(0)
 
+ny_water <- tigris::area_water("NY", "New York", class = "sf")
+ny_water <- sf::st_transform(ny_water, crs=4326)
+
+st_erase <- function(x, y) {
+  sf::st_difference(x, sf::st_union(y))
+}
+ny_census_tracts_wo_water <- st_erase(nyc_census_tracts, ny_water)
 
 # -------------------- build map with access score information
 pal_pop <- colorNumeric("plasma", domain = ny_census_tracts_wo_water$estimate)
@@ -169,15 +186,9 @@ pal_pop <- colorNumeric("plasma", domain = ny_census_tracts_wo_water$estimate)
 access_score_4_pal <- access_score_by_geoid %>% filter(., category == "early childhood center")
 pal <- colorNumeric("viridis", domain = access_score_4_pal$weighted_score)
 
-st_erase <- function(x, y) {
-  sf::st_difference(x, sf::st_union(y))
-}
-
-ny_water <- tigris::area_water("NY", "New York", class = "sf")
-ny_water <- sf::st_transform(ny_water, crs=4326)
 
 
-ny_census_tracts_wo_water <- st_erase(nyc_census_tracts, ny_water)
+
 
 
 

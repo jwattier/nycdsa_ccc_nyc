@@ -18,15 +18,16 @@ shinyUI(dashboardPage(
             menuItem(text = "Map", tabName = "map", icon = icon("map")),
             selectizeInput(inputId="select_category",
                            label="Resource Category:",
-                           choices = resouse_categories),
-            menuItem(text = "Explore", tabName = "explore", icon = icon("chart-area")),
-
-            selectizeInput(inputId="borough",
-                           label="Borough:",
-                           choices = unique(nyc_just_geoid_geom_sf$borough_name)),
-            selectizeInput(inputId="nta",
-                           label="NTA:",
-                           choices = unique(nyc_just_geoid_geom_sf$nta_code))
+                           choices = resouse_categories)
+            #,
+            # menuItem(text = "Explore", tabName = "explore", icon = icon("chart-area")),
+            # selectizeInput(inputId="borough",
+            #                label="Borough:",
+            #                choices = unique(nyc_just_geoid_geom_sf$borough_name)),
+            # selectizeInput(inputId="nta",
+            #                label="NTA:",
+            #                choices = unique(nyc_just_geoid_geom_sf$nta_code)),
+            # menuItem(text = "Deep Dive", tabName = "deep_dive", icon = icon("chart-area"))
             )
         ),
     dashboardBody(
@@ -34,28 +35,42 @@ shinyUI(dashboardPage(
             tabItem(tabName = "map",
                     fluidRow(
                         box(
-                            width = 8, status = "info", solidHeader = TRUE,
+                            width = 12, status = "info", solidHeader = TRUE,
                             title = "Access Score NYC", 
                             leafletOutput("accessMap", width = "100%", height = 600)
-                        ),
-                        box(
-                            # Output is a display of the allocations percentages should that option be selected
-                        width = 4, status = "info", title = "Percent Splits for Overall Score",
-                        DT::dataTableOutput("perc_table")
-                        )
-                        )
-                    ),
-            tabItem(tabName = "explore",
-                    fluidRow(
-                        valueBoxOutput("population")
-                    ),
-                    fluidRow(
-                        box(
-                            leafletOutput("popMap")
-                            )
-                        )
-                    )
+                        ))
+                    # ,
+                    # fluidRow(
+                    #     box(
+                    #         # Output is a display of the allocations percentages should that option be selected
+                    #     width = 8, status = "info",solidHeader = TRUE,
+                    #     title = "Percent Weight for Resources",
+                    #     DT::dataTableOutput("perc_table")
+                    #     ))
+                    # )
+            # tabItem(tabName = "explore",
+            #         fluidRow(
+            #             valueBoxOutput("population")
+            #         ),
+            #         # fluidRow(
+            #         #     box(
+            #         #         leafletOutput("popMap")
+            #         #         )
+            #         #     ),
+            #         # fluidRow(
+            #         #     box(
+            #         #         leafletOutput("resourceMap")
+            #         #     )
+            #         # )
+            #         ),
+            # tabItem(tabName = "deep_dive",
+            #         fluidRow(
+            #             box(
+            #                 leaflet("trvlTimeMap")
+            #             )
+            #         ))
             )
             )
         )
-)
+))
+
