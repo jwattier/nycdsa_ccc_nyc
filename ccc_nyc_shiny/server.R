@@ -73,12 +73,12 @@ shinyServer(function(input, output, session) {
   #   )
   # })
     
-    # filteredArea <- reactive({
-    #   nyc_just_geoid_geom_sf %>% 
-    #     as_tibble() %>% 
-    #     filter(., borough_name == input$borough) %>% select(., GEOID) %>% 
-    #     inner_join(., ny_census_tracts_wo_water)
-    # })
+    filteredArea <- reactive({
+      nyc_just_geoid_geom_sf %>%
+        as_tibble() %>%
+        filter(., borough_name == input$borough) %>% select(., GEOID) %>%
+        inner_join(., ny_census_tracts_wo_water)
+    })
     
     
     # filteredPopulation <- reactive({
@@ -93,35 +93,35 @@ shinyServer(function(input, output, session) {
     #   )
     # })
     
-    # output$popMap <- renderLeaflet({
-    #   filteredArea() %>% 
-    #     st_as_sf() %>% 
-    #     leaflet() %>% 
-    #     addProviderTiles("CartoDB.Positron") %>% 
-    #     setView(lat = 40.7128, lng = -74.0060, zoom = 10) %>%
-    #     addPolygons(
-    #       fillColor = ~pal_pop(estimate),
-    #       stroke = FALSE,
-    #       weight = 2,
-    #       opacity = 1,
-    #       color = "white",
-    #       dashArray = "3",
-    #       fillOpacity = 0.7,
-    #       highlight = highlightOptions(
-    #         weight = 5,
-    #         color = '#666',
-    #         dashArray = "",
-    #         fillOpacity = 0.7,
-    #         bringToFront = TRUE)#,
-    #       # label = labels,
-    #       # labelOptions = labelOptions(
-    #       #   style = list("font-weight" = "normal", padding = "3px 8px"),
-    #       #   textsize = "15px",
-    #       #   direction = "auto")
-    #     ) %>%
-    #     addLegend(pal = pal_pop, values = ~estimate, opacity = 0.7, title = "Population",
-    #               position = "bottomright")
-    # })
+    output$popMap <- renderLeaflet({
+      filteredArea() %>%
+        st_as_sf() %>%
+        leaflet() %>%
+        addProviderTiles("CartoDB.Positron") %>%
+        setView(lat = 40.7128, lng = -74.0060, zoom = 10) %>%
+        addPolygons(
+          fillColor = ~pal_pop(estimate),
+          stroke = FALSE,
+          weight = 2,
+          opacity = 1,
+          color = "white",
+          dashArray = "3",
+          fillOpacity = 0.7,
+          highlight = highlightOptions(
+            weight = 5,
+            color = '#666',
+            dashArray = "",
+            fillOpacity = 0.7,
+            bringToFront = TRUE)#,
+          # label = labels,
+          # labelOptions = labelOptions(
+          #   style = list("font-weight" = "normal", padding = "3px 8px"),
+          #   textsize = "15px",
+          #   direction = "auto")
+        ) %>%
+        addLegend(pal = pal_pop, values = ~estimate, opacity = 0.7, title = "Population",
+                  position = "bottomright")
+    })
     
     # output$resourceMap <- renderLeaflet({
     #   resource_sf %>% 
@@ -154,4 +154,14 @@ shinyServer(function(input, output, session) {
     output$access_score_detail <- DT::renderDataTable({
       DT::datatable(weighted_score_table )
     })
+    
+    output$access_score_chart <- renderPlot(
+      access_score_by_geoid %>% 
+        ggplot(., mapping = aes(x = weighted_score, color = GEOID, alpha = GEOID, fill=GEOID)) + 
+        geom_histogram() +
+        scale_color_focus("36005000100", color_focus = "red",color_other = "black") +
+        scale_fill_focus("36005000100", color_focus = "red", color_other = "black") +
+        scale_alpha_focus("36005000100") + 
+        ggtitle("Chart of Weighted score by GEOID")
+    )
 })

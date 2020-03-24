@@ -20,10 +20,10 @@ shinyUI(dashboardPage(
                            label="Resource Category:",
                            choices = resouse_categories),
             #,
-            # menuItem(text = "Explore", tabName = "explore", icon = icon("chart-area")),
-            # selectizeInput(inputId="borough",
-            #                label="Borough:",
-            #                choices = unique(nyc_just_geoid_geom_sf$borough_name)),
+            menuItem(text = "Explore", tabName = "explore", icon = icon("chart-area")),
+            selectizeInput(inputId="borough",
+                            label="Borough:",
+                            choices = unique(nyc_just_geoid_geom_sf$borough_name)),
             # selectizeInput(inputId="nta",
             #                label="NTA:",
             #                choices = unique(nyc_just_geoid_geom_sf$nta_code)),
@@ -57,21 +57,24 @@ shinyUI(dashboardPage(
                     #     DT::dataTableOutput("perc_table")
                     #     ))
                     # )
-            # tabItem(tabName = "explore",
-            #         fluidRow(
-            #             valueBoxOutput("population")
-            #         ),
-            #         # fluidRow(
-            #         #     box(
-            #         #         leafletOutput("popMap")
-            #         #         )
-            #         #     ),
-            #         # fluidRow(
-            #         #     box(
-            #         #         leafletOutput("resourceMap")
-            #         #     )
-            #         # )
-            #         ),
+            tabItem(tabName = "explore",
+                    # fluidRow(
+                    #     valueBoxOutput("population")
+                    # ),
+                    fluidRow(
+                        box(
+                            width = 12, status = "info", solidHeader = TRUE,
+                            title = "Demographic Information for Community District(s)",
+                            leafletOutput("popMap")
+                            )
+                        )
+                    #,
+                    # fluidRow(
+                    #     box(
+                    #         leafletOutput("resourceMap")
+                    #     )
+                    # )
+                    ),
             tabItem(tabName = "deep_dive",
                     fluidRow(
                         box(
@@ -88,6 +91,15 @@ shinyUI(dashboardPage(
                             title = "Access Score Detail",
                             DT::dataTableOutput("access_score_detail")
                         )                     
+                    ),
+                    br(),
+                    fluidRow(
+                        box(
+                            # Output is a display of the allocations percentages should that option be selected
+                            width = 12, status = "info",solidHeader = TRUE,
+                            title = "Access Score Detail",
+                            plotOutput("access_score_chart")
+                        )   
                     ))
             )
             )
