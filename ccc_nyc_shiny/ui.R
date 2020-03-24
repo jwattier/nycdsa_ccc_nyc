@@ -18,7 +18,7 @@ shinyUI(dashboardPage(
             menuItem(text = "Map", tabName = "map", icon = icon("map")),
             selectizeInput(inputId="select_category",
                            label="Resource Category:",
-                           choices = resouse_categories)
+                           choices = resouse_categories),
             #,
             # menuItem(text = "Explore", tabName = "explore", icon = icon("chart-area")),
             # selectizeInput(inputId="borough",
@@ -27,7 +27,7 @@ shinyUI(dashboardPage(
             # selectizeInput(inputId="nta",
             #                label="NTA:",
             #                choices = unique(nyc_just_geoid_geom_sf$nta_code)),
-            # menuItem(text = "Deep Dive", tabName = "deep_dive", icon = icon("chart-area"))
+            menuItem(text = "Deep Dive", tabName = "deep_dive", icon = icon("chart-area"))
             )
         ),
     dashboardBody(
@@ -38,8 +38,17 @@ shinyUI(dashboardPage(
                             width = 12, status = "info", solidHeader = TRUE,
                             title = "Access Score NYC", 
                             leafletOutput("accessMap", width = "100%", height = 600)
-                        ))
-                    # ,
+                        )),
+                    br(),
+                    fluidRow(
+                        box(
+                            # Output is a display of the allocations percentages should that option be selected
+                        width = 12, status = "info",solidHeader = TRUE,
+                        title = "Percent Weight for Resources",
+                        DT::dataTableOutput("perc_table")
+                        )
+                        )
+                    ),
                     # fluidRow(
                     #     box(
                     #         # Output is a display of the allocations percentages should that option be selected
@@ -63,14 +72,25 @@ shinyUI(dashboardPage(
             #         #     )
             #         # )
             #         ),
-            # tabItem(tabName = "deep_dive",
-            #         fluidRow(
-            #             box(
-            #                 leaflet("trvlTimeMap")
-            #             )
-            #         ))
+            tabItem(tabName = "deep_dive",
+                    fluidRow(
+                        box(
+                            width = 12, status = "info", solidHeader = TRUE,
+                            title = "Travel Time Radius",
+                            leafletOutput("trvlTimeMap", width = "100%", height = 600)
+                        )
+                    ),
+                    br(),
+                    fluidRow(
+                        box(
+                            # Output is a display of the allocations percentages should that option be selected
+                            width = 12, status = "info",solidHeader = TRUE,
+                            title = "Access Score Detail",
+                            DT::dataTableOutput("access_score_detail")
+                        )                     
+                    ))
             )
             )
         )
-))
+)
 

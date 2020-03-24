@@ -9,6 +9,13 @@
 
 library(shiny)
 
+weighted_score_table <- nyc_just_geoid_geom_sf %>% filter(., GEOID == "36005000100" ) %>%  as_tibble() %>%
+  select(., GEOID) %>% inner_join(x=., y=nyc_trvl_times, by = c("GEOID" = "origin")) %>%
+  filter(., minutes <= 60) %>% inner_join(x=., y=resource_ct_by_geoid, by = c("destination" = "resource_geoid")) %>%
+  filter(., category == "food retail") %>% group_by(minutes) %>% summarise(., resource_count = sum(count)) %>%
+  arrange(., desc(resource_count)) %>%
+  mutate(., weighted_score = resource_count / minutes) %>% filter(., resource_count >0)
+
 shinyServer(function(input, output, session) {
   
   # I. first page visualizations
@@ -127,19 +134,24 @@ shinyServer(function(input, output, session) {
     ## Third spot for looking at individual areas
     ### First we want to look at - for a given census tract the 
     ### other census tracts that are within an hour's travel time
-    # output$trvlTimeMap <- renderLeaflet({
-    #   nyc_just_geoid_geom_sf %>% filter(., GEOID == "36005000100") %>%
-    #     as_tibble() %>%
-    #     select(., GEOID) %>%
-    #     inner_join(x=., y=nyc_trvl_times, by = c("GEOID" = "origin")) %>%
-    #     filter(., minutes < 60) %>%
-    #     select(., GEOID = destination, minutes) %>%
-    #     inner_join(., ny_census_tracts_wo_water, by = "GEOID") %>%
-    #     st_as_sf() %>%
-    #     leaflet::leaflet() %>% addProviderTiles("CartoDB.DarkMatter") %>% addPolygons()
-    #   
-    # })
+    output$trvlTimeMap <- renderLeaflet({
+      nyc_just_geoid_geom_sf %>% filter(., GEOID == "36005000100") %>%
+        as_tibble() %>%
+        select(., GEOID) %>%
+        inner_join(x=., y=nyc_trvl_times, by = c("GEOID" = "origin")) %>%
+        filter(., minutes < 60) %>%
+        select(., GEOID = destination, minutes) %>%
+        inner_join(., ny_census_tracts_wo_water, by = "GEOID") %>%
+        st_as_sf() %>%
+        leaflet::leaflet() %>% addProviderTiles("CartoDB.Positron") %>% addPolygons()
+
+    })
     
-    # # map to show resource count within travel area
+    
+
+   
     # output$
+    output$access_score_detail <- DT::renderDataTable({
+      DT::datatable(weighted_score_table )
+    })
 })
