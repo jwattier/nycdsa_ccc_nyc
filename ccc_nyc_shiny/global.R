@@ -1,7 +1,9 @@
 # import needed libraries
 library(opentripplanner)
 library(DT)
+library(geojsonsf)
 library(htmltools)
+library(readxl)
 library(leaflet)
 library(leaflet.providers)
 library(tidycensus)
@@ -27,22 +29,40 @@ parent_path = "./"
 
 source(paste0(parent_path, "helpers.R"))
 
+
+#---------------------- import census tract information from opendata nyc files
+file_path = paste0(parent_path, "data/nyc_geo")
+file_name = "/nyc_boro_to_fips_mapping.xlsx"
+boro_cd_to_fips_mapping <- readxl::read_xlsx(paste0(file_path, file_name))
+
+file_name = "/2010 Census Tracts.geojson"
+file_geojson = paste0(file_path, file_name)
+nyc_census_tracts_opendatanyc <- geojson_sf(file_geojson) %>% lwgeom::st_make_valid() %>% 
+  sf::st_cast("MULTIPOLYGON") 
+
+# done to conform census tract # to that of the pre-computed #s
+nyc_census_tracts_opendatanyc <- nyc_census_tracts_opendatanyc %>% as_tibble() %>% 
+  left_join(x=., y= boro_cd_to_fips_mapping) %>% 
+  mutate(., GEOID = paste0(fips_state_county_code, ct2010)) %>% st_as_sf()
+
+#nyc_census_blocks_opendatanyc %>% as_tibble()
+
 #---------------------- import census tracts
 # 1) define function for potential furture use
-census_sf_fun <- function(geography_type="tract", acs_year=2018) {
-  # this function retrieves the shape file for NYC and 
-  return (
-    tidycensus::get_acs(geography = geography_type, year = acs_year, geometry = TRUE, 
-                        variables = "B01003_001", # retrieves population
-                        survey = "acs5", county = c(061, 047, 081, 085, 005)
-                        , state = "NY",cb = FALSE) %>% 
-      st_transform(., crs=4326) # other map-based information follows the crs id of 4326
-    # crs => coordinate reference system
-  )
-}
+# census_sf_fun <- function(geography_type="tract", acs_year=2018) {
+#   # this function retrieves the shape file for NYC and 
+#   return (
+#     tidycensus::get_acs(geography = geography_type, year = acs_year, geometry = TRUE, 
+#                         variables = "B01003_001", # retrieves population
+#                         survey = "acs5", county = c(061, 047, 081, 085, 005)
+#                         , state = "NY",cb = FALSE) %>% 
+#       st_transform(., crs=4326) # other map-based information follows the crs id of 4326
+#     # crs => coordinate reference system
+#   )
+# }
 
 # 2) utilize function to retrieve nyc census tract information
-nyc_census_tracts <- census_sf_fun(geography_type = "tract", acs_year = 2018)
+#nyc_census_tracts <- census_sf_fun(geography_type = "tract", acs_year = 2018)
 
 
 #---------------------- import pre-computed times
@@ -63,20 +83,20 @@ nyc_trvl_times <- nyc_trvl_times %>% mutate(., minutes = if_else(condition = min
 
 # 2) create table with only GEOID and the geoid geometry
 
-nyc_just_geoid_geom_sf <- nyc_census_tracts %>% select(., GEOID, geometry)
+nyc_just_geoid_geom_sf <- nyc_census_tracts_opendatanyc %>% select(., GEOID, geometry)
 resource_ct_geoid_sf <- nyc_just_geoid_geom_sf # for use later to add in resource counts
 
 # 3) add to the "just geoid" tibble in order to include information on NTA, PUMA and borough linkage
-file_path = paste0(parent_path, "data/nyc_geo")
-file_name = "/nyc2010census_tract_nta_equiv.xlsx"
-
-census_tract_to_nta_mapping <- readxl::read_xlsx(paste0(file_path, file_name))
-
-
-nyc_just_geoid_geom_sf <- nyc_just_geoid_geom_sf %>% 
-  mutate(., fips_county_code = str_sub(GEOID, start = 3, end = 5)
-           ,census_tract_2010 = str_sub(GEOID, start = 6)) %>% 
-  left_join(., y = census_tract_to_nta_mapping,by = c("fips_county_code", "census_tract_2010"))
+# file_path = paste0(parent_path, "data/nyc_geo")
+# file_name = "/nyc2010census_tract_nta_equiv.xlsx"
+# 
+# census_tract_to_nta_mapping <- readxl::read_xlsx(paste0(file_path, file_name))
+# 
+# 
+# nyc_just_geoid_geom_sf <- nyc_just_geoid_geom_sf %>% 
+#   mutate(., fips_county_code = str_sub(GEOID, start = 3, end = 5)
+#            ,census_tract_2010 = str_sub(GEOID, start = 6)) %>% 
+#   left_join(., y = census_tract_to_nta_mapping,by = c("fips_county_code", "census_tract_2010"))
 
 #--------------------- import resource of interest
 # 1) nyc food retail
@@ -172,16 +192,16 @@ access_score_by_geoid <-
 #access_score_by_geoid <- 
 access_score_by_geoid$weighted_score <- access_score_by_geoid$weighted_score %>% replace_na(0)
 
-ny_water <- tigris::area_water("NY", "New York", class = "sf")
-ny_water <- sf::st_transform(ny_water, crs=4326)
-
-st_erase <- function(x, y) {
-  sf::st_difference(x, sf::st_union(y))
-}
-ny_census_tracts_wo_water <- st_erase(nyc_census_tracts, ny_water)
+# ny_water <- tigris::area_water("NY", "New York", class = "sf")
+# ny_water <- sf::st_transform(ny_water, crs=4326)
+# 
+# st_erase <- function(x, y) {
+#   sf::st_difference(x, sf::st_union(y))
+# }
+# ny_census_tracts_wo_water <- st_erase(nyc_census_tracts, ny_water)
 
 # -------------------- build map with access score information
-pal_pop <- colorNumeric("plasma", domain = ny_census_tracts_wo_water$estimate)
+#pal_pop <- colorNumeric("plasma", domain = ny_census_tracts_wo_water$estimate)
 
 access_score_4_pal <- access_score_by_geoid %>% filter(., category == "early childhood center")
 pal <- colorNumeric("viridis", domain = access_score_4_pal$weighted_score)

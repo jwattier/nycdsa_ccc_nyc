@@ -25,8 +25,8 @@ shinyServer(function(input, output, session) {
     })
 
   output$accessMap<- renderLeaflet({
-    ny_census_tracts_wo_water %>%
-      as_tibble() %>% filter(., estimate != 0) %>%
+    nyc_census_tracts_opendatanyc %>%
+      as_tibble() %>% #filter(., estimate != 0) %>%
       left_join(x = ., y = access_score_by_geoid, by="GEOID") %>%
       filter(., category == input$select_category) %>%
       replace_na(., list(category = "", weighted_score = 0)) %>%
@@ -73,13 +73,13 @@ shinyServer(function(input, output, session) {
   #   )
   # })
     
-    filteredArea <- reactive({
-      nyc_just_geoid_geom_sf %>%
-        as_tibble() %>%
-        filter(., borough_name == input$borough) %>% select(., GEOID) %>%
-        inner_join(., ny_census_tracts_wo_water)
-    })
-    
+    # filteredArea <- reactive({
+    #   nyc_just_geoid_geom_sf %>%
+    #     as_tibble() %>%
+    #     filter(., borough_name == input$borough) %>% select(., GEOID) %>%
+    #     inner_join(., ny_census_tracts_wo_water)
+    # })
+    # 
     
     # filteredPopulation <- reactive({
     #   filteredArea() %>% summarise(population = sum(estimate))
@@ -93,35 +93,35 @@ shinyServer(function(input, output, session) {
     #   )
     # })
     
-    output$popMap <- renderLeaflet({
-      filteredArea() %>%
-        st_as_sf() %>%
-        leaflet() %>%
-        addProviderTiles("CartoDB.Positron") %>%
-        setView(lat = 40.7128, lng = -74.0060, zoom = 10) %>%
-        addPolygons(
-          fillColor = ~pal_pop(estimate),
-          stroke = FALSE,
-          weight = 2,
-          opacity = 1,
-          color = "white",
-          dashArray = "3",
-          fillOpacity = 0.7,
-          highlight = highlightOptions(
-            weight = 5,
-            color = '#666',
-            dashArray = "",
-            fillOpacity = 0.7,
-            bringToFront = TRUE)#,
-          # label = labels,
-          # labelOptions = labelOptions(
-          #   style = list("font-weight" = "normal", padding = "3px 8px"),
-          #   textsize = "15px",
-          #   direction = "auto")
-        ) %>%
-        addLegend(pal = pal_pop, values = ~estimate, opacity = 0.7, title = "Population",
-                  position = "bottomright")
-    })
+    # output$popMap <- renderLeaflet({
+    #   filteredArea() %>%
+    #     st_as_sf() %>%
+    #     leaflet() %>%
+    #     addProviderTiles("CartoDB.Positron") %>%
+    #     setView(lat = 40.7128, lng = -74.0060, zoom = 10) %>%
+    #     addPolygons(
+    #       fillColor = ~pal_pop(estimate),
+    #       stroke = FALSE,
+    #       weight = 2,
+    #       opacity = 1,
+    #       color = "white",
+    #       dashArray = "3",
+    #       fillOpacity = 0.7,
+    #       highlight = highlightOptions(
+    #         weight = 5,
+    #         color = '#666',
+    #         dashArray = "",
+    #         fillOpacity = 0.7,
+    #         bringToFront = TRUE)#,
+    #       # label = labels,
+    #       # labelOptions = labelOptions(
+    #       #   style = list("font-weight" = "normal", padding = "3px 8px"),
+    #       #   textsize = "15px",
+    #       #   direction = "auto")
+    #     ) %>%
+    #     addLegend(pal = pal_pop, values = ~estimate, opacity = 0.7, title = "Population",
+    #               position = "bottomright")
+    #})
     
     # output$resourceMap <- renderLeaflet({
     #   resource_sf %>% 
@@ -135,13 +135,13 @@ shinyServer(function(input, output, session) {
     ### First we want to look at - for a given census tract the 
     ### other census tracts that are within an hour's travel time
     output$trvlTimeMap <- renderLeaflet({
-      nyc_just_geoid_geom_sf %>% filter(., GEOID == "36005000100") %>%
+      nyc_census_tracts_opendatanyc %>% filter(., GEOID == "36005000100") %>%
         as_tibble() %>%
         select(., GEOID) %>%
         inner_join(x=., y=nyc_trvl_times, by = c("GEOID" = "origin")) %>%
         filter(., minutes < 60) %>%
         select(., GEOID = destination, minutes) %>%
-        inner_join(., ny_census_tracts_wo_water, by = "GEOID") %>%
+        inner_join(.,  nyc_census_tracts_opendatanyc, by = "GEOID") %>%
         st_as_sf() %>%
         leaflet::leaflet() %>% addProviderTiles("CartoDB.Positron") %>% addPolygons()
 

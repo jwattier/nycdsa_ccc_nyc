@@ -57,24 +57,24 @@ shinyUI(dashboardPage(
                     #     DT::dataTableOutput("perc_table")
                     #     ))
                     # )
-            tabItem(tabName = "explore",
-                    # fluidRow(
-                    #     valueBoxOutput("population")
-                    # ),
-                    fluidRow(
-                        box(
-                            width = 12, status = "info", solidHeader = TRUE,
-                            title = "Demographic Information for Community District(s)",
-                            leafletOutput("popMap")
-                            )
-                        )
+            # tabItem(tabName = "explore",
+            #         # fluidRow(
+            #         #     valueBoxOutput("population")
+            #         # ),
+            #         fluidRow(
+            #             box(
+            #                 width = 12, status = "info", solidHeader = TRUE,
+            #                 title = "Demographic Information for Community District(s)",
+            #                 leafletOutput("popMap")
+            #                 )
+            #             )
                     #,
                     # fluidRow(
                     #     box(
                     #         leafletOutput("resourceMap")
                     #     )
                     # )
-                    ),
+                  #  ),
             tabItem(tabName = "deep_dive",
                     fluidRow(
                         box(
@@ -97,7 +97,7 @@ shinyUI(dashboardPage(
                         box(
                             # Output is a display of the allocations percentages should that option be selected
                             width = 12, status = "info",solidHeader = TRUE,
-                            title = "Access Score Detail",
+                            title = "Access Score Chart",
                             plotOutput("access_score_chart")
                         )   
                     ))
