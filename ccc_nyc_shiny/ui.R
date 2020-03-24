@@ -21,9 +21,9 @@ shinyUI(dashboardPage(
                            choices = resouse_categories),
             #,
             menuItem(text = "Explore", tabName = "explore", icon = icon("chart-area")),
-            selectizeInput(inputId="borough",
-                            label="Borough:",
-                            choices = unique(nyc_just_geoid_geom_sf$borough_name)),
+            selectizeInput(inputId="puma",
+                            label="Puma:",
+                            choices = unique(nyc_census_blocks_opendatanyc$puma)),
             # selectizeInput(inputId="nta",
             #                label="NTA:",
             #                choices = unique(nyc_just_geoid_geom_sf$nta_code)),
@@ -57,24 +57,24 @@ shinyUI(dashboardPage(
                     #     DT::dataTableOutput("perc_table")
                     #     ))
                     # )
-            # tabItem(tabName = "explore",
-            #         # fluidRow(
-            #         #     valueBoxOutput("population")
-            #         # ),
-            #         fluidRow(
-            #             box(
-            #                 width = 12, status = "info", solidHeader = TRUE,
-            #                 title = "Demographic Information for Community District(s)",
-            #                 leafletOutput("popMap")
-            #                 )
-            #             )
+            tabItem(tabName = "explore",
+                    # fluidRow(
+                    #     valueBoxOutput("population")
+                    # ),
+                    fluidRow(
+                        box(
+                            width = 12, status = "info", solidHeader = TRUE,
+                            title = "Demographic Information for PUMAs",
+                            leafletOutput("filteredMap")
+                            )
+                        )
                     #,
                     # fluidRow(
                     #     box(
                     #         leafletOutput("resourceMap")
                     #     )
                     # )
-                  #  ),
+                    ),
             tabItem(tabName = "deep_dive",
                     fluidRow(
                         box(
