@@ -28,8 +28,9 @@ add_resource <- function(new_resource_tbl, name_col, type_col, capacity_amt_col 
   # if else condition to handle instances where the capacity amount column is NA
   if (is.na(capacity_amt_col)){
     new_addition <- new_resource_tbl %>% 
-      select(., name = name_col, type = type_col, capacity_amt = rep(capacity_amt_col)) %>%
-      mutate(., capacity_unit_col = rep(capacity_unit_col, length.out = total_rows))
+      select(., name = name_col, type = type_col) %>%
+      mutate(., capacity_unit_col = rep(capacity_unit_col, length.out = total_rows)
+                                        , capacity_amt = rep(capacity_amt_col, length.out = total_rows))
     
   } else {
     new_addition <- new_resource_tbl %>% 
@@ -48,6 +49,15 @@ add_resource <- function(new_resource_tbl, name_col, type_col, capacity_amt_col 
   }
   
 }
+
+# resource_sf
+# new_stuff <- readr::read_csv(file = "./data/resources/new_csv_file/Assets.csv")
+# 
+# input_table <- new_stuff
+# 
+# add_resource(
+#   new_resource_tbl = input_table, name_col = "Location", type_col = "Category", capacity_amt_col = NA,
+#   capacity_unit_col = NA, geom_col = "latlong", current_resource_tbl = resource_sf)
 
 find_tvl_radius <- function(geometry_sf, geo_id, travel_time_cutoff){
   geometry_sf %>% 

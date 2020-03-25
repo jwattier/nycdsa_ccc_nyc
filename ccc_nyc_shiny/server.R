@@ -236,12 +236,10 @@ shinyServer(function(input, output, session) {
       
     })
     
-    output$asset_listing <- DT::renderDataTable({
-        DT::datatable(resource_sf)
-      })
-  
+
+    # Section for displaying cumulative resource information
     
-    placeholder <- eventReactive(input$upload_resource, {
+    resource_tbl <- eventReactive(input$upload_resource, {
       input_table <- resource_input_data()
       
       add_resource(
@@ -249,6 +247,25 @@ shinyServer(function(input, output, session) {
         capacity_unit_col = NA, geom_col = "latlong", current_resource_tbl = resource_sf)
     })
 
+    output$asset_listing <- DT::renderDataTable({
+      #DT::datatable(resource_sf)
+      if(is_empty(resource_tbl())){
+        DT::datatable(resource_sf)
+      } else{
+      DT::datatable(resource_tbl())
+        }
+    })
+    
+    output$resource_ct_tbl <- DT::renderDataTable({
+      resource_ct_by_geoid
+    })
+    
+    output$resource_point_map <- renderLeaflet({
+      resource_tbl() %>% leaflet() %>% addTiles() %>% 
+        addMarkers(
+          clusterOptions = markerClusterOptions()
+        )
+    })
     
     ## Third spot for looking at individual areas
     ### First we want to look at - for a given census tract the 

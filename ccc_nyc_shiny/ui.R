@@ -78,7 +78,9 @@ shinyUI(dashboardPage(
             tabItem(tabName = "asset_inventory",
                     fluidPage(
                       tabBox(title = "Community Asset Info", id = "asset_tabset",
-                             tabPanel("Asset List", DT::dataTableOutput("asset_listing"))
+                             tabPanel("Asset List", DT::dataTableOutput("asset_listing")),
+                             tabPanel("Asset Counts", DT::dataTableOutput("resource_ct_tbl")),
+                             tabPanel("Asset Map", leafletOutput("resource_point_map"))
                       )
                     )),
             tabItem(tabName = "explore",
