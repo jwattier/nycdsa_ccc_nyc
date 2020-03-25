@@ -62,16 +62,8 @@ shinyUI(dashboardPage(
                     ),
             tabItem(tabName = "resource",
                         fluidPage(
-                            tabBox(title = "Resource Zone",
-                                   id = "tabset_resources",
-                                   side = "left",
-                                   tabPanel(title="new",
-                                            tableOutput("new_resource_contents")
-                                   ),
-                                   tabPanel("total", "Meant to display all resources"),
-                                   tabPanel("map", "Meant to visualize those specific resources")
-                            )
-                        )
+                          tableOutput("new_resource_contents")
+                          )
                     ),
                     # fluidRow(
                     #     box(
