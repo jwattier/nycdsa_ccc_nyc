@@ -99,7 +99,39 @@ shinyServer(function(input, output, session) {
     #     icon = icon("user-check")
     #   )
     # })
-    
+
+    output$filteredAccessMap <- renderLeaflet({
+      filteredArea() %>%  as_tibble() %>% #filter(., estimate != 0) %>%
+        left_join(x = ., y = access_score_by_geoid, by="GEOID") %>%
+        filter(., category == input$select_category) %>%
+        replace_na(., list(category = "", weighted_score = 0)) %>%
+        st_as_sf() %>%
+        leaflet() %>%
+        addProviderTiles("CartoDB.Positron") %>%
+        addPolygons(
+          fillColor = ~pal(weighted_score),
+          stroke = FALSE,
+          weight = 2,
+          opacity = 1,
+          color = "white",
+          dashArray = "3",
+          fillOpacity = 0.7,
+          highlight = highlightOptions(
+            weight = 5,
+            color = '#666',
+            dashArray = "",
+            fillOpacity = 0.7,
+            bringToFront = TRUE)#,
+          # label = labels,
+          # labelOptions = labelOptions(
+          #   style = list("font-weight" = "normal", padding = "3px 8px"),
+          #   textsize = "15px",
+          #   direction = "auto")
+        ) %>%
+        addLegend(pal = pal, values = ~weighted_score, opacity = 0.7, title = "Access Score",
+                  position = "bottomright")
+    })
+       
     output$filteredMap <- renderLeaflet({
       filteredArea() %>% as_tibble() %>% 
         inner_join(x=., y=nyc_census_tract_population, by="GEOID") %>% 
@@ -171,8 +203,8 @@ shinyServer(function(input, output, session) {
         inner_join(x=., y=nyc_census_tracts_opendatanyc, by = c("origin" = "GEOID")) %>% 
         st_as_sf() %>% 
         leaflet() %>% 
-        addTiles() %>% 
-        addPolygons(stroke = FALSE)
+        addProviderTiles("CartoDB.Positron") %>% 
+        addPolygons(stroke = FALSE, fillColor = "blue") 
       
     })
 

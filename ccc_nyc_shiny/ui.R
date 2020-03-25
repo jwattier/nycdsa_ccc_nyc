@@ -64,6 +64,13 @@ shinyUI(dashboardPage(
                     fluidRow(
                         box(
                             width = 12, status = "info", solidHeader = TRUE,
+                            title = "Access Score for PUMAs",
+                            leafletOutput("filteredAccessMap")
+                        )   
+                    ),
+                    fluidRow(
+                        box(
+                            width = 12, status = "info", solidHeader = TRUE,
                             title = "Demographic Information for PUMAs",
                             leafletOutput("filteredMap")
                             )
