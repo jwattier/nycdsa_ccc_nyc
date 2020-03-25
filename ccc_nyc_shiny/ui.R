@@ -61,10 +61,18 @@ shinyUI(dashboardPage(
                         )
                     ),
             tabItem(tabName = "resource",
-                fluidPage(
-                    tableOutput("new_resource_contents")
-                )
-            ),
+                        fluidPage(
+                            tabBox(title = "Resource Zone",
+                                   id = "tabset_resources",
+                                   side = "left",
+                                   tabPanel(title="new",
+                                            tableOutput("new_resource_contents")
+                                   ),
+                                   tabPanel("total", "Meant to display all resources"),
+                                   tabPanel("map", "Meant to visualize those specific resources")
+                            )
+                        )
+                    ),
                     # fluidRow(
                     #     box(
                     #         # Output is a display of the allocations percentages should that option be selected
