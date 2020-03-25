@@ -1,0 +1,326 @@
+Location,Latitude,Longitude,Category,Description,Is Area,Asset Id
+East Tremont,40.842373,-73.884395,Workforce Development/Workforce1 Career Center,"Name: West Farms Workforce1 Career Center 
+
+Name: West Farms Workforce1 Career Center
+
+",False,
+Mott Haven,40.807212,-73.929496,Workforce Development/Workforce1 Career Center,"Name: Bronx Workforce1 Industrial &amp; Transportation Career Center 
+
+Name: Bronx Workforce1 Industrial &amp; Transportation Career Center
+
+",False,
+Jamaica/St. Albans,40.707147,-73.791648,Workforce Development/Workforce1 Career Center,"Name: Queens Workforce1 Career Center 
+
+Name: Queens Workforce1 Career Center
+
+",False,
+Midtown Business District,40.747729,-73.987834,Workforce Development/Workforce1 Career Center,"Name: Midtown Workforce1 Career Center 
+
+Name: Midtown Workforce1 Career Center
+
+",False,
+Fort Greene/Brooklyn Hts,40.688127,-73.98448,Workforce Development/Workforce1 Career Center,"Name: NYS Department of Labor MetroTech Workforce1 Career Center 
+
+Name: NYS Department of Labor MetroTech Workforce1 Career Center
+
+",False,
+Sunset Park,40.644524,-74.022532,Workforce Development/Workforce1 Career Center,"Name: Brooklyn Workforce1 Industrial &amp; Transportation Career Center 
+
+Name: Brooklyn Workforce1 Industrial &amp; Transportation Career Center
+
+",False,
+St. George,40.643267,-74.077562,Workforce Development/Workforce1 Career Center,"Name: Staten Island Workforce1 Career Center 
+
+Name: Staten Island Workforce1 Career Center
+
+",False,
+Jamaica/St. Albans,40.707147,-73.791648,Workforce Development/Workforce1 Career Center,"Name: Workforce1 Industrial &amp; Transportation Career Center 
+
+Name: Workforce1 Industrial &amp; Transportation Career Center
+
+",False,
+Greenwich Village,40.723442,-74.006817,Workforce Development/Workforce1 Career Center,"Name: NYS Department of Labor Lower Manhattan Workforce1 Career Center 
+
+Name: NYS Department of Labor Lower Manhattan Workforce1 Career Center
+
+",False,
+Central Harlem,40.8097,-73.948932,Workforce Development/Workforce1 Career Center,"Name: Upper Manhattan Workforce1 Career Center 
+
+Name: Upper Manhattan Workforce1 Career Center
+
+",False,
+Fort Greene/Brooklyn Hts,40.689104,-73.98287,Workforce Development/Workforce1 Career Center,"Name: Brooklyn Workforce1 Career Center 
+
+Name: Brooklyn Workforce1 Career Center
+
+",False,
+Flushing,40.757782,-73.828877,Workforce Development/Workforce1 Career Center,"Name: Flushing Workforce1 Career Center 
+
+Name: Flushing Workforce1 Career Center
+
+",False,
+Tottenville,40.544144,-74.164855,Workforce Development/Workforce1 Career Center,"Name: Staten Island South Shore Workforce1 Career Center 
+
+Name: Staten Island South Shore Workforce1 Career Center
+
+",False,
+East Tremont,40.861032,-73.891509,Workforce Development/Workforce1 Career Center,"Name: Bronx Workforce1 Career Center 
+
+Name: Bronx Workforce1 Career Center
+
+",False,
+Flushing,40.75799,-73.825902,Workforce Development/Workforce1 Career Center,"Name: NYS Department of Labor Flushing Workforce1 Career Center 
+
+Name: NYS Department of Labor Flushing Workforce1 Career Center
+
+",False,
+The Rockaways,40.589604,-73.787775,Workforce Development/Workforce1 Career Center,"Name: Rockaway Workforce1 Career Center 
+
+Name: Rockaway Workforce1 Career Center
+
+",False,
+St. George,40.638918,-74.129555,Workforce Development/Workforce1 Career Center,"Name: Staten Island Workforce1 Industrial &amp; Transportation Career Center 
+
+Name: Staten Island Workforce1 Industrial &amp; Transportation Career Center
+
+",False,
+Battery Park/Tribeca,40.708778,-74.00674,Workforce Development/Workforce1 Career Center,"Name: Workforce1 Healthcare Career Center 
+
+Name: Workforce1 Healthcare Career Center
+
+",False,
+Washington Heights,40.84836,-73.932184,Workforce Development/Workforce1 Career Center,"Name: Washington Heights Workforce1 Career Center 
+
+Name: Washington Heights Workforce1 Career Center
+
+",False,
+Hunts Point,40.821249,-73.892067,Workforce Development/Workforce1 Career Center,"Name: Hunts Point Workforce1 Career Center 
+
+Name: Hunts Point Workforce1 Career Center
+
+",False,
+Coney Island,40.576237,-73.986073,Workforce Development/Workforce1 Career Center,"Name: Sandy Recovery Workforce1 Career Center 
+
+Name: Sandy Recovery Workforce1 Career Center
+
+",False,
+East New York,40.675938,-73.897774,Workforce Development/Workforce1 Career Center,"Name: East New York Workforce1 Career Center 
+
+Name: East New York Workforce1 Career Center
+
+",False,
+Astoria,40.75576,-73.941702,Workforce Development/Workforce1 Career Center,"Name: Long Island City Workforce1 Career Center 
+
+Name: Long Island City Workforce1 Career Center
+
+",False,
+Mott Haven,40.805742,-73.918238,Workforce Development/Job Plus Site,"Service Provider: East Side HouseDevelopments Served: Mill Brook Houses 
+
+Service Provider: East Side House
+
+Developments Served: Mill Brook Houses
+
+",False,
+Mott Haven,40.815332,-73.907818,Workforce Development/Job Plus Site,"Service Provider: BronxWorksDevelopments Served: East 152nd Street-Courtlandt Avenue, Moore, Betances, Melrose Houses 
+
+Service Provider: BronxWorks
+
+Developments Served: East 152nd Street-Courtlandt Avenue, Moore, Betances, Melrose Houses
+
+",False,
+Unionport/Soundview,40.823035,-73.874119,Workforce Development/Job Plus Site,"Service Provider: Goodwill IndustriesDevelopments Served: Sack Wern, Clason Point Gardens, Monroe Houses 
+
+Service Provider: Goodwill Industries
+
+Developments Served: Sack Wern, Clason Point Gardens, Monroe Houses
+
+",False,
+Bedford Stuyvesant,40.699576,-73.948601,Workforce Development/Job Plus Site,"Service Provider: Bed Stuy Restoration CorporationDevelopments Served: Armstrong I and II, Marcy, Lafayette? Houses 
+
+Service Provider: Bed Stuy Restoration Corporation
+
+Developments Served: Armstrong I and II, Marcy, Lafayette? Houses
+
+",False,
+Brownsville,40.665625,-73.90437,Workforce Development/Job Plus Site,"Service Provider: DB GrantDevelopments Served: Van Dyke I, Brownsville Houses 
+
+Service Provider: DB Grant
+
+Developments Served: Van Dyke I, Brownsville Houses
+
+",False,
+East New York,40.662548,-73.892011,Workforce Development/Job Plus Site,"Service Provider: ?Bed-Stuy Restoration CorporationDevelopments Served: Pennsylvania Avenue-Wortman Avenue Houses 
+
+Service Provider: ?Bed-Stuy Restoration Corporation
+
+Developments Served: Pennsylvania Avenue-Wortman Avenue Houses
+
+",False,
+"Lower East Side ",40.72069,-73.976388,Workforce Development/Job Plus Site,"Service Provider: Henry Street SettlementDevelopments Served: Wald, Riis II Houses 
+
+Service Provider: Henry Street Settlement
+
+Developments Served: Wald, Riis II Houses
+
+",False,
+East Harlem,40.793219,-73.938142,Workforce Development/Job Plus Site,"Service Provider: Urban UpboundDevelopments Served: Jefferson, Johnson and Clinton?Houses 
+
+Service Provider: Urban Upbound
+
+Developments Served: Jefferson, Johnson and Clinton?Houses
+
+",False,
+Astoria,40.773551,-73.93485,Workforce Development/Job Plus Site,"Service Provider: Urban UpboundDevelopments Served: Astoria Houses 
+
+Service Provider: Urban Upbound
+
+Developments Served: Astoria Houses
+
+",False,
+St. George,40.641337,-74.076415,Workforce Development/Job Plus Site,"Service Provider: Arbor/RescareDevelopments Served: Todt Hill, Mariner?s Harbor, South Beach, West Brighton I, Stapleton, Richmond Terrace Houses 
+
+Service Provider: Arbor/Rescare
+
+Developments Served: Todt Hill, Mariner?s Harbor, South Beach, West Brighton I, Stapleton, Richmond Terrace Houses
+
+",False,
+Concourse/Highbridge,40.839881,-73.918782,Workforce Development/HRA Job Center,"Name: Concourse 
+
+Name: Concourse
+
+",False,
+Mott Haven,40.813208,-73.927163,Workforce Development/HRA Job Center,"Name: Rider 
+
+Name: Rider
+
+",False,
+East Tremont,40.846916,-73.894842,Workforce Development/HRA Job Center,"Name: Crotona 
+
+Name: Crotona
+
+",False,
+Bedford Park,40.862587,-73.893548,Workforce Development/HRA Job Center,"Name: Fordham 
+
+Name: Fordham
+
+",False,
+Hunts Point,40.817107,-73.890933,Workforce Development/HRA Job Center,"Name: Family Services Call Center, Bronx Satelite 
+
+Name: Family Services Call Center, Bronx Satelite
+
+",False,
+Hunts Point,40.817107,-73.890933,Workforce Development/HRA Job Center,"Name: Hunts point 
+
+Name: Hunts point
+
+",False,
+Fort Greene/Brooklyn Hts,40.697443,-73.98608,Workforce Development/HRA Job Center,"Name: Veterans&#39; Service Center 
+
+Name: Veterans&#39; Service Center
+
+",False,
+Coney Island,40.573439,-73.98784,Workforce Development/HRA Job Center,"Name: Coney Island 
+
+Name: Coney Island
+
+",False,
+Fort Greene/Brooklyn Hts,40.683749,-73.982816,Workforce Development/HRA Job Center,"Name: Dekalb 
+
+Name: Dekalb
+
+",False,
+Williamsburg/Greenpoint,40.700913,-73.943461,Workforce Development/HRA Job Center,"Name: Bushwick 
+
+Name: Bushwick
+
+",False,
+Fort Greene/Brooklyn Hts,40.682596,-73.968232,Workforce Development/HRA Job Center,"Name: Clinton Hill Center 
+
+Name: Clinton Hill Center
+
+",False,
+Park Slope,40.683134,-73.978565,Workforce Development/HRA Job Center,"Name: Southern Brooklyn 
+
+Name: Southern Brooklyn
+
+",False,
+East New York,40.67588,-73.871091,Workforce Development/HRA Job Center,"Name: Family Services Call Center Brooklyn Satellite 
+
+Name: Family Services Call Center Brooklyn Satellite
+
+",False,
+Greenwich Village,40.735895,-73.994678,Workforce Development/HRA Job Center,"Name: Waverly 
+
+Name: Waverly
+
+",False,
+East Harlem,40.804866,-73.935538,Workforce Development/HRA Job Center,"Name: East End 
+
+Name: East End
+
+",False,
+Midtown Business District,40.73565,-73.988103,Workforce Development/HRA Job Center,"Name: Union Square 
+
+Name: Union Square
+
+",False,
+Midtown Business District,40.73565,-73.988103,Workforce Development/HRA Job Center,"Name: Residential Treatment Service Center 
+
+Name: Residential Treatment Service Center
+
+",False,
+Central Harlem,40.808111,-73.947408,Workforce Development/HRA Job Center,"Name: Family Services Call Center Manhattan Satellite 
+
+Name: Family Services Call Center Manhattan Satellite
+
+",False,
+Central Harlem,40.808111,-73.947408,Workforce Development/HRA Job Center,"Name: St. Nicholas 
+
+Name: St. Nicholas
+
+",False,
+Washington Heights,40.870088,-73.913853,Workforce Development/HRA Job Center,"Name: Dyckman 
+
+Name: Dyckman
+
+",False,
+Midtown Business District,40.73565,-73.988103,Workforce Development/HRA Job Center,"Name: Home Visit Needed/Reasonable Accomodations Request Operations 
+
+Name: Home Visit Needed/Reasonable Accomodations Request Operations
+
+",False,
+Jamaica/St. Albans,40.708391,-73.796282,Workforce Development/HRA Job Center,"Name: Family Service Call Center 
+
+Name: Family Service Call Center
+
+",False,
+Jamaica/St. Albans,40.708391,-73.796282,Workforce Development/HRA Job Center,"Name: Jamaica 
+
+Name: Jamaica
+
+",False,
+Astoria,40.751635,-73.931042,Workforce Development/HRA Job Center,"Name: Queens 
+
+Name: Queens
+
+",False,
+The Rockaways,40.592697,-73.789408,Workforce Development/HRA Job Center,"Name: Rockaway 
+
+Name: Rockaway
+
+",False,
+Astoria,40.751635,-73.931042,Workforce Development/HRA Job Center,"Name: Refugee and Immigrant Service Center 
+
+Name: Refugee and Immigrant Service Center
+
+",False,
+Astoria,40.751635,-73.931042,Workforce Development/HRA Job Center,"Name: Family Services Call Center Queens Satellite 
+
+Name: Family Services Call Center Queens Satellite
+
+",False,
+St. George,40.637339,-74.075704,Workforce Development/HRA Job Center,"Name: Richmond 
+
+Name: Richmond
+
+",False,

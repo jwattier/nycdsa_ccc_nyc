@@ -221,7 +221,12 @@ shinyServer(function(input, output, session) {
       if(is.null(inFile))
         return(NULL)
       
-      readxl::read_excel(path = inFile$datapath)
+      if(reader::get.ext(inFile$datapath) == "csv") {
+        readr::read_csv(file = inFile$datapath)
+      } else {
+        readxl::read_excel(path = inFile$datapath)  
+      }
+      
     })
 
     

@@ -31,8 +31,8 @@ shinyUI(dashboardPage(
                     #'text/csv',
                     #'text/comma-separated-values',
                     '.xlsx',
-                    '.xls' 
-                    #'.csv'
+                    '.xls', 
+                    '.csv'
                     )
             ),
             # selectizeInput(inputId="nta",
