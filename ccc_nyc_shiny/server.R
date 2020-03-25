@@ -209,23 +209,40 @@ shinyServer(function(input, output, session) {
     })
     
     # Section for previewing the resource file upload
-    output$new_resource_contents <- renderTable({
+    # reactive expression to wait for upload and then render Table to display results
+    
+    resource_input_data <- reactive({
       # input$file1 will be NULL initially. After the user selects
       # and uploads a file, it will be a data frame with 'name',
       # 'size', 'type', and 'datapath' columns. The 'datapath'
       # column will contain the local filenames where the data can
       # be found.
+      req(input$resource_file)
       
       inFile <- input$resource_file
       
-      if(is.null(inFile))
-        return(NULL)
+      ext <- reader::get.ext(inFile$datapath)
       
-      if(reader::get.ext(inFile$datapath) == "csv") {
-        readr::read_csv(file = inFile$datapath)
-      } else {
-        readxl::read_excel(path = inFile$datapath)  
-      }
+      switch(ext,
+        "csv" = readr::read_csv(file = inFile$datapath),
+        "xls" = readxl::read_excel(path = inFile$datapath),
+        "xlsx" = readxl::read_excel(path = inFile$datapath),
+        validate("Invalid file; Please upload a .csv, .xls, or .xlsx file")
+      )
+    })
+    
+    output$new_resource_contents <- renderTable({
+      head(resource_input_data())
+      # inFile <- input$resource_file
+      # 
+      # if(is.null(inFile))
+      #   return(NULL)
+      # 
+      # if(reader::get.ext(inFile$datapath) == "csv") {
+      #   readr::read_csv(file = inFile$datapath)
+      # } else {
+      #   readxl::read_excel(path = inFile$datapath)  
+      # }
       
     })
 
