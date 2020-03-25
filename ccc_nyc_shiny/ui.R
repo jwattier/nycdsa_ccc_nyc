@@ -24,6 +24,17 @@ shinyUI(dashboardPage(
             selectizeInput(inputId="puma",
                             label="Puma:",
                             choices = unique(nyc_census_tracts_opendatanyc$puma)),
+            menuItem(text = "Add a Resource", tabName = "resource"),
+            fileInput(
+                inputId = "resource_file", label = "Choose resource file to upload", 
+                accept  = c(
+                    #'text/csv',
+                    #'text/comma-separated-values',
+                    '.xlsx',
+                    '.xls' 
+                    #'.csv'
+                    )
+            ),
             # selectizeInput(inputId="nta",
             #                label="NTA:",
             #                choices = unique(nyc_just_geoid_geom_sf$nta_code)),
@@ -49,6 +60,11 @@ shinyUI(dashboardPage(
                         )
                         )
                     ),
+            tabItem(tabName = "resource",
+                fluidPage(
+                    tableOutput("new_resource_contents")
+                )
+            ),
                     # fluidRow(
                     #     box(
                     #         # Output is a display of the allocations percentages should that option be selected

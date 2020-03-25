@@ -19,7 +19,10 @@ library(sp)
 library(lwgeom)
 
 
-# 
+# By default, the file size limit is 5MB. It can be changed by
+# setting this option. Here we'll raise limit to 9MB.
+options(shiny.maxRequestSize = 9*1024^2)
+
 # census_api_key("9b7b36ca21156e2f5e04583421016793d575d7b0")
 
 options(tigris_use_cache = TRUE)

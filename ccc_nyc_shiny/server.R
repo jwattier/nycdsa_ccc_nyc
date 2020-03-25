@@ -207,6 +207,22 @@ shinyServer(function(input, output, session) {
         addPolygons(stroke = FALSE, fillColor = "blue") 
       
     })
+    
+    # Section for previewing the resource file upload
+    output$new_resource_contents <- renderTable({
+      # input$file1 will be NULL initially. After the user selects
+      # and uploads a file, it will be a data frame with 'name',
+      # 'size', 'type', and 'datapath' columns. The 'datapath'
+      # column will contain the local filenames where the data can
+      # be found.
+      
+      inFile <- input$resource_file
+      
+      if(is.null(inFile))
+        return(NULL)
+      
+      readxl::read_excel(path = inFile$datapath)
+    })
 
     
     ## Third spot for looking at individual areas
