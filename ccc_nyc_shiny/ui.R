@@ -35,9 +35,11 @@ shinyUI(dashboardPage(
                     '.csv'
                     )
             ),
+            actionButton(inputId = "upload_resource", label = "Upload Assets"),
             # selectizeInput(inputId="nta",
             #                label="NTA:",
             #                choices = unique(nyc_just_geoid_geom_sf$nta_code)),
+            menuItem(text = "Asset Inventory", tabName = "asset_inventory"),
             menuItem(text = "Deep Dive", tabName = "deep_dive", icon = icon("chart-area"))
             )
         ),
@@ -73,6 +75,12 @@ shinyUI(dashboardPage(
                     #     DT::dataTableOutput("perc_table")
                     #     ))
                     # )
+            tabItem(tabName = "asset_inventory",
+                    fluidPage(
+                      tabBox(title = "Community Asset Info", id = "asset_tabset",
+                             tabPanel("Asset List", DT::dataTableOutput("asset_listing"))
+                      )
+                    )),
             tabItem(tabName = "explore",
                     # fluidRow(
                     #     valueBoxOutput("population")

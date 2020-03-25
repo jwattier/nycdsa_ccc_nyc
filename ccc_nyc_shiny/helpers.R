@@ -5,8 +5,8 @@ library(leaflet)
 library(sf)
 
 
-add_resource <- function(new_resource_tbl, name_col, type_col, capacity_amt_col, 
-                         capacity_unit_col, geom_col = "geometry", current_resource_tbl=NULL){
+add_resource <- function(new_resource_tbl, name_col, type_col, capacity_amt_col = NA, 
+                         capacity_unit_col = NA, geom_col = "geometry", current_resource_tbl=NULL){
   # current_resource_tbl is the tibble/data frame object 
   # name is the label provided to the location (e.g., the DBA name of a business)
   # type_col is the type category (e.g., Charter or DOE school in the case of schools) 
@@ -14,10 +14,31 @@ add_resource <- function(new_resource_tbl, name_col, type_col, capacity_amt_col,
   # capity_unit_col represents the unit of measure for the capacity_amt column 
   # geom_col is the location of the geometry column, assumed to be geometry
   
-  new_addition <- new_resource_tbl %>% 
-    select(., name = name_col, type = type_col, capacity_amt = capacity_amt_col) %>%
-    mutate(., capacity_unit_col = rep(capacity_unit_col, length.out = nrow(new_resource_tbl)))
   
+  column_names <- colnames(new_resource_tbl)
+  # assumption is that user will provide lat_long colums
+  if (geom_col != "geometry"){
+    if (('Latitude' %in% column_names) && ('Longitude' %in% column_names)) {
+      new_resource_tbl <- new_resource_tbl %>% st_as_sf(., coords = c("Longitude", "Latitude"), crs = 4326)
+    }
+  }
+  
+  total_rows <- nrow(new_resource_tbl)
+  
+  # if else condition to handle instances where the capacity amount column is NA
+  if (is.na(capacity_amt_col)){
+    new_addition <- new_resource_tbl %>% 
+      select(., name = name_col, type = type_col, capacity_amt = rep(capacity_amt_col)) %>%
+      mutate(., capacity_unit_col = rep(capacity_unit_col, length.out = total_rows))
+    
+  } else {
+    new_addition <- new_resource_tbl %>% 
+      select(., name = name_col, type = type_col, capacity_amt = capacity_amt_col) %>%
+      mutate(., capacity_unit_col = rep(capacity_unit_col, length.out = total_rows))
+  }
+    
+    
+    
   if (is.null(current_resource_tbl)){
     return(
       new_addition

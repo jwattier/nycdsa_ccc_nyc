@@ -233,17 +233,20 @@ shinyServer(function(input, output, session) {
     
     output$new_resource_contents <- renderTable({
       head(resource_input_data())
-      # inFile <- input$resource_file
-      # 
-      # if(is.null(inFile))
-      #   return(NULL)
-      # 
-      # if(reader::get.ext(inFile$datapath) == "csv") {
-      #   readr::read_csv(file = inFile$datapath)
-      # } else {
-      #   readxl::read_excel(path = inFile$datapath)  
-      # }
       
+    })
+    
+    output$asset_listing <- DT::renderDataTable({
+        DT::datatable(resource_sf)
+      })
+  
+    
+    placeholder <- eventReactive(input$upload_resource, {
+      input_table <- resource_input_data()
+      
+      add_resource(
+        new_resource_tbl = input_table, name_col = "Location", type_col = "Category", capacity_amt_col = NA,
+        capacity_unit_col = NA, geom_col = "latlong", current_resource_tbl = resource_sf)
     })
 
     
