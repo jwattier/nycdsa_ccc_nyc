@@ -161,6 +161,22 @@ shinyServer(function(input, output, session) {
                       position = "bottomright")
      })
     
+    # map to show the area outside of the community district that can access its communal resources
+    output$expand_cov_map <- renderLeaflet({
+      filteredArea() %>% as_tibble() %>% select(., GEOID) %>% 
+        inner_join(x=., y = resource_ct_by_geoid, by = c("GEOID" = "resource_geoid")) %>% 
+        filter(., category == input$select_category, count != 0) %>% select(., GEOID, count) %>%
+        inner_join(., y= nyc_trvl_times, by=c("GEOID" = "destination")) %>% 
+        filter(., minutes < 60) %>%  distinct(., origin) %>% 
+        inner_join(x=., y=nyc_census_tracts_opendatanyc, by = c("origin" = "GEOID")) %>% 
+        st_as_sf() %>% 
+        leaflet() %>% 
+        addTiles() %>% 
+        addPolygons(stroke = FALSE)
+      
+    })
+
+    
     ## Third spot for looking at individual areas
     ### First we want to look at - for a given census tract the 
     ### other census tracts that are within an hour's travel time

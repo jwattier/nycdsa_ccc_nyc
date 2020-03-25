@@ -75,6 +75,13 @@ shinyUI(dashboardPage(
                             title = "Resource Info for PUMAs",
                             leafletOutput("resourceMap")
                         )
+                    ),
+                    fluidRow(
+                        box(
+                            width = 12, status = "info", solidHeader = TRUE,
+                            title = "Coverage Area for PUMAs",
+                            leafletOutput("expand_cov_map")
+                        )
                     )
                     ),
             tabItem(tabName = "deep_dive",
