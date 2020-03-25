@@ -74,9 +74,18 @@ shinyServer(function(input, output, session) {
   # })
     
     filteredArea <- reactive({
-      nyc_census_blocks_opendatanyc %>%
+      nyc_census_tracts_opendatanyc %>%
         filter(., puma == input$puma) 
     })
+    
+    
+    # filteredResourcePalette <- reactive({
+    #   filtered_resource_ct <- filteredArea() %>% as_tibble() %>% select(., GEOID) %>% 
+    #     inner_join(x=., y = resource_ct_geoid_sf, by = c("GEOID" = "resource_geoid"))
+    #   
+    #   colorNumeric("plasma", domain = filtered_resource_ct$count)
+    #     
+    # })
 
     
     # filteredPopulation <- reactive({
@@ -97,9 +106,8 @@ shinyServer(function(input, output, session) {
         st_as_sf() %>% 
         leaflet() %>%
         addProviderTiles("CartoDB.Positron") %>%
-        setView(lat = 40.7128, lng = -74.0060, zoom = 10) %>%
         addPolygons(
-          fillColor = ~pal(estimate),
+          fillColor = ~pal_pop(estimate),
           stroke = FALSE,
           weight = 2,
           opacity = 1,
@@ -118,17 +126,40 @@ shinyServer(function(input, output, session) {
           #   textsize = "15px",
           #   direction = "auto")
         ) %>%
-      addLegend(pal = pal, values = ~estimate, opacity = 0.7, title = "Access Score",
+      addLegend(pal = pal_pop, values = ~estimate, opacity = 0.7, title = "Population",
                 position = "bottomright")
     })
     
-    # output$resourceMap <- renderLeaflet({
-    #   resource_sf %>% 
-    #     leaflet() %>% 
-    #     addProviderTiles("CartoDB.DarkMatter") %>% 
-    #     leaflet::addMarkers()
-    #     
-    # })
+    # map to show resources within the puma area selected
+    # class(resource_ct_geoid_sf)
+    # colnames(resource_ct_geoid_sf)
+    output$resourceMap <- renderLeaflet({
+      # pal_fun <- filteredResourcePalette()
+      # 
+      filteredArea() %>% as_tibble() %>% select(., GEOID) %>% 
+        inner_join(x=., y = resource_ct_by_geoid, by = c("GEOID" = "resource_geoid")) %>% 
+        filter(., category == input$select_category) %>% select(., GEOID, count) %>% 
+        inner_join(x=., y=nyc_census_tracts_opendatanyc, by="GEOID") %>% 
+        st_as_sf() %>% 
+        leaflet() %>%
+        addProviderTiles("CartoDB.Positron") %>%
+        addPolygons(
+          fillColor = ~pal_resource(count),
+          stroke = FALSE,
+          weight = 2,
+          opacity = 1,
+          color = "white",
+          dashArray = "3",
+          fillOpacity = 0.7,
+          highlight = highlightOptions(
+            weight = 5,
+            color = '#666',
+            dashArray = "",
+            fillOpacity = 0.7,
+            bringToFront = TRUE))%>%
+        addLegend(pal = pal_resource, values = ~count, opacity = 0.7, title = "Resource Count",
+                      position = "bottomright")
+     })
     
     ## Third spot for looking at individual areas
     ### First we want to look at - for a given census tract the 

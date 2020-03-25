@@ -23,7 +23,7 @@ shinyUI(dashboardPage(
             menuItem(text = "Explore", tabName = "explore", icon = icon("chart-area")),
             selectizeInput(inputId="puma",
                             label="Puma:",
-                            choices = unique(nyc_census_blocks_opendatanyc$puma)),
+                            choices = unique(nyc_census_tracts_opendatanyc$puma)),
             # selectizeInput(inputId="nta",
             #                label="NTA:",
             #                choices = unique(nyc_just_geoid_geom_sf$nta_code)),
@@ -68,12 +68,14 @@ shinyUI(dashboardPage(
                             leafletOutput("filteredMap")
                             )
                         )
-                    #,
-                    # fluidRow(
-                    #     box(
-                    #         leafletOutput("resourceMap")
-                    #     )
-                    # )
+                    ,
+                    fluidRow(
+                        box(
+                            width = 12, status = "info", solidHeader = TRUE,
+                            title = "Resource Info for PUMAs",
+                            leafletOutput("resourceMap")
+                        )
+                    )
                     ),
             tabItem(tabName = "deep_dive",
                     fluidRow(
