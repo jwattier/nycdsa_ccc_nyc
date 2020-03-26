@@ -6,7 +6,10 @@
 #
 #    http://shiny.rstudio.com/
 #
+#parent_path = "./ccc_nyc_shiny/"
+parent_path = "./"
 
+source(paste0(parent_path, "helpers.R"))
 library(shiny)
 
 
@@ -39,6 +42,7 @@ shinyUI(dashboardPage(
             # selectizeInput(inputId="nta",
             #                label="NTA:",
             #                choices = unique(nyc_just_geoid_geom_sf$nta_code)),
+            menuItem(text = "Access Score", tabName = "access_score"),
             menuItem(text = "Asset Inventory", tabName = "asset_inventory"),
             menuItem(text = "Deep Dive", tabName = "deep_dive", icon = icon("chart-area"))
             )
@@ -82,6 +86,10 @@ shinyUI(dashboardPage(
                              tabPanel("Asset Counts", DT::dataTableOutput("resource_ct_tbl")),
                              tabPanel("Asset Map", leafletOutput("resource_point_map"))
                       )
+                    )),
+            tabItem(tabName = "access_score_by_geoid",
+                    fluidPage(
+                      DT::dataTableOutput("access_score_tbl")
                     )),
             tabItem(tabName = "explore",
                     # fluidRow(

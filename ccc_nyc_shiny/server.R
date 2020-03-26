@@ -25,37 +25,39 @@ shinyServer(function(input, output, session) {
     })
 
   output$accessMap<- renderLeaflet({
-    nyc_census_tracts_opendatanyc %>%
-      as_tibble() %>% #filter(., estimate != 0) %>%
-      left_join(x = ., y = access_score_by_geoid, by="GEOID") %>%
-      filter(., category == input$select_category) %>%
-      replace_na(., list(category = "", weighted_score = 0)) %>%
-      st_as_sf() %>%
-      leaflet() %>%
-      setView(lat = 40.7128, lng = -74.0060, zoom = 10) %>%
-      addProviderTiles("CartoDB.Positron") %>%
-      addPolygons(
-        fillColor = ~pal(weighted_score),
-        stroke = FALSE,
-        weight = 2,
-        opacity = 1,
-        color = "white",
-        dashArray = "3",
-        fillOpacity = 0.7,
-        highlight = highlightOptions(
-          weight = 5,
-          color = '#666',
-          dashArray = "",
-          fillOpacity = 0.7,
-          bringToFront = TRUE)#,
-        # label = labels,
-        # labelOptions = labelOptions(
-        #   style = list("font-weight" = "normal", padding = "3px 8px"),
-        #   textsize = "15px",
-        #   direction = "auto")
-      ) %>%
-      addLegend(pal = pal, values = ~weighted_score, opacity = 0.7, title = "Access Score",
-                position = "bottomright")
+    #access_score_by_geoid_tbl <- access_score_by_geoid()
+    
+    # nyc_census_tracts_opendatanyc %>%
+    #   as_tibble() %>% #filter(., estimate != 0) %>%
+    #   left_join(x = ., y = access_score_by_geoid_tbl, by="GEOID") %>%
+    #   filter(., category == input$select_category) %>%
+    #   replace_na(., list(category = "", weighted_score = 0)) %>%
+    #   st_as_sf() %>%
+    #   leaflet() %>%
+    #   setView(lat = 40.7128, lng = -74.0060, zoom = 10) %>%
+    #   addProviderTiles("CartoDB.Positron") %>%
+    #   addPolygons(
+    #     fillColor = ~pal(weighted_score),
+    #     stroke = FALSE,
+    #     weight = 2,
+    #     opacity = 1,
+    #     color = "white",
+    #     dashArray = "3",
+    #     fillOpacity = 0.7,
+    #     highlight = highlightOptions(
+    #       weight = 5,
+    #       color = '#666',
+    #       dashArray = "",
+    #       fillOpacity = 0.7,
+    #       bringToFront = TRUE)#,
+    #     # label = labels,
+    #     # labelOptions = labelOptions(
+    #     #   style = list("font-weight" = "normal", padding = "3px 8px"),
+    #     #   textsize = "15px",
+    #     #   direction = "auto")
+    #   ) %>%
+    #   addLegend(pal = pal, values = ~weighted_score, opacity = 0.7, title = "Access Score",
+    #             position = "bottomright")
     })
   
   # II. Second page visualizations 
@@ -256,8 +258,18 @@ shinyServer(function(input, output, session) {
         }
     })
     
+    resource_ct_by_geoid_tbl <- reactive({
+      new_category <- resource_input_data() %>% .$Category %>% unique() 
+      
+      new_resource_tbl <- resource_tbl()
+      
+      update_resource_ct_sf(current_resource_ct_table = resource_ct_by_geoid, new_resource_sf = new_resource_tbl,
+                            census_geo_sf = nyc_just_geoid_geom_sf, resource_category = new_category,
+                            travel_time_cutoff = 60)
+    })
+    
     output$resource_ct_tbl <- DT::renderDataTable({
-      resource_ct_by_geoid
+      resource_ct_by_geoid_tbl()
     })
     
     output$resource_point_map <- renderLeaflet({
@@ -265,6 +277,19 @@ shinyServer(function(input, output, session) {
         addMarkers(
           clusterOptions = markerClusterOptions()
         )
+    })
+    
+    access_score_by_geoid <- reactive({
+      new_category <- resource_input_data() %>% .$Category %>% unique()
+      
+      new_resource_ct_info <- resource_ct_by_geoid_tbl()
+      
+      update_access_calc_tbl(current_accesss_score_tbl = access_score_by_geoid, new_resource_category = new_category,
+                             new_resource_ct_tbl = new_resource_ct_info, travel_time_cutoff = 60)
+    })
+    
+    output$access_score_tbl <- DT::renderDataTable({
+      access_score_by_geoid()
     })
     
     ## Third spot for looking at individual areas

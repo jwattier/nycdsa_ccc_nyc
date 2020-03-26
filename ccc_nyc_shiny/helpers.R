@@ -40,7 +40,7 @@ add_resource <- function(new_resource_tbl, name_col, type_col, capacity_amt_col 
     
     
     
-  if (is.null(current_resource_tbl)){
+  if (is.null(current_resource_tbl) == TRUE){
     return(
       new_addition
     )
@@ -84,8 +84,48 @@ show_resources_in_tvl_radius <- function(resources_sf, geo_id_vctr){
 }
 
 
+update_resource_ct_sf <- function(current_resource_ct_table, new_resource_sf
+                                  , census_geo_sf, resource_category, travel_time_cutoff = 60){
+  # this function is meant to calculate access score for individual census tracts 
+  # it serves as the prep function for displaying a table and a histogram of this information.
+  #nyc_just_geoid_geom_sf %>% filter(., GEOID == geo_id ) %>%  as_tibble() %>% 
+  count_by_census_area_vector <- st_intersects(x=census_geo_sf, 
+                                        y=new_resource_sf, sparse = FALSE) %>% apply(., 1, sum)
+  
+  
+  new_addition <- tibble(
+    resource_geoid = census_geo_sf$GEOID,
+    category = rep(resource_category, length.out = length(census_geo_sf$GEOID)),
+    count = count_by_census_area_vector
+  )
+  
+  if (is.null(current_resource_ct_table) == TRUE){
+    return(new_addition)
+  } else {
+    return(bind_rows(current_resource_ct_table, new_addition))
+  }
+}
+
+update_access_calc_tbl <- function(current_accesss_score_tbl, new_resource_category, resource_ct_tbl, travel_time_cutoff = 60){
+  new_addition <- just_geoids %>% 
+    left_join(., nyc_trvl_times_adj, by = c("GEOID" = "origin")) %>% 
+    filter(., minutes <= travel_time_cutoff) %>% 
+    left_join(., y=resource_ct_tbl, by = c("destination" = "resource_geoid")) %>%
+    filter(., category == new_resource_category)
+    mutate(., weighted_score = count / minutes) %>% 
+    group_by(GEOID, category) %>% 
+    summarise(weighted_score = sum(weighted_score))
+    
+  if (is.null(current_accesss_score_tbl) == TRUE){
+    return(new_addition)
+  } else{
+    bind_rows(current_accesss_score_tbl, new_addition)
+  }
+}
+
+
 # rewrite later to take input from the find_tvl_radius funcitons 
-calc_access_score_detail <- function(sf_object, geo_id, resource_category, travel_time_cutoff){
+calc_access_score_detail <- function(census_sf_object, geo_id, resource_category, travel_time_cutoff){
   # this function is meant to calculate access score for individual census tracts 
   # it serves as the prep function for displaying a table and a histogram of this information.
   #nyc_just_geoid_geom_sf %>% filter(., GEOID == geo_id ) %>%  as_tibble() %>% 
