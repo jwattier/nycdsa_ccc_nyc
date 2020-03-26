@@ -84,10 +84,10 @@ shinyServer(function(input, output, session) {
   })
   
     
-    # filteredArea <- reactive({
-    #   nyc_census_tracts_opendatanyc %>%
-    #     filter(., puma == input$puma) 
-    # })
+    filteredArea <- reactive({
+      nyc_census_tracts_opendatanyc %>%
+        filter(., puma == input$puma)
+    })
     
     
     
@@ -206,19 +206,40 @@ shinyServer(function(input, output, session) {
     #  })
     # 
     # # map to show the area outside of the community district that can access its communal resources
-    # output$expand_cov_map <- renderLeaflet({
-    #   # filteredArea() %>% as_tibble() %>% select(., GEOID) %>% 
-    #   #   inner_join(x=., y = resource_ct_by_geoid, by = c("GEOID" = "resource_geoid")) %>% 
-    #   #   filter(., category == input$select_category, count != 0) %>% select(., GEOID, count) %>%
-    #   #   inner_join(., y= nyc_trvl_times, by=c("GEOID" = "destination")) %>% 
-    #   #   filter(., minutes < 60) %>%  distinct(., origin) %>% 
-    #   #   inner_join(x=., y=nyc_census_tracts_opendatanyc, by = c("origin" = "GEOID")) %>% 
-    #   #   st_as_sf() %>% 
-    #   #   leaflet() %>% 
-    #   #   addProviderTiles("CartoDB.Positron") %>% 
-    #   #   addPolygons(stroke = FALSE, fillColor = "blue") 
-    #   
-    # })
+    output$expand_cov_map <- renderLeaflet({
+      pal_minutes <- colorNumeric("Reds", domain = c(0, 60))
+      
+      filteredArea() %>% as_tibble() %>% select(., GEOID) %>%
+        inner_join(x=., y = resource_ct_by_geoid, by = c("GEOID" = "resource_geoid")) %>%
+        filter(., category == input$select_category, count != 0) %>% 
+        select(., GEOID, count) %>%
+        inner_join(., y= nyc_trvl_times, by=c("GEOID" = "destination")) %>%
+        filter(., minutes <= 60) %>%
+        group_by(origin) %>% 
+        summarise(minutes = min(minutes)) %>% 
+        inner_join(x=., y=nyc_census_tracts_opendatanyc, by = c("origin" = "GEOID")) %>%
+        st_as_sf() %>%
+        leaflet() %>%
+        addProviderTiles("CartoDB.Positron") %>%
+        addPolygons(
+          fillColor = ~pal_minutes(minutes),
+          stroke = FALSE,
+          weight = 2,
+          opacity = 1,
+          color = "white",
+          dashArray = "3",
+          fillOpacity = 0.7,
+          highlight = highlightOptions(
+            weight = 5,
+            color = '#666',
+            dashArray = "",
+            fillOpacity = 0.7,
+            bringToFront = TRUE)
+        )%>%
+        addLegend(pal = pal_minutes, values = ~minutes, opacity = 0.7, title = "Travel Time (Minutes)",
+                  position = "bottomright")
+    })
+ 
     # 
     # # Section for previewing the resource file upload
     # # reactive expression to wait for upload and then render Table to display results

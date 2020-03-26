@@ -76,7 +76,7 @@ shinyUI(dashboardPage(
         #             fluidPage(
         #               DT::dataTableOutput("access_score_tbl")
         #             )),
-        #     tabItem(tabName = "explore",
+            tabItem(tabName = "explore",
         #             # fluidRow(
         #             #     valueBoxOutput("population")
         #             # ),
@@ -102,14 +102,15 @@ shinyUI(dashboardPage(
         #                     leafletOutput("resourceMap")
         #                 )
         #             ),
-        #             fluidRow(
-        #                 box(
-        #                     width = 12, status = "info", solidHeader = TRUE,
-        #                     title = "Coverage Area for PUMAs",
-        #                     leafletOutput("expand_cov_map")
-        #                 )
-        #             )
-        #             ),
+                    fluidRow(
+                        box(
+                            width = 12, status = "info", solidHeader = TRUE,
+                            collapsible = TRUE,
+                            title = "Coverage Area for PUMAs",
+                            leafletOutput("expand_cov_map")
+                            )
+                        )
+                    ),
             tabItem(tabName = "deep_dive",
                     fluidRow(
                         box(
