@@ -195,7 +195,7 @@ access_score_by_geoid$weighted_score <- access_score_by_geoid$weighted_score %>%
 # -------------------- build map with access score information
 # pal_pop <- colorNumeric("plasma", domain = nyc_census_tract_population$estimate)
 pal_resource <- colorNumeric("magma", domain = resource_ct_by_geoid$count)
-pal_minutes <- colorNumeric("viridis", domain = nyc_trvl_times$minutes)
+#pal_minutes <- colorNumeric("viridis", domain = nyc_trvl_times$minutes)
 
 access_score_4_pal <- access_score_by_geoid %>% filter(., category == "early childhood center")
 pal <- colorNumeric("viridis", domain = access_score_4_pal$weighted_score)

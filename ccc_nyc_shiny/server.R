@@ -306,6 +306,8 @@ shinyServer(function(input, output, session) {
     # ### First we want to look at - for a given census tract the 
     # ### other census tracts that are within an hour's travel time
     output$trvlTimeMap <- renderLeaflet({
+      pal_minutes <- colorNumeric("Reds", domain = c(0, 60))
+      
       nyc_census_tracts_opendatanyc %>% filter(., GEOID == input$census_area) %>%
         as_tibble() %>%
         select(., GEOID) %>%
