@@ -106,19 +106,29 @@ shinyUI(dashboardPage(
                         box(
                             width = 12, status = "info", solidHeader = TRUE,
                             collapsible = TRUE,
-                            title = "Coverage Area for PUMAs",
+                            title = "Coverage Area for Assets in PUMAs",
                             leafletOutput("expand_cov_map")
                             )
                         )
                     ),
             tabItem(tabName = "deep_dive",
                     fluidRow(
-                        box(
-                            width = 12, status = "info", solidHeader = TRUE,
-                            collapsible = TRUE,
-                            title = "Travel Time Radius",
-                            leafletOutput("trvlTimeMap", width = "100%", height = 600)
-                        )
+                        # box(
+                        #     width = 12, status = "info", solidHeader = TRUE,
+                        #     collapsible = TRUE,
+                        #     title = "Travel Time Radius",
+                        #     leafletOutput("trvlTimeMap", width = "100%", height = 600)
+                        # )
+                      shinydashboardPlus::flipBox(
+                        id = 1,
+                        main_img = "New_York_City_community_districts.svg.png",
+                        header_img = "New_York_City_community_districts.svg.png",
+                        front_title = "Map Travel Time Radius",
+                        back_title = "Table Travel Time Radius",
+                        width = 12,
+                        leafletOutput("trvlTimeMap", width = "100%", height = 600),
+                        back_content = DT::dataTableOutput("trvlTimeDT")
+                      )
                     ),
                     br(),
                     fluidRow(
@@ -126,7 +136,16 @@ shinyUI(dashboardPage(
                         width = 12, status = "info", solidHeader = TRUE,
                         collapsible = TRUE,
                         title = "Resources within an Hour",
-                        leafletOutput("resources_within_travel_time", width = "100%", height = 600)
+                        tabsetPanel(type = "pills",
+                          tabPanel("Map",
+                            leafletOutput("resources_within_travel_time")
+                          ),
+                          tabPanel("Tab2",
+                                   verbatimTextOutput("Test Output")
+                                   )
+                        )
+                          )
+                        )
                       )
                     )
                     
@@ -152,6 +171,5 @@ shinyUI(dashboardPage(
         #     )
              
         ))
-        ))
-)
+        )
 

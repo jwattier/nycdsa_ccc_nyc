@@ -361,6 +361,10 @@ shinyServer(function(input, output, session) {
                   position = "bottomright")
     })
     
+    output$trvlTimeDT <- DT::renderDataTable({
+      DT::datatable(zone_around_census_tract())
+    })
+    
     output$resources_within_travel_time <- renderLeaflet({
       resources_ct_tbl <- resource_ct_by_geoid %>% filter(., category == input$select_category) 
       
