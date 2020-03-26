@@ -18,141 +18,129 @@ shinyUI(dashboardPage(
     dashboardHeader(title = "CCC NYC Analysis"),
     dashboardSidebar(
         sidebarMenu(
+          selectizeInput(inputId="borough",
+                         label="Borough:",
+                         choices = unique(nyc_census_tracts_opendatanyc$boro_name)
+          ),
+          selectizeInput(inputId="puma",
+                         label="PUMA:",
+                         choices = unique(nyc_census_tracts_opendatanyc$puma)
+                         ),
+          selectizeInput(inputId="census_area",
+                         label="Census Tract:",
+                         choices = unique(nyc_census_tracts_opendatanyc$GEOID)
+                         ),
             menuItem(text = "Map", tabName = "map", icon = icon("map")),
             selectizeInput(inputId="select_category",
                            label="Resource Category:",
                            choices = resouse_categories),
             #,
             menuItem(text = "Explore", tabName = "explore", icon = icon("chart-area")),
-            selectizeInput(inputId="puma",
-                            label="Puma:",
-                            choices = unique(nyc_census_tracts_opendatanyc$puma)),
-            menuItem(text = "Add a Resource", tabName = "resource"),
-            fileInput(
-                inputId = "resource_file", label = "Choose resource file to upload", 
-                accept  = c(
-                    #'text/csv',
-                    #'text/comma-separated-values',
-                    '.xlsx',
-                    '.xls', 
-                    '.csv'
-                    )
-            ),
-            actionButton(inputId = "upload_resource", label = "Upload Assets"),
-            # selectizeInput(inputId="nta",
-            #                label="NTA:",
-            #                choices = unique(nyc_just_geoid_geom_sf$nta_code)),
             menuItem(text = "Access Score", tabName = "access_score"),
             menuItem(text = "Asset Inventory", tabName = "asset_inventory"),
             menuItem(text = "Deep Dive", tabName = "deep_dive", icon = icon("chart-area"))
             )
         ),
     dashboardBody(
-        tabItems(
-            tabItem(tabName = "map",
-                    fluidRow(
-                        box(
-                            width = 12, status = "info", solidHeader = TRUE,
-                            title = "Access Score NYC", 
-                            leafletOutput("accessMap", width = "100%", height = 600)
-                        )),
-                    br(),
-                    fluidRow(
-                        box(
-                            # Output is a display of the allocations percentages should that option be selected
-                        width = 12, status = "info",solidHeader = TRUE,
-                        title = "Percent Weight for Resources",
-                        DT::dataTableOutput("perc_table")
-                        )
-                        )
-                    ),
-            tabItem(tabName = "resource",
-                        fluidPage(
-                          tableOutput("new_resource_contents")
-                          )
-                    ),
-                    # fluidRow(
-                    #     box(
-                    #         # Output is a display of the allocations percentages should that option be selected
-                    #     width = 8, status = "info",solidHeader = TRUE,
-                    #     title = "Percent Weight for Resources",
-                    #     DT::dataTableOutput("perc_table")
-                    #     ))
-                    # )
-            tabItem(tabName = "asset_inventory",
-                    fluidPage(
-                      tabBox(title = "Community Asset Info", id = "asset_tabset",
-                             tabPanel("Asset List", DT::dataTableOutput("asset_listing")),
-                             tabPanel("Asset Counts", DT::dataTableOutput("resource_ct_tbl")),
-                             tabPanel("Asset Map", leafletOutput("resource_point_map"))
-                      )
-                    )),
-            tabItem(tabName = "access_score_by_geoid",
-                    fluidPage(
-                      DT::dataTableOutput("access_score_tbl")
-                    )),
-            tabItem(tabName = "explore",
-                    # fluidRow(
-                    #     valueBoxOutput("population")
-                    # ),
-                    fluidRow(
-                        box(
-                            width = 12, status = "info", solidHeader = TRUE,
-                            title = "Access Score for PUMAs",
-                            leafletOutput("filteredAccessMap")
-                        )   
-                    ),
-                    fluidRow(
-                        box(
-                            width = 12, status = "info", solidHeader = TRUE,
-                            title = "Demographic Information for PUMAs",
-                            leafletOutput("filteredMap")
-                            )
-                        )
-                    ,
-                    fluidRow(
-                        box(
-                            width = 12, status = "info", solidHeader = TRUE,
-                            title = "Resource Info for PUMAs",
-                            leafletOutput("resourceMap")
-                        )
-                    ),
-                    fluidRow(
-                        box(
-                            width = 12, status = "info", solidHeader = TRUE,
-                            title = "Coverage Area for PUMAs",
-                            leafletOutput("expand_cov_map")
-                        )
-                    )
-                    ),
+      tabItems(
+        #     tabItem(tabName = "map",
+        #             fluidRow(
+        #                 box(
+        #                     width = 12, status = "info", solidHeader = TRUE,
+        #                     title = "Access Score NYC", 
+        #                     leafletOutput("accessMap", width = "100%", height = 600)
+        #                 ))
+        #             ),
+        #     tabItem(tabName = "resource",
+        #                 fluidPage(
+        #                   tableOutput("new_resource_contents")
+        #                   )
+        #             ),
+        #             # fluidRow(
+        #             #     box(
+        #             #         # Output is a display of the allocations percentages should that option be selected
+        #             #     width = 8, status = "info",solidHeader = TRUE,
+        #             #     title = "Percent Weight for Resources",
+        #             #     DT::dataTableOutput("perc_table")
+        #             #     ))
+        #             # )
+        #     tabItem(tabName = "asset_inventory",
+        #             fluidPage(
+        #               tabBox(title = "Community Asset Info", id = "asset_tabset",
+        #                      tabPanel("Asset List", DT::dataTableOutput("asset_listing")),
+        #                      tabPanel("Asset Counts", DT::dataTableOutput("resource_ct_tbl")),
+        #                      tabPanel("Asset Map", leafletOutput("resource_point_map"))
+        #               )
+        #             )),
+        #     tabItem(tabName = "access_score_by_geoid",
+        #             fluidPage(
+        #               DT::dataTableOutput("access_score_tbl")
+        #             )),
+        #     tabItem(tabName = "explore",
+        #             # fluidRow(
+        #             #     valueBoxOutput("population")
+        #             # ),
+        #             fluidRow(
+        #                 box(
+        #                     width = 12, status = "info", solidHeader = TRUE,
+        #                     title = "Access Score for PUMAs",
+        #                     leafletOutput("filteredAccessMap")
+        #                 )   
+        #             ),
+        #             fluidRow(
+        #                 box(
+        #                     width = 12, status = "info", solidHeader = TRUE,
+        #                     title = "Demographic Information for PUMAs",
+        #                     leafletOutput("filteredMap")
+        #                     )
+        #                 )
+        #             ,
+        #             fluidRow(
+        #                 box(
+        #                     width = 12, status = "info", solidHeader = TRUE,
+        #                     title = "Resource Info for PUMAs",
+        #                     leafletOutput("resourceMap")
+        #                 )
+        #             ),
+        #             fluidRow(
+        #                 box(
+        #                     width = 12, status = "info", solidHeader = TRUE,
+        #                     title = "Coverage Area for PUMAs",
+        #                     leafletOutput("expand_cov_map")
+        #                 )
+        #             )
+        #             ),
             tabItem(tabName = "deep_dive",
                     fluidRow(
                         box(
                             width = 12, status = "info", solidHeader = TRUE,
+                            collapsible = TRUE,
                             title = "Travel Time Radius",
                             leafletOutput("trvlTimeMap", width = "100%", height = 600)
                         )
-                    ),
-                    br(),
-                    fluidRow(
-                        box(
-                            # Output is a display of the allocations percentages should that option be selected
-                            width = 12, status = "info",solidHeader = TRUE,
-                            title = "Access Score Detail",
-                            DT::dataTableOutput("access_score_detail")
-                        )                     
-                    ),
-                    br(),
-                    fluidRow(
-                        box(
-                            # Output is a display of the allocations percentages should that option be selected
-                            width = 12, status = "info",solidHeader = TRUE,
-                            title = "Access Score Chart",
-                            plotOutput("access_score_chart")
-                        )   
-                    ))
-            )
-            )
-        )
+                    )
+        # ,
+        #             br(),
+        #             fluidRow(
+        #                 box(
+        #                     # Output is a display of the allocations percentages should that option be selected
+        #                     width = 12, status = "info",solidHeader = TRUE,
+        #                     title = "Access Score Detail",
+        #                     DT::dataTableOutput("access_score_detail")
+        #                 )                     
+        #             ),
+        #             br(),
+        #             fluidRow(
+        #                 box(
+        #                     # Output is a display of the allocations percentages should that option be selected
+        #                     width = 12, status = "info",solidHeader = TRUE,
+        #                     title = "Access Score Chart",
+        #                     plotOutput("access_score_chart")
+        #                 )   
+        #             ))
+        #     )
+             
+        ))
+        ))
 )
 

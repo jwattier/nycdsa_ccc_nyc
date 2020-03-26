@@ -64,24 +64,14 @@ census_fun <- function(geography_type="tract", acs_year=2018) {
 }
 
 # 2) utilize function to retrieve nyc census tract information
-nyc_census_tract_population <- census_fun(geography_type = "tract", acs_year = 2018)
-#nyc_census_tract_population
+#nyc_census_tract_population <- census_fun(geography_type = "tract", acs_year = 2018)
 
 #---------------------- import pre-computed times
-# 1) import transit times from the transit_walk subfoder
-#    -> there is a separate file for each borough
-data_dir <- paste0(parent_path, "data/uofc_precomputed_times/transit_walk")
-csv_files <- fs::dir_ls(data_dir)
-nyc_trvl_times <- csv_files %>% 
-  map_dfr(readr::read_csv, col_types = "ccd") %>%
-  # 36 is the FIPS code for NY state (first two digits), the 3-5th digits represent the 
-  # county.
-  filter(., str_sub(destination, 1, 5) %in% c("36061", "36047", "36081", "36085", "36005"))
+# 1) import transit times from pre_processed subfolder
+# which represents combining of a subset of the UoC pre-computted times for transit_walk travel mode
+file_name = "/pre_process/nyc_trvl_times.csv.bz2"
+nyc_trvl_times <- readr::read_csv(paste0(parent_path, file_name), col_types = "ccd")
 
-
-# fix 0 minute travel times to 1 minute
-nyc_trvl_times <- nyc_trvl_times %>% mutate(., minutes = if_else(condition = minutes == 0, 
-                                                                 true = 1, false =  minutes))
 
 # 2) create table with only GEOID and the geoid geometry
 
@@ -203,19 +193,10 @@ access_score_by_geoid$weighted_score <- access_score_by_geoid$weighted_score %>%
 # ny_census_tracts_wo_water <- st_erase(nyc_census_tracts, ny_water)
 
 # -------------------- build map with access score information
-pal_pop <- colorNumeric("plasma", domain = nyc_census_tract_population$estimate)
+# pal_pop <- colorNumeric("plasma", domain = nyc_census_tract_population$estimate)
 pal_resource <- colorNumeric("magma", domain = resource_ct_by_geoid$count)
-
+pal_minutes <- colorNumeric("viridis", domain = nyc_trvl_times$minutes)
 
 access_score_4_pal <- access_score_by_geoid %>% filter(., category == "early childhood center")
 pal <- colorNumeric("viridis", domain = access_score_4_pal$weighted_score)
 
-
-
-
-# nrow(resource_ct_geoid_sf)
-# nrow(resource_by_geoid_ct)
-# nrow(resource_sf)
-# resource_by_geoid_ct
-
-summary(resource_ct_by_geoid)
