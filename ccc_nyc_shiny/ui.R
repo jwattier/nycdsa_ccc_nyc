@@ -119,16 +119,19 @@ shinyUI(dashboardPage(
                         #     title = "Travel Time Radius",
                         #     leafletOutput("trvlTimeMap", width = "100%", height = 600)
                         # )
-                      shinydashboardPlus::flipBox(
-                        id = 1,
-                        main_img = "New_York_City_community_districts.svg.png",
-                        header_img = "New_York_City_community_districts.svg.png",
-                        front_title = "Map Travel Time Radius",
-                        back_title = "Table Travel Time Radius",
-                        width = 12,
-                        leafletOutput("trvlTimeMap", width = "100%", height = 600),
-                        back_content = DT::dataTableOutput("trvlTimeDT")
-                      )
+                      box(
+                        width = 12, status = "info", solidHeader = TRUE,
+                        collapsible = TRUE,
+                        title = "Travel Time within an Hour",
+                        tabsetPanel(type = "pills",
+                          tabPanel("Map",
+                            leafletOutput("trvlTimeMap")
+                            ),
+                          tabPanel("Data",
+                                   DT::dataTableOutput("trvlTimeDT")
+                                   )
+                          )
+                        )
                     ),
                     br(),
                     fluidRow(
@@ -140,8 +143,8 @@ shinyUI(dashboardPage(
                           tabPanel("Map",
                             leafletOutput("resources_within_travel_time")
                           ),
-                          tabPanel("Tab2",
-                                   verbatimTextOutput("Test Output")
+                          tabPanel("Data",
+                                   DT::dataTableOutput("resources_within_travel_time_DT")
                                    )
                         )
                           )

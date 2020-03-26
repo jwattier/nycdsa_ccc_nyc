@@ -364,12 +364,21 @@ shinyServer(function(input, output, session) {
     output$trvlTimeDT <- DT::renderDataTable({
       DT::datatable(zone_around_census_tract())
     })
+
+    isochrone_w_ct_reactive <- reactive({
+      resources_ct_tbl <- resource_ct_by_geoid %>% filter(., category == input$select_category)
+
+      zone_around_census_tract() %>%
+        inner_join(., resources_ct_tbl, by = c("GEOID" = "resource_geoid"))
+    })
+    
     
     output$resources_within_travel_time <- renderLeaflet({
       resources_ct_tbl <- resource_ct_by_geoid %>% filter(., category == input$select_category) 
       
       isochrone_w_ct <- zone_around_census_tract() %>% 
         inner_join(., resources_ct_tbl, by = c("GEOID" = "resource_geoid"))
+      
       
       pal_resources <- colorNumeric("Blues", domain = isochrone_w_ct$count)
       
@@ -393,6 +402,10 @@ shinyServer(function(input, output, session) {
         )%>%
         addLegend(pal = pal_resources, values = ~count, opacity = 0.7, title = "Resource Count",
                   position = "bottomright")
+    })
+    
+    output$resources_within_travel_time_DT <- DT::renderDataTable({
+      DT::datatable(isochrone_w_ct_reactive())
     })
     
     
