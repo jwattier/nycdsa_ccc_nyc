@@ -305,16 +305,20 @@ shinyServer(function(input, output, session) {
     # ## Third spot for looking at individual areas
     # ### First we want to look at - for a given census tract the 
     # ### other census tracts that are within an hour's travel time
+  zone_around_census_tract <- reactive({
+    nyc_census_tracts_opendatanyc %>% filter(., GEOID == input$census_area) %>%
+      as_tibble() %>%
+      select(., GEOID) %>%
+      inner_join(x=., y=nyc_trvl_times, by = c("GEOID" = "origin")) %>%
+      filter(., minutes <= 60) %>%
+      select(., GEOID = destination, minutes) %>%
+      inner_join(.,  nyc_census_tracts_opendatanyc, by = "GEOID")
+  })
+  
     output$trvlTimeMap <- renderLeaflet({
       pal_minutes <- colorNumeric("Reds", domain = c(0, 60))
       
-      nyc_census_tracts_opendatanyc %>% filter(., GEOID == input$census_area) %>%
-        as_tibble() %>%
-        select(., GEOID) %>%
-        inner_join(x=., y=nyc_trvl_times, by = c("GEOID" = "origin")) %>%
-        filter(., minutes <= 60) %>%
-        select(., GEOID = destination, minutes) %>%
-        inner_join(.,  nyc_census_tracts_opendatanyc, by = "GEOID") %>%
+      zone_around_census_tract() %>% 
         st_as_sf() %>%
         leaflet::leaflet() %>% addProviderTiles("CartoDB.Positron") %>%  
         addPolygons(
@@ -335,7 +339,39 @@ shinyServer(function(input, output, session) {
         addLegend(pal = pal_minutes, values = ~minutes, opacity = 0.7, title = "Travel Time (Minutes)",
                   position = "bottomright")
     })
-    # 
+    
+    output$resources_within_travel_time <- renderLeaflet({
+      resources_ct_tbl <- resource_ct_by_geoid %>% filter(., category == input$select_category) 
+      
+      isochrone_w_ct <- zone_around_census_tract() %>% 
+        inner_join(., resources_ct_tbl, by = c("GEOID" = "resource_geoid"))
+      
+      pal_resources <- colorNumeric("Blues", domain = isochrone_w_ct$count)
+      
+      isochrone_w_ct %>%  
+        st_as_sf() %>%
+        leaflet::leaflet() %>% addProviderTiles("CartoDB.DarkMatter") %>%  
+        addPolygons(
+          fillColor = ~pal_resources(count),
+          stroke = FALSE,
+          weight = 2,
+          opacity = 1,
+          color = "white",
+          dashArray = "3",
+          fillOpacity = 0.7,
+          highlight = highlightOptions(
+            weight = 5,
+            color = '#666',
+            dashArray = "",
+            fillOpacity = 0.7,
+            bringToFront = TRUE)
+        )%>%
+        addLegend(pal = pal_resources, values = ~count, opacity = 0.7, title = "Resource Count",
+                  position = "bottomright")
+    })
+    
+    
+        # 
     # 
     # 
     # 

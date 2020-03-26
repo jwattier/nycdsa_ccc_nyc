@@ -118,7 +118,17 @@ shinyUI(dashboardPage(
                             title = "Travel Time Radius",
                             leafletOutput("trvlTimeMap", width = "100%", height = 600)
                         )
+                    ),
+                    br(),
+                    fluidRow(
+                      box(
+                        width = 12, status = "info", solidHeader = TRUE,
+                        collapsible = TRUE,
+                        title = "Resources within an Hour",
+                        leafletOutput("resources_within_travel_time", width = "100%", height = 600)
+                      )
                     )
+                    
         # ,
         #             br(),
         #             fluidRow(
