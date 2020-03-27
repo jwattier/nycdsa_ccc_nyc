@@ -66,7 +66,7 @@ census_fun <- function(geography_type="tract", acs_year=2018) {
 }
 
 # 2) utilize function to retrieve nyc census tract information
-#nyc_census_tract_population <- census_fun(geography_type = "tract", acs_year = 2018)
+nyc_census_tract_population <- census_fun(geography_type = "tract", acs_year = 2018)
 
 #---------------------- import pre-computed times
 # 1) import transit times from pre_processed subfolder
@@ -188,7 +188,6 @@ access_score_by_geoid <-
   summarise(weighted_score = sum(weighted_score))
 
 ### TO DO -> LOOK INTO WHY THERE'S A NA ROW re: category/access score
-#access_score_by_geoid <- 
 access_score_by_geoid$weighted_score <- access_score_by_geoid$weighted_score %>% replace_na(0)
 
 access_score_4_pal <- access_score_by_geoid %>% filter(., category == "early childhood center")

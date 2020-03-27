@@ -114,35 +114,44 @@ shinyServer(function(input, output, session) {
 
 
     #    
-    # output$filteredMap <- renderLeaflet({
-    #   # filteredArea() %>% as_tibble() %>% 
-    #   #   inner_join(x=., y=nyc_census_tract_population, by="GEOID") %>% 
-    #   #   st_as_sf() %>% 
-    #   #   leaflet() %>%
-    #   #   addProviderTiles("CartoDB.Positron") %>%
-    #   #   addPolygons(
-    #   #     fillColor = ~pal_pop(estimate),
-    #   #     stroke = FALSE,
-    #   #     weight = 2,
-    #   #     opacity = 1,
-    #   #     color = "white",
-    #   #     dashArray = "3",
-    #   #     fillOpacity = 0.7,
-    #   #     highlight = highlightOptions(
-    #   #       weight = 5,
-    #   #       color = '#666',
-    #   #       dashArray = "",
-    #   #       fillOpacity = 0.7,
-    #   #       bringToFront = TRUE)#,
-    #   #     # label = labels,
-    #   #     # labelOptions = labelOptions(
-    #   #     #   style = list("font-weight" = "normal", padding = "3px 8px"),
-    #   #     #   textsize = "15px",
-    #   #     #   direction = "auto")
-    #   #   ) %>%
-    #   # addLegend(pal = pal_pop, values = ~estimate, opacity = 0.7, title = "Population",
-    #   #           position = "bottomright")
-    # })
+    output$filteredMap <- renderLeaflet({
+      filtered_population <- filteredArea() %>% as_tibble() %>%
+        inner_join(x=., y=nyc_census_tract_population, by="GEOID")
+      
+      pal_population <- colorNumeric("magma", domain = filtered_population$estimate)
+      
+      labels <-sprintf(
+        "Census Tract <strong>%s</strong><br/>%g number of people <br/>ACS 5-year 2018",
+        filtered_population$GEOID, filtered_population$estimate
+      ) %>% lapply(htmltools::HTML)
+      
+      filtered_population %>% 
+        st_as_sf() %>%
+        leaflet() %>%
+        addProviderTiles("CartoDB.Positron") %>%
+        addPolygons(
+          fillColor = ~pal_pop(estimate),
+          stroke = FALSE,
+          weight = 2,
+          opacity = 1,
+          color = "white",
+          dashArray = "3",
+          fillOpacity = 0.7,
+          highlight = highlightOptions(
+            weight = 5,
+            color = '#666',
+            dashArray = "",
+            fillOpacity = 0.7,
+            bringToFront = TRUE),
+          label = labels,
+          labelOptions = labelOptions(
+            style = list("font-weight" = "normal", padding = "3px 8px"),
+            textsize = "15px",
+            direction = "auto")
+        ) %>%
+      addLegend(pal = pal_pop, values = ~estimate, opacity = 0.7, title = "Population",
+                position = "bottomright")
+      })
     # 
     # # map to show resources within the puma area selected
     # # class(resource_ct_geoid_sf)
@@ -244,6 +253,22 @@ shinyServer(function(input, output, session) {
         )%>%
         addLegend(pal = pal_minutes, values = ~minutes, opacity = 0.7, title = "Travel Time (Minutes)",
                   position = "bottomright")
+    })
+    
+    ### Section for Analysis Attempt
+    output$scatter_plot <- renderPlot({
+      filteredArea() %>% as_tibble() %>%
+        inner_join(x=., y=nyc_census_tract_population, by="GEOID") %>% 
+        inner_join(x=., y=access_score_by_geoid, by="GEOID") %>% 
+        rename(., population = estimate, access_score = weighted_score, resource_category = category) %>% 
+        filter(., !is.na(access_score), !is.na(resource_category)) %>% 
+        ggplot(., mapping = aes(x = population, y = access_score, color = resource_category, group = resource_category)) +
+        geom_point() +
+        geom_smooth(method="lm", se = FALSE) +
+        ggtitle("Analysis of Access Score vs Demographic Information") +
+        xlab("Population") +
+        ylab("Access Score") +
+        theme(legend.title=element_blank())
     })
  
     # 

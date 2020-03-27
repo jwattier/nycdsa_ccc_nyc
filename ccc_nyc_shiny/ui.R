@@ -36,7 +36,7 @@ shinyUI(dashboardPage(
                            ),
           menuItem(text = "Map", tabName = "map", icon = icon("map")),
           menuItem(text = "Explore", tabName = "explore", icon = icon("chart-area")),
-          #menuItem(text = "Access Score", tabName = "access_score"),
+          menuItem(text = "Demographic Analysis", tabName = "demogrph_analysis", icon=icon("chart-area")),
           #menuItem(text = "Asset Inventory", tabName = "asset_inventory"),
           menuItem(text = "Deep Dive", tabName = "deep_dive", icon = icon("chart-area"))
             )
@@ -85,23 +85,24 @@ shinyUI(dashboardPage(
                         box(
                             width = 12, status = "info", solidHeader = TRUE,
                             collapsible = TRUE,
-                            title = "Access Score for PUMAs",
+                            title = "Access Score for PUMA",
                             leafletOutput("filteredAccessMap")
                         )
                     ),
-        #             fluidRow(
-        #                 box(
-        #                     width = 12, status = "info", solidHeader = TRUE,
-        #                     title = "Demographic Information for PUMAs",
-        #                     leafletOutput("filteredMap")
-        #                     )
-        #                 )
-        #             ,
                     fluidRow(
                         box(
                             width = 12, status = "info", solidHeader = TRUE,
                             collapsible = TRUE,
-                            title = "Resource Info for PUMAs",
+                            title = "Demographic Information for PUMA",
+                            leafletOutput("filteredMap")
+                            )
+                        )
+                    ,
+                    fluidRow(
+                        box(
+                            width = 12, status = "info", solidHeader = TRUE,
+                            collapsible = TRUE,
+                            title = "Resource Info for PUMA",
                             leafletOutput("resourceMap")
                         )
                     ),
@@ -109,11 +110,21 @@ shinyUI(dashboardPage(
                         box(
                             width = 12, status = "info", solidHeader = TRUE,
                             collapsible = TRUE,
-                            title = "Coverage Area for Assets in PUMAs",
+                            title = "Coverage Area for Assets in PUMA",
                             leafletOutput("expand_cov_map")
                             )
                         )
                     ),
+        tabItem(tabName = "demogrph_analysis",
+          fluidPage(
+            box(
+              width = 12, status = "info", solidHeader = TRUE,
+              collapsible = TRUE,
+              title = "Demographic Analysis - Citywide",
+              plotOutput("scatter_plot"))
+            )
+          ),
+      
             tabItem(tabName = "deep_dive",
                     # fluidRow(
                     #   valueBoxOutput("accessScoreBox"),
@@ -132,7 +143,7 @@ shinyUI(dashboardPage(
                         title = "Travel Time within an Hour",
                         tabsetPanel(type = "pills",
                           tabPanel("Map",
-                                   h5("Represents census areas that are within an hour's travel time of the origin census selected."),
+                                  # h5("Represents census areas that are within an hour's travel time of the origin census selected."),
                             leafletOutput("trvlTimeMap")
                             ),
                           tabPanel("Data",
@@ -191,5 +202,5 @@ shinyUI(dashboardPage(
         #     )
              
         ))
-        )
+)
 
