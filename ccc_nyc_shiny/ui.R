@@ -115,6 +115,10 @@ shinyUI(dashboardPage(
                         )
                     ),
             tabItem(tabName = "deep_dive",
+                    # fluidRow(
+                    #   valueBoxOutput("accessScoreBox"),
+                    #   valueBoxOutput("numberOfResourcesBox")
+                    # ),
                     fluidRow(
                         # box(
                         #     width = 12, status = "info", solidHeader = TRUE,
@@ -158,7 +162,7 @@ shinyUI(dashboardPage(
                       box(
                         width = 12, status = "info", solidHeader = TRUE,
                         collapsible = TRUE,
-                        title = "Resources within an Hour",
+                        title = "Resource Count by Travel Time Bucket",
                         plotOutput("histogram_accesss")
                       )
                     )

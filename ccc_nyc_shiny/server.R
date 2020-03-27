@@ -466,11 +466,30 @@ shinyServer(function(input, output, session) {
           geom_hline(yintercept = 0, size=1, colour = "#333333") +
           bbc_style() +
           labs(
-            title = "# of Resources by Travel Time",
-            subtitle = "Further Away => Less Impact"
+            title = "# of Resources by Travel Time"
           )
         }
         )
+    
+    # output$numberOfResourcesBox <- renderValueBox({
+    #   isochrone_w_ct_info <- isochrone_w_ct_reactive()
+    #   
+    #   sum_total <- sum(isochrone_w_ct_info$count)
+    #   
+    #   valueBox(
+    #     value = sum_total, subtitle = "Number of Resources w/in an Hour", color = "orange"
+    #   )
+    # })
+    # 
+    # access_score <- reactive({
+    #   access_score_by_geoid %>% filter(., GEOID == input$census_area, category == input$select_category) %>% select(., weighted_score)
+    # })
+    # 
+    # output$accessScoreBox <- renderValueBox({
+    #   valueBox(
+    #     value = access_score(), subtitle = "Access Score", color = "blue"
+    #   )
+    # })
         # 
     # 
     # 
