@@ -113,35 +113,35 @@ shinyServer(function(input, output, session) {
     # })
 
     # output$filteredAccessMap <- renderLeaflet({
-    #   # filteredArea() %>%  as_tibble() %>% #filter(., estimate != 0) %>%
-    #   #   left_join(x = ., y = access_score_by_geoid, by="GEOID") %>%
-    #   #   filter(., category == input$select_category) %>%
-    #   #   replace_na(., list(category = "", weighted_score = 0)) %>%
-    #   #   st_as_sf() %>%
-    #   #   leaflet() %>%
-    #   #   addProviderTiles("CartoDB.Positron") %>%
-    #   #   addPolygons(
-    #   #     fillColor = ~pal(weighted_score),
-    #   #     stroke = FALSE,
-    #   #     weight = 2,
-    #   #     opacity = 1,
-    #   #     color = "white",
-    #   #     dashArray = "3",
-    #   #     fillOpacity = 0.7,
-    #   #     highlight = highlightOptions(
-    #   #       weight = 5,
-    #   #       color = '#666',
-    #   #       dashArray = "",
-    #   #       fillOpacity = 0.7,
-    #   #       bringToFront = TRUE)#,
-    #   #     # label = labels,
-    #   #     # labelOptions = labelOptions(
-    #   #     #   style = list("font-weight" = "normal", padding = "3px 8px"),
-    #   #     #   textsize = "15px",
-    #   #     #   direction = "auto")
-    #   #   ) %>%
-    #   #   addLegend(pal = pal, values = ~weighted_score, opacity = 0.7, title = "Access Score",
-    #   #             position = "bottomright")
+    #   filteredArea() %>%  as_tibble() %>% #filter(., estimate != 0) %>%
+    #     left_join(x = ., y = access_score_by_geoid, by="GEOID") %>%
+    #     filter(., category == input$select_category) %>%
+    #     replace_na(., list(category = "", weighted_score = 0)) %>%
+    #     st_as_sf() %>%
+    #     leaflet() %>%
+    #     addProviderTiles("CartoDB.Positron") %>%
+    #     addPolygons(
+    #       fillColor = ~pal(weighted_score),
+    #       stroke = FALSE,
+    #       weight = 2,
+    #       opacity = 1,
+    #       color = "white",
+    #       dashArray = "3",
+    #       fillOpacity = 0.7,
+    #       highlight = highlightOptions(
+    #         weight = 5,
+    #         color = '#666',
+    #         dashArray = "",
+    #         fillOpacity = 0.7,
+    #         bringToFront = TRUE)#,
+    #       # label = labels,
+    #       # labelOptions = labelOptions(
+    #       #   style = list("font-weight" = "normal", padding = "3px 8px"),
+    #       #   textsize = "15px",
+    #       #   direction = "auto")
+    #     ) %>%
+    #     addLegend(pal = pal, values = ~weighted_score, opacity = 0.7, title = "Access Score",
+    #               position = "bottomright")
     # })
     #    
     # output$filteredMap <- renderLeaflet({
@@ -177,33 +177,37 @@ shinyServer(function(input, output, session) {
     # # map to show resources within the puma area selected
     # # class(resource_ct_geoid_sf)
     # # colnames(resource_ct_geoid_sf)
-    # output$resourceMap <- renderLeaflet({
-    #   # pal_fun <- filteredResourcePalette()
-    #   # 
-    #   # filteredArea() %>% as_tibble() %>% select(., GEOID) %>% 
-    #   #   inner_join(x=., y = resource_ct_by_geoid, by = c("GEOID" = "resource_geoid")) %>% 
-    #   #   filter(., category == input$select_category) %>% select(., GEOID, count) %>% 
-    #   #   inner_join(x=., y=nyc_census_tracts_opendatanyc, by="GEOID") %>% 
-    #   #   st_as_sf() %>% 
-    #   #   leaflet() %>%
-    #   #   addProviderTiles("CartoDB.Positron") %>%
-    #   #   addPolygons(
-    #   #     fillColor = ~pal_resource(count),
-    #   #     stroke = FALSE,
-    #   #     weight = 2,
-    #   #     opacity = 1,
-    #   #     color = "white",
-    #   #     dashArray = "3",
-    #   #     fillOpacity = 0.7,
-    #   #     highlight = highlightOptions(
-    #   #       weight = 5,
-    #   #       color = '#666',
-    #   #       dashArray = "",
-    #   #       fillOpacity = 0.7,
-    #   #       bringToFront = TRUE))%>%
-    #   #   addLegend(pal = pal_resource, values = ~count, opacity = 0.7, title = "Resource Count",
-    #   #                 position = "bottomright")
-    #  })
+    output$resourceMap <- renderLeaflet({
+      
+      filteredArea_w_resource_ct <- filteredArea() %>% as_tibble() %>% select(., GEOID) %>%
+        inner_join(x=., y = resource_ct_by_geoid, by = c("GEOID" = "resource_geoid")) %>%
+        filter(., category == input$select_category) %>% select(., GEOID, count) %>%
+        inner_join(x=., y=nyc_census_tracts_opendatanyc, by="GEOID") 
+      
+      
+      pal_resource <- colorNumeric("Blues", domain = filteredArea_w_resource_ct$count)
+
+      filteredArea_w_resource_ct %>% 
+        st_as_sf() %>%
+        leaflet() %>%
+        addProviderTiles("CartoDB.Positron") %>%
+        addPolygons(
+          fillColor = ~pal_resource(count),
+          stroke = FALSE,
+          weight = 2,
+          opacity = 1,
+          color = "white",
+          dashArray = "3",
+          fillOpacity = 0.7,
+          highlight = highlightOptions(
+            weight = 5,
+            color = '#666',
+            dashArray = "",
+            fillOpacity = 0.7,
+            bringToFront = TRUE))%>%
+        addLegend(pal = pal_resource, values = ~count, opacity = 0.7, title = "Resource Count",
+                      position = "bottomright")
+     })
     # 
     # # map to show the area outside of the community district that can access its communal resources
     output$expand_cov_map <- renderLeaflet({
@@ -337,9 +341,19 @@ shinyServer(function(input, output, session) {
   })
   
     output$trvlTimeMap <- renderLeaflet({
+      
+      zone_around_census_tract_tbl <- zone_around_census_tract()
+      
+      origin_point <- input$census_area
+      
+      labels <-sprintf(
+        "Census Tract <strong>%s</strong><br/>%g minutes from origin",
+        zone_around_census_tract_tbl$GEOID, zone_around_census_tract_tbl$minutes
+      ) %>% lapply(htmltools::HTML)
+      
       pal_minutes <- colorNumeric("Reds", domain = c(0, 60))
       
-      zone_around_census_tract() %>% 
+      zone_around_census_tract_tbl %>% 
         st_as_sf() %>%
         leaflet::leaflet() %>% addProviderTiles("CartoDB.Positron") %>%  
         addPolygons(
@@ -355,7 +369,12 @@ shinyServer(function(input, output, session) {
             color = '#666',
             dashArray = "",
               fillOpacity = 0.7,
-              bringToFront = TRUE)
+              bringToFront = TRUE),
+          label = labels,
+          labelOptions = labelOptions(
+            style = list("font-weight" = "normal", padding = "3px 8px"),
+            textsize = "15px",
+            direction)
           )%>%
         addLegend(pal = pal_minutes, values = ~minutes, opacity = 0.7, title = "Travel Time (Minutes)",
                   position = "bottomright")

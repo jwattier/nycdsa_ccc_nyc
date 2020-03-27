@@ -80,13 +80,13 @@ shinyUI(dashboardPage(
         #             # fluidRow(
         #             #     valueBoxOutput("population")
         #             # ),
-        #             fluidRow(
-        #                 box(
-        #                     width = 12, status = "info", solidHeader = TRUE,
-        #                     title = "Access Score for PUMAs",
-        #                     leafletOutput("filteredAccessMap")
-        #                 )   
-        #             ),
+                    # fluidRow(
+                    #     box(
+                    #         width = 12, status = "info", solidHeader = TRUE,
+                    #         title = "Access Score for PUMAs",
+                    #         leafletOutput("filteredAccessMap")
+                    #     )
+                    # ),
         #             fluidRow(
         #                 box(
         #                     width = 12, status = "info", solidHeader = TRUE,
@@ -95,13 +95,14 @@ shinyUI(dashboardPage(
         #                     )
         #                 )
         #             ,
-        #             fluidRow(
-        #                 box(
-        #                     width = 12, status = "info", solidHeader = TRUE,
-        #                     title = "Resource Info for PUMAs",
-        #                     leafletOutput("resourceMap")
-        #                 )
-        #             ),
+                    fluidRow(
+                        box(
+                            width = 12, status = "info", solidHeader = TRUE,
+                            collapsible = TRUE,
+                            title = "Resource Info for PUMAs",
+                            leafletOutput("resourceMap")
+                        )
+                    ),
                     fluidRow(
                         box(
                             width = 12, status = "info", solidHeader = TRUE,
