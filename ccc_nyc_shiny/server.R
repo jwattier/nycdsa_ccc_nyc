@@ -376,7 +376,7 @@ shinyServer(function(input, output, session) {
           labelOptions = labelOptions(
             style = list("font-weight" = "normal", padding = "3px 8px"),
             textsize = "15px",
-            direction)
+            direction = "auto")
           )%>%
         addLegend(pal = pal_minutes, values = ~minutes, opacity = 0.7, title = "Travel Time (Minutes)",
                   position = "bottomright")
@@ -436,7 +436,7 @@ shinyServer(function(input, output, session) {
           labelOptions = labelOptions(
             style = list("font-weight" = "normal", padding = "3px 8px"),
             textsize = "15px",
-            direction)
+            direction = "auto")
         )%>%
         addLegend(pal = pal_resources, values = ~count, opacity = 0.7, title = "Resource Count",
                   position = "bottomright")
@@ -450,7 +450,27 @@ shinyServer(function(input, output, session) {
       DT::datatable(resource_count_around_census_tract)
     })
     
-    
+    output$histogram_accesss <- renderPlot({
+        breaks <- c(0, 10, 20, 30, 40, 50, 60)
+        tags <- c("0-10", "10-20", "20-30", "30-40", "40-50", "50-60 mins")
+        # nyc_census_tracts_opendatanyc %>% 
+        #   as_tibble() %>% select(., GEOID) %>% 
+        #   filter(., GEOID == "36061024500") %>% 
+        #   inner_join(., y=nyc_trvl_times_adj, by = c("GEOID" = "origin")) %>%
+        #   left_join(., y=resource_ct_by_geoid, by = c("destination" = "resource_geoid")) %>% 
+        isochrone_w_ct_reactive() %>% 
+          mutate(.,  minutes_bin = cut(minutes, breaks = breaks, include.lowest = TRUE, 
+                                       right = FALSE, labels = tags)) %>% 
+          ggplot(data = ., mapping = aes(x = minutes_bin, y = count)) + 
+          geom_col(fill="#1380A1") +
+          geom_hline(yintercept = 0, size=1, colour = "#333333") +
+          bbc_style() +
+          labs(
+            title = "# of Resources by Travel Time",
+            subtitle = "Further Away => Less Impact"
+          )
+        }
+        )
         # 
     # 
     # 

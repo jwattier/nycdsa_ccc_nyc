@@ -152,7 +152,16 @@ shinyUI(dashboardPage(
                                    )
                         )
                           )
-                        )
+                        ),
+                    br(),
+                    fluidRow(
+                      box(
+                        width = 12, status = "info", solidHeader = TRUE,
+                        collapsible = TRUE,
+                        title = "Resources within an Hour",
+                        plotOutput("histogram_accesss")
+                      )
+                    )
                       )
                     )
                     

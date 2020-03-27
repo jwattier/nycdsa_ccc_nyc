@@ -1,6 +1,7 @@
 # import needed libraries
 library(opentripplanner)
 library(DT)
+library(bbplot)
 library(geojsonsf)
 library(htmltools)
 library(readxl)
