@@ -381,7 +381,12 @@ shinyServer(function(input, output, session) {
     })
     
     output$trvlTimeDT <- DT::renderDataTable({
-      DT::datatable(zone_around_census_tract())
+      #columns_to_subset <- c("GEOID", "minutes", "puma", "ntacode", "ntaname", "boro_name")
+      zone_around_census_tract_tbl <- zone_around_census_tract() %>% 
+        select(., `Census Tract` = GEOID, Minutes = minutes, Puma = puma, 'NTA Code' = ntacode, 
+               'NTA Name' = ntaname, Borough = boro_name)
+      
+      DT::datatable(zone_around_census_tract_tbl)
     })
 
     isochrone_w_ct_reactive <- reactive({
@@ -393,6 +398,8 @@ shinyServer(function(input, output, session) {
     
     
     output$resources_within_travel_time <- renderLeaflet({
+      resource_category <- input$select_category
+      
       resources_ct_tbl <- resource_ct_by_geoid %>% filter(., category == input$select_category) 
       
       isochrone_w_ct <- zone_around_census_tract() %>% 
@@ -400,6 +407,11 @@ shinyServer(function(input, output, session) {
       
       
       pal_resources <- colorNumeric("Blues", domain = isochrone_w_ct$count)
+      
+      labels <-sprintf(
+        "Census Tract <strong>%s</strong><br/> has %s of resource category %s",
+        isochrone_w_ct$GEOID, isochrone_w_ct$count, resource_category
+      ) %>% lapply(htmltools::HTML)
       
       isochrone_w_ct %>%  
         st_as_sf() %>%
@@ -417,14 +429,23 @@ shinyServer(function(input, output, session) {
             color = '#666',
             dashArray = "",
             fillOpacity = 0.7,
-            bringToFront = TRUE)
+            bringToFront = TRUE),
+          label = labels,
+          labelOptions = labelOptions(
+            style = list("font-weight" = "normal", padding = "3px 8px"),
+            textsize = "15px",
+            direction)
         )%>%
         addLegend(pal = pal_resources, values = ~count, opacity = 0.7, title = "Resource Count",
                   position = "bottomright")
     })
     
     output$resources_within_travel_time_DT <- DT::renderDataTable({
-      DT::datatable(isochrone_w_ct_reactive())
+      resource_count_around_census_tract <- isochrone_w_ct_reactive() %>% 
+        select(., `Census Tract` = GEOID, `Resource Count` = count, `Resource Category` = category,
+               Puma = puma, 'NTA Code' = ntacode, 'NTA Name' = ntaname, Borough = boro_name)
+      
+      DT::datatable(resource_count_around_census_tract)
     })
     
     

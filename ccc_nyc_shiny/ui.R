@@ -126,6 +126,7 @@ shinyUI(dashboardPage(
                         title = "Travel Time within an Hour",
                         tabsetPanel(type = "pills",
                           tabPanel("Map",
+                                   h5("Represents census areas that are within an hour's travel time of the origin census selected."),
                             leafletOutput("trvlTimeMap")
                             ),
                           tabPanel("Data",
