@@ -17,37 +17,37 @@ shinyServer(function(input, output, session) {
 
   output$accessMap<- renderLeaflet({
 
-    # nyc_census_tracts_opendatanyc %>%
-    #   as_tibble() %>% 
-    #   left_join(x = ., y = access_score_by_geoid_tbl, by="GEOID") %>%
-    #   filter(., category == input$select_category) %>%
-    #   replace_na(., list(category = "", weighted_score = 0)) %>%
-    #   st_as_sf() %>%
-    #   leaflet() %>%
-    #   setView(lat = 40.7128, lng = -74.0060, zoom = 10) %>%
-    #   addProviderTiles("CartoDB.Positron") %>%
-    #   addPolygons(
-    #     fillColor = ~pal(weighted_score),
-    #     stroke = FALSE,
-    #     weight = 2,
-    #     opacity = 1,
-    #     color = "white",
-    #     dashArray = "3",
-    #     fillOpacity = 0.7,
-    #     highlight = highlightOptions(
-    #       weight = 5,
-    #       color = '#666',
-    #       dashArray = "",
-    #       fillOpacity = 0.7,
-    #       bringToFront = TRUE)#,
-    # #     # label = labels,
-    # #     # labelOptions = labelOptions(
-    # #     #   style = list("font-weight" = "normal", padding = "3px 8px"),
-    # #     #   textsize = "15px",
-    # #     #   direction = "auto")
-    #   ) %>%
-    #   addLegend(pal = pal, values = ~weighted_score, opacity = 0.7, title = "Access Score",
-    #             position = "bottomright")
+    nyc_census_tracts_opendatanyc %>%
+      as_tibble() %>%
+      left_join(x = ., y = access_score_by_geoid, by="GEOID") %>%
+      filter(., category == input$select_category) %>%
+      replace_na(., list(category = "", weighted_score = 0)) %>%
+      st_as_sf() %>%
+      leaflet() %>%
+      setView(lat = 40.7128, lng = -74.0060, zoom = 10) %>%
+      addProviderTiles("CartoDB.Positron") %>%
+      addPolygons(
+        fillColor = ~pal(weighted_score),
+        stroke = FALSE,
+        weight = 2,
+        opacity = 1,
+        color = "white",
+        dashArray = "3",
+        fillOpacity = 0.7,
+        highlight = highlightOptions(
+          weight = 5,
+          color = '#666',
+          dashArray = "",
+          fillOpacity = 0.7,
+          bringToFront = TRUE)#,
+    #     # label = labels,
+    #     # labelOptions = labelOptions(
+    #     #   style = list("font-weight" = "normal", padding = "3px 8px"),
+    #     #   textsize = "15px",
+    #     #   direction = "auto")
+      ) %>%
+      addLegend(pal = pal, values = ~weighted_score, opacity = 0.7, title = "Access Score",
+                position = "bottomright")
     })
   
   # II. Second page visualizations 

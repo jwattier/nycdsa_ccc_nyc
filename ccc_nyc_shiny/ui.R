@@ -43,14 +43,19 @@ shinyUI(dashboardPage(
         ),
     dashboardBody(
       tabItems(
-        #     tabItem(tabName = "map",
-        #             fluidRow(
-        #                 box(
-        #                     width = 12, status = "info", solidHeader = TRUE,
-        #                     title = "Access Score NYC", 
-        #                     leafletOutput("accessMap", width = "100%", height = 600)
-        #                 ))
-        #             ),
+            tabItem(tabName = "map",
+                    fluidPage(
+                        shinydashboardPlus::flipBox(
+                          id = 1,
+                          main_img = "New_York_City_community_districts.svg.png",
+                          header_img = "",
+                          front_title = "Welcome",
+                          back_title = "Access Score Across NYC",
+                          "Welcome to the CCC NYC accessibility analysis.",
+                          back_content = 
+                            leafletOutput("accessMap", width = "100%", height = 600)
+                        ))
+                    ),
         #     tabItem(tabName = "resource",
         #                 fluidPage(
         #                   tableOutput("new_resource_contents")
