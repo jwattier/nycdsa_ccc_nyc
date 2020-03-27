@@ -45,14 +45,10 @@ shinyUI(dashboardPage(
       tabItems(
             tabItem(tabName = "map",
                     fluidPage(
-                        shinydashboardPlus::flipBox(
-                          id = 1,
-                          main_img = "New_York_City_community_districts.svg.png",
-                          header_img = "",
-                          front_title = "Welcome",
-                          back_title = "Access Score Across NYC",
-                          "Welcome to the CCC NYC accessibility analysis.",
-                          back_content = 
+                          box(
+                            width = 12, status = "info", solidHeader = TRUE,
+                            collapsible = TRUE,
+                            title = "Access Score for NYC",
                             leafletOutput("accessMap", width = "100%", height = 600)
                         ))
                     ),

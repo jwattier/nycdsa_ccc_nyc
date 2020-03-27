@@ -85,7 +85,7 @@ show_resources_in_tvl_radius <- function(resources_sf, geo_id_vctr){
 
 
 update_resource_ct_sf <- function(current_resource_ct_table, new_resource_sf
-                                  , census_geo_sf, resource_category, travel_time_cutoff = 60){
+                                  , census_geo_sf, resource_category,travel_time_cutoff = 60){
   # this function is meant to calculate access score for individual census tracts 
   # it serves as the prep function for displaying a table and a histogram of this information.
   #nyc_just_geoid_geom_sf %>% filter(., GEOID == geo_id ) %>%  as_tibble() %>% 
@@ -95,7 +95,7 @@ update_resource_ct_sf <- function(current_resource_ct_table, new_resource_sf
   
   new_addition <- tibble(
     resource_geoid = census_geo_sf$GEOID,
-    category = rep(resource_category, length.out = length(census_geo_sf$GEOID)),
+    category = rep(resource_category, length.out = nrow(census_geo_sf)),
     count = count_by_census_area_vector
   )
   

@@ -121,6 +121,16 @@ resource_sf <- add_resource(new_resource_tbl = early_chood_ctrs_sf, name_col = '
                             capacity_amt_col = "Total Enrollment", capacity_unit_col = "enrollment", 
                             current_resource_tbl = resource_sf)
 
+# 3) optional set of assets 
+asset_dir <- paste0("./data/resources/custom")
+asset_csv_files <- fs::dir_ls(asset_dir)
+asset_files <- asset_csv_files %>% 
+  map_dfr(readr::read_csv)
+
+custom_resource_sf <-add_resource(
+    new_resource_tbl = asset_files, name_col = "Description", type_col = "Category", capacity_amt_col = NA,
+    capacity_unit_col = NA, geom_col = "latlong", current_resource_tbl = resource_sf)
+
 #--------------------- map resources to census areas
 # this numeric vector is ordered the same as the rows on the nyc_just_geoid_geom_sf
 resource_by_geoid_ct <- st_intersects(x=nyc_just_geoid_geom_sf, 
@@ -149,21 +159,16 @@ new_row <- tibble(
 
 resource_ct_by_geoid <- dplyr::bind_rows(resource_ct_by_geoid, new_row)
 
-resouse_categories <- c(unique(resource_ct_by_geoid$category),"overall")
+resource_ct_by_geoid <- update_resource_ct_sf(current_resource_ct_table = resource_ct_by_geoid, 
+                                              new_resource_sf = custom_resource_sf,
+                                              census_geo_sf = nyc_just_geoid_geom_sf, 
+                                              resource_category = "workforce development",
+                                              travel_time_cutoff = 60)
 
-# Import resource percentages
-category_percents <- readr::read_csv(paste0(parent_path, "input/category_percents/category_percents.csv"))
+resouse_categories <- c(unique(resource_ct_by_geoid$category))
 
-#invoke in-case user provided percentages do not add up to 0
-if (sum(category_percents$percent) != 1){
-  
-  number_of_categories <- n_distinct(resource_ct_by_geoid$category)
-  
-  tibble(
-    category = unique(resource_ct_by_geoid$category),
-    percent = rep((1 / number_of_categories), length.out = number_of_categories)
-  )
-}
+
+
 
 # -------------------- compute access score via distance weighting against number of resources
 breaks <- c(0, 10, 20, 30, 40, 50, 60)
@@ -184,19 +189,6 @@ access_score_by_geoid <-
 ### TO DO -> LOOK INTO WHY THERE'S A NA ROW re: category/access score
 #access_score_by_geoid <- 
 access_score_by_geoid$weighted_score <- access_score_by_geoid$weighted_score %>% replace_na(0)
-
-# ny_water <- tigris::area_water("NY", "New York", class = "sf")
-# ny_water <- sf::st_transform(ny_water, crs=4326)
-# 
-# st_erase <- function(x, y) {
-#   sf::st_difference(x, sf::st_union(y))
-# }
-# ny_census_tracts_wo_water <- st_erase(nyc_census_tracts, ny_water)
-
-# -------------------- build map with access score information
-# pal_pop <- colorNumeric("plasma", domain = nyc_census_tract_population$estimate)
-#pal_resource <- colorNumeric("magma", domain = resource_ct_by_geoid$count)
-#pal_minutes <- colorNumeric("viridis", domain = nyc_trvl_times$minutes)
 
 access_score_4_pal <- access_score_by_geoid %>% filter(., category == "early childhood center")
 pal <- colorNumeric("viridis", domain = access_score_4_pal$weighted_score)
