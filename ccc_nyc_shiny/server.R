@@ -112,37 +112,7 @@ shinyServer(function(input, output, session) {
     #   )
     # })
 
-    # output$filteredAccessMap <- renderLeaflet({
-    #   filteredArea() %>%  as_tibble() %>% #filter(., estimate != 0) %>%
-    #     left_join(x = ., y = access_score_by_geoid, by="GEOID") %>%
-    #     filter(., category == input$select_category) %>%
-    #     replace_na(., list(category = "", weighted_score = 0)) %>%
-    #     st_as_sf() %>%
-    #     leaflet() %>%
-    #     addProviderTiles("CartoDB.Positron") %>%
-    #     addPolygons(
-    #       fillColor = ~pal(weighted_score),
-    #       stroke = FALSE,
-    #       weight = 2,
-    #       opacity = 1,
-    #       color = "white",
-    #       dashArray = "3",
-    #       fillOpacity = 0.7,
-    #       highlight = highlightOptions(
-    #         weight = 5,
-    #         color = '#666',
-    #         dashArray = "",
-    #         fillOpacity = 0.7,
-    #         bringToFront = TRUE)#,
-    #       # label = labels,
-    #       # labelOptions = labelOptions(
-    #       #   style = list("font-weight" = "normal", padding = "3px 8px"),
-    #       #   textsize = "15px",
-    #       #   direction = "auto")
-    #     ) %>%
-    #     addLegend(pal = pal, values = ~weighted_score, opacity = 0.7, title = "Access Score",
-    #               position = "bottomright")
-    # })
+
     #    
     # output$filteredMap <- renderLeaflet({
     #   # filteredArea() %>% as_tibble() %>% 
@@ -177,6 +147,38 @@ shinyServer(function(input, output, session) {
     # # map to show resources within the puma area selected
     # # class(resource_ct_geoid_sf)
     # # colnames(resource_ct_geoid_sf)
+    output$filteredAccessMap <- renderLeaflet({
+      filteredArea() %>%  as_tibble() %>% #filter(., estimate != 0) %>%
+        left_join(x = ., y = access_score_by_geoid, by="GEOID") %>%
+        filter(., category == input$select_category) %>%
+        replace_na(., list(category = "", weighted_score = 0)) %>%
+        st_as_sf() %>%
+        leaflet() %>%
+        addProviderTiles("CartoDB.Positron") %>%
+        addPolygons(
+          fillColor = ~pal(weighted_score),
+          stroke = FALSE,
+          weight = 2,
+          opacity = 1,
+          color = "white",
+          dashArray = "3",
+          fillOpacity = 0.7,
+          highlight = highlightOptions(
+            weight = 5,
+            color = '#666',
+            dashArray = "",
+            fillOpacity = 0.7,
+            bringToFront = TRUE)#,
+          # label = labels,
+          # labelOptions = labelOptions(
+          #   style = list("font-weight" = "normal", padding = "3px 8px"),
+          #   textsize = "15px",
+          #   direction = "auto")
+        ) %>%
+        addLegend(pal = pal, values = ~weighted_score, opacity = 0.7, title = "Access Score",
+                  position = "bottomright")
+    })
+    
     output$resourceMap <- renderLeaflet({
       
       filteredArea_w_resource_ct <- filteredArea() %>% as_tibble() %>% select(., GEOID) %>%

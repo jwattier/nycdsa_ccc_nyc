@@ -30,15 +30,15 @@ shinyUI(dashboardPage(
                          label="Census Tract:",
                          choices = unique(nyc_census_tracts_opendatanyc$GEOID)
                          ),
-            menuItem(text = "Map", tabName = "map", icon = icon("map")),
             selectizeInput(inputId="select_category",
                            label="Resource Category:",
-                           choices = resouse_categories),
-            #,
-            menuItem(text = "Explore", tabName = "explore", icon = icon("chart-area")),
-            menuItem(text = "Access Score", tabName = "access_score"),
-            menuItem(text = "Asset Inventory", tabName = "asset_inventory"),
-            menuItem(text = "Deep Dive", tabName = "deep_dive", icon = icon("chart-area"))
+                           choices = resouse_categories
+                           ),
+          menuItem(text = "Map", tabName = "map", icon = icon("map")),
+          menuItem(text = "Explore", tabName = "explore", icon = icon("chart-area")),
+          #menuItem(text = "Access Score", tabName = "access_score"),
+          #menuItem(text = "Asset Inventory", tabName = "asset_inventory"),
+          menuItem(text = "Deep Dive", tabName = "deep_dive", icon = icon("chart-area"))
             )
         ),
     dashboardBody(
@@ -80,13 +80,14 @@ shinyUI(dashboardPage(
         #             # fluidRow(
         #             #     valueBoxOutput("population")
         #             # ),
-                    # fluidRow(
-                    #     box(
-                    #         width = 12, status = "info", solidHeader = TRUE,
-                    #         title = "Access Score for PUMAs",
-                    #         leafletOutput("filteredAccessMap")
-                    #     )
-                    # ),
+                    fluidRow(
+                        box(
+                            width = 12, status = "info", solidHeader = TRUE,
+                            collapsible = TRUE,
+                            title = "Access Score for PUMAs",
+                            leafletOutput("filteredAccessMap")
+                        )
+                    ),
         #             fluidRow(
         #                 box(
         #                     width = 12, status = "info", solidHeader = TRUE,
