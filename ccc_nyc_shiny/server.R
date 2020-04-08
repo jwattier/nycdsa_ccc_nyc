@@ -130,7 +130,7 @@ shinyServer(function(input, output, session) {
         leaflet() %>%
         addProviderTiles("CartoDB.Positron") %>%
         addPolygons(
-          fillColor = ~pal_pop(estimate),
+          fillColor = ~pal_population(estimate),
           stroke = FALSE,
           weight = 2,
           opacity = 1,
@@ -149,7 +149,7 @@ shinyServer(function(input, output, session) {
             textsize = "15px",
             direction = "auto")
         ) %>%
-      addLegend(pal = pal_pop, values = ~estimate, opacity = 0.7, title = "Population",
+      addLegend(pal = pal_population, values = ~estimate, opacity = 0.7, title = "Population",
                 position = "bottomright")
       })
     # 

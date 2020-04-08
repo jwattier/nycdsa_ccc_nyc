@@ -7,7 +7,7 @@ library(htmltools)
 library(readxl)
 library(leaflet)
 library(leaflet.providers)
-library(tidycensus)
+# library(tidycensus)
 library(tidyverse)
 library(tigris)
 library(tmap)
@@ -50,23 +50,6 @@ nyc_census_tracts_opendatanyc <- nyc_census_tracts_opendatanyc %>% as_tibble() %
   left_join(x=., y= boro_cd_to_fips_mapping) %>% 
   mutate(., GEOID = paste0(fips_state_county_code, ct2010)) %>% st_as_sf()
 
-#nyc_census_blocks_opendatanyc %>% as_tibble()
-
-#---------------------- import census tracts
-# 1) define function for potential furture use
-census_fun <- function(geography_type="tract", acs_year=2018) {
-  # this function retrieves the shape file for NYC and
-  return (
-    tidycensus::get_acs(geography = geography_type, year = acs_year, geometry = FALSE,
-                        variables = "B01003_001", # retrieves population
-                        survey = "acs5", county = c(061, 047, 081, 085, 005)
-                        , state = "NY")
-    # crs => coordinate reference system
-  )
-}
-
-# 2) utilize function to retrieve nyc census tract information
-nyc_census_tract_population <- census_fun(geography_type = "tract", acs_year = 2018)
 
 #---------------------- import pre-computed times
 # 1) import transit times from pre_processed subfolder
@@ -80,17 +63,14 @@ nyc_trvl_times <- readr::read_csv(paste0(parent_path, file_name), col_types = "c
 nyc_just_geoid_geom_sf <- nyc_census_tracts_opendatanyc %>% select(., GEOID, geometry)
 resource_ct_geoid_sf <- nyc_just_geoid_geom_sf # for use later to add in resource counts
 
-# 3) add to the "just geoid" tibble in order to include information on NTA, PUMA and borough linkage
-# file_path = paste0(parent_path, "data/nyc_geo")
-# file_name = "/nyc2010census_tract_nta_equiv.xlsx"
-# 
-# census_tract_to_nta_mapping <- readxl::read_xlsx(paste0(file_path, file_name))
-# 
-# 
-# nyc_just_geoid_geom_sf <- nyc_just_geoid_geom_sf %>% 
-#   mutate(., fips_county_code = str_sub(GEOID, start = 3, end = 5)
-#            ,census_tract_2010 = str_sub(GEOID, start = 6)) %>% 
-#   left_join(., y = census_tract_to_nta_mapping,by = c("fips_county_code", "census_tract_2010"))
+#---------------------- pull in census informaton from csv file
+# Note this census information was retrieved via the data/census subfolder
+# The code that produces this file is in the pre_process.R file
+file_path = paste0(parent_path, "data/census")
+file_name = "/nyc_census_tract_population.csv"
+
+nyc_census_tract_population <- readr::read_csv(paste0(file_path, file_name),
+                                               col_types = "cccdd")
 
 #--------------------- import resource of interest
 # 1) nyc food retail
