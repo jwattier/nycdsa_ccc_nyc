@@ -24,7 +24,9 @@ shinyUI(dashboardPage(
           ),
           selectizeInput(inputId="puma",
                          label="PUMA:",
-                         choices = unique(nyc_census_tracts_opendatanyc$puma)
+                         choices = unique(nyc_census_tracts_opendatanyc$puma),
+                         multiple = TRUE,
+                         selected = unique(nyc_census_tracts_opendatanyc$puma)[1]
                          ),
           selectizeInput(inputId="census_area",
                          label="Census Tract:",

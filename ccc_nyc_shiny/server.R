@@ -73,7 +73,7 @@ shinyServer(function(input, output, session) {
   # update census tracts based upon PUMA 
   observe({
     census_tracts <- unique(nyc_census_tracts_opendatanyc %>%
-                              filter(nyc_census_tracts_opendatanyc$puma == input$puma) %>%
+                              filter(nyc_census_tracts_opendatanyc$puma %in% input$puma) %>%
                               .$GEOID)
     updateSelectizeInput(
       session = session,
@@ -86,7 +86,7 @@ shinyServer(function(input, output, session) {
     
     filteredArea <- reactive({
       nyc_census_tracts_opendatanyc %>%
-        filter(., puma == input$puma)
+        filter(., puma %in% input$puma)
     })
     
     
