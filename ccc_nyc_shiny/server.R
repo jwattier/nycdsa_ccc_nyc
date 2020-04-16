@@ -58,14 +58,19 @@ shinyServer(function(input, output, session) {
     puma_codes <- unique(nyc_census_tracts_opendatanyc %>%
                           filter(nyc_census_tracts_opendatanyc$boro_name == input$borough) %>%
                             .$puma)
-    
-
-    updateSelectizeInput(
+    shinyWidgets::updatePickerInput(
       session = session,
       inputId = "puma",
       choices = puma_codes,
       selected = puma_codes[1]
-    )
+    )  
+
+    # updateSelectizeInput(
+    #   session = session,
+    #   inputId = "puma",
+    #   choices = puma_codes,
+    #   selected = puma_codes[1]
+    # )
 
 
   })

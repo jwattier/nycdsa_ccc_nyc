@@ -22,12 +22,20 @@ shinyUI(dashboardPage(
                          label="Borough:",
                          choices = unique(nyc_census_tracts_opendatanyc$boro_name)
           ),
-          selectizeInput(inputId="puma",
-                         label="PUMA:",
-                         choices = unique(nyc_census_tracts_opendatanyc$puma),
-                         multiple = TRUE,
-                         selected = unique(nyc_census_tracts_opendatanyc$puma)[1]
-                         ),
+          shinyWidgets::pickerInput(
+            inputId = "puma",
+            label = "PUMA:",
+            selected = unique(nyc_census_tracts_opendatanyc$puma)[1],
+            choices = unique(nyc_census_tracts_opendatanyc$puma),
+            multiple = TRUE,
+            options = list(`actions-box` = TRUE)
+          ),
+          # selectizeInput(inputId="puma",
+          #                label="PUMA:",
+          #                choices = unique(nyc_census_tracts_opendatanyc$puma),
+          #                multiple = TRUE,
+          #                selected = unique(nyc_census_tracts_opendatanyc$puma)[1]
+          #                ),
           selectizeInput(inputId="census_area",
                          label="Census Tract:",
                          choices = unique(nyc_census_tracts_opendatanyc$GEOID)
