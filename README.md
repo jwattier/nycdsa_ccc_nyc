@@ -6,6 +6,10 @@ This readme file is an explainer on the components of my capstone project for th
 
 The capstone project involved supporting the Citzen's Committee for Children of New York (CCC NY) effort to create a framework to streamline accessibility analysis for the New York City (NYC) metropolitan area utilizing open source technologies.
 
+## Shiny App URL
+
+The url for the in-process shiny app is located at <https://jwattier.shinyapps.io/ccc_nyc_shiny_draft/>.
+
 ## Project File Structure
 
 1. Data Inputs
