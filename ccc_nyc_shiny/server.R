@@ -53,7 +53,7 @@ shinyServer(function(input, output, session) {
   # update PUMA code based upon boro
   observe({
     puma_codes <- unique(nyc_census_tracts_opendatanyc %>%
-                          filter(nyc_census_tracts_opendatanyc$boro_name == input$borough) %>%
+                          filter(nyc_census_tracts_opendatanyc$boro_name %in% input$borough) %>%
                             .$puma)
     shinyWidgets::updatePickerInput(
       session = session,

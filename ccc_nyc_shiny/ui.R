@@ -18,10 +18,19 @@ shinyUI(dashboardPage(
     dashboardHeader(title = "CCC NYC Analysis"),
     dashboardSidebar(
         sidebarMenu(
-          selectizeInput(inputId="borough",
-                         label="Borough:",
-                         choices = unique(nyc_census_tracts_opendatanyc$boro_name)
+          shinyWidgets::pickerInput(
+            inputId = "borough",
+            label = "Borough:",
+            selected = unique(nyc_census_tracts_opendatanyc$boro_name),
+            choices = unique(nyc_census_tracts_opendatanyc$boro_name),
+            multiple = TRUE,
+            options = list(`actions-box` = TRUE,
+                           `select-all-text` = "All Boroughs")
           ),
+          # selectizeInput(inputId="borough",
+          #                label="Borough:",
+          #                choices = unique(nyc_census_tracts_opendatanyc$boro_name)
+          # ),
           shinyWidgets::pickerInput(
             inputId = "puma",
             label = "PUMA:",
