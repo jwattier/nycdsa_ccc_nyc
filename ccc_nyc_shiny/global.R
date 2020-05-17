@@ -184,3 +184,14 @@ access_score_by_geoid$weighted_score <- access_score_by_geoid$weighted_score %>%
 access_score_4_pal <- access_score_by_geoid %>% filter(., category == "early childhood center")
 pal <- colorNumeric("viridis", domain = access_score_4_pal$weighted_score)
 
+
+# ----------------- Set up binning system of 0 to 15, 30 to 45, and 45 to 60
+# Default setting will be a 100% attribution and then change based upon user selection/settings.
+nyc_trvl_times_adj <- nyc_trvl_times_adj %>% 
+  mutate(., minutes_bin = cut(minutes, breaks = breaks, include.lowest = TRUE, right = TRUE, labels = tags))
+
+# factor table is pre-loaded with defaults of 1 per travel minute bin
+prcnt_fctr_by_time_bin <- tibble(
+  minutes_bin = tags,
+  percent = rep(1, length(tags))
+)

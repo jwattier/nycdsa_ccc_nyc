@@ -47,6 +47,13 @@ shinyServer(function(input, output, session) {
                 position = "bottomright")
     })
   
+  # Visual to display table of percent allocaitons
+  # # output$
+  output$perc_factor_trvl_time_bins <- DT::renderDataTable({
+     DT::datatable(prcnt_fctr_by_time_bin)
+  })
+  
+  
   # II. Second page visualizations 
   
   ### Data for the exploratory tab

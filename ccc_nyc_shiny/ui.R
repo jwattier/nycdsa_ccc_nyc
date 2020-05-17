@@ -56,6 +56,7 @@ shinyUI(dashboardPage(
                       value = 1, step = 0.10, round = FALSE, ticks = TRUE
           ),
           menuItem(text = "Map", tabName = "map", icon = icon("map")),
+          menuItem(text = "Allocation Split", tabName = "per_split", icon = icon("percent")),
           menuItem(text = "Explore", tabName = "explore", icon = icon("chart-area")),
           menuItem(text = "Demographic Analysis", tabName = "demogrph_analysis", icon=icon("chart-area")),
           #menuItem(text = "Asset Inventory", tabName = "asset_inventory"),
@@ -73,6 +74,16 @@ shinyUI(dashboardPage(
                             leafletOutput("accessMap", width = "100%", height = 600)
                         ))
                     ),
+            tabItem(tabName = "per_split",
+                    fluidPage(
+                      box(
+                        width = 12, status = "info", solidHeader = TRUE,
+                        collapsible = FALSE,
+                        title = "Percent Factor for Travel Time Bins",
+                        DT::dataTableOutput("perc_factor_trvl_time_bins")
+                      ))
+              
+            ),
         #     tabItem(tabName = "resource",
         #                 fluidPage(
         #                   tableOutput("new_resource_contents")
