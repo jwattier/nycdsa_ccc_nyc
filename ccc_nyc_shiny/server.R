@@ -62,14 +62,6 @@ shinyServer(function(input, output, session) {
       selected = puma_codes[1]
     )  
 
-    # updateSelectizeInput(
-    #   session = session,
-    #   inputId = "puma",
-    #   choices = puma_codes,
-    #   selected = puma_codes[1]
-    # )
-
-
   })
   
   # update census tracts based upon PUMA 

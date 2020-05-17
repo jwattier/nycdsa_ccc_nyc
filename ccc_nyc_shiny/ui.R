@@ -27,10 +27,6 @@ shinyUI(dashboardPage(
             options = list(`actions-box` = TRUE,
                            `select-all-text` = "All Boroughs")
           ),
-          # selectizeInput(inputId="borough",
-          #                label="Borough:",
-          #                choices = unique(nyc_census_tracts_opendatanyc$boro_name)
-          # ),
           shinyWidgets::pickerInput(
             inputId = "puma",
             label = "PUMA:",
@@ -39,12 +35,6 @@ shinyUI(dashboardPage(
             multiple = TRUE,
             options = list(`actions-box` = TRUE)
           ),
-          # selectizeInput(inputId="puma",
-          #                label="PUMA:",
-          #                choices = unique(nyc_census_tracts_opendatanyc$puma),
-          #                multiple = TRUE,
-          #                selected = unique(nyc_census_tracts_opendatanyc$puma)[1]
-          #                ),
           selectizeInput(inputId="census_area",
                          label="Census Tract:",
                          choices = sort(unique(nyc_census_tracts_opendatanyc$GEOID))
