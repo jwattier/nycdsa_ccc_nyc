@@ -7,9 +7,6 @@
 #    http://shiny.rstudio.com/
 #
 
-library(shiny)
- 
-
 shinyServer(function(input, output, session) {
   
   # I. first page visualizations

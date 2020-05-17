@@ -38,7 +38,7 @@ shinyUI(dashboardPage(
           #                ),
           selectizeInput(inputId="census_area",
                          label="Census Tract:",
-                         choices = unique(nyc_census_tracts_opendatanyc$GEOID)
+                         choices = sort(unique(nyc_census_tracts_opendatanyc$GEOID))
                          ),
             selectizeInput(inputId="select_category",
                            label="Resource Category:",
