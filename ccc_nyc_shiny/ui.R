@@ -43,6 +43,18 @@ shinyUI(dashboardPage(
                            label="Resource Category:",
                            choices = resouse_categories
                            ),
+          sliderInput("first_bin", "0 to 15 Mins Factor", min = 0, max = 1, 
+                      value = 1, step = 0.10, round = FALSE, ticks = TRUE
+                      ),
+          sliderInput("second_bin", "15 to 30 Mins Factor", min = 0, max = 1, 
+                      value = 1, step = 0.10, round = FALSE, ticks = TRUE
+          ),
+          sliderInput("third_bin", "30 to 45 Mins Factor", min = 0, max = 1, 
+                      value = 1, step = 0.10, round = FALSE, ticks = TRUE
+          ),
+          sliderInput("fourth_bin", "45 to 60 Mins Factor", min = 0, max = 1, 
+                      value = 1, step = 0.10, round = FALSE, ticks = TRUE
+          ),
           menuItem(text = "Map", tabName = "map", icon = icon("map")),
           menuItem(text = "Explore", tabName = "explore", icon = icon("chart-area")),
           menuItem(text = "Demographic Analysis", tabName = "demogrph_analysis", icon=icon("chart-area")),

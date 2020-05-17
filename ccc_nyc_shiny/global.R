@@ -152,12 +152,15 @@ resouse_categories <- c(unique(resource_ct_by_geoid$category))
 
 
 # -------------------- compute access score via distance weighting against number of resources
-breaks <- c(0, 10, 20, 30, 40, 50, 60)
-tags <- c("0-10", "10-20", "20-30", "30-40", "40-50", "50-60 mins")
+breaks <- c(0, 15, 30, 45, 60)
+tags <- c("0-15", "15-30", "30-45", "45-60 mins")
+
+#nyc_trvl_times_adj <- nyc_trvl_times %>%  filter(., minutes < 60)
 
 nyc_trvl_times_adj <- nyc_trvl_times %>%  filter(., minutes < 60)
 
 just_geoids <- nyc_just_geoid_geom_sf %>% as_tibble() %>% select(., GEOID)
+
 
 access_score_by_geoid <- 
   just_geoids %>% 
@@ -166,6 +169,14 @@ access_score_by_geoid <-
   mutate(., weighted_score = count / minutes) %>% 
   group_by(GEOID, category) %>% 
   summarise(weighted_score = sum(weighted_score))
+
+# access_score_by_geoid <- 
+#   just_geoids %>% 
+#   left_join(., nyc_trvl_times_adj, by = c("GEOID" = "origin")) %>% 
+#   left_join(., y=resource_ct_by_geoid, by = c("destination" = "resource_geoid")) %>%
+#   mutate(., weighted_score = count / minutes) %>% 
+#   group_by(GEOID, category) %>% 
+#   summarise(weighted_score = sum(weighted_score))
 
 ### TO DO -> LOOK INTO WHY THERE'S A NA ROW re: category/access score
 access_score_by_geoid$weighted_score <- access_score_by_geoid$weighted_score %>% replace_na(0)
