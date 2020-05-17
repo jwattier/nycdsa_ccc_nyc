@@ -49,9 +49,21 @@ shinyServer(function(input, output, session) {
   
   # Visual to display table of percent allocaitons
   # # output$
-  output$perc_factor_trvl_time_bins <- DT::renderDataTable({
-     DT::datatable(prcnt_fctr_by_time_bin)
+  # Section to update the percentage splits
+  perc_factor_tbl <- reactive({
+    tibble(
+      minutes_bins = tags,
+      percent = c(input$first_bin, input$second_bin, input$third_bin, input$fourth_bin)
+    )
   })
+  
+  
+  output$perc_factor_trvl_time_bins <- DT::renderDataTable({
+     #DT::datatable(prcnt_fctr_by_time_bin)
+    DT::datatable(perc_factor_tbl())
+  })
+  
+
   
   
   # II. Second page visualizations 
