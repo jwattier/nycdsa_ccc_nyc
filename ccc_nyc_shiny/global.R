@@ -148,26 +148,35 @@ resource_ct_by_geoid <- update_resource_ct_sf(current_resource_ct_table = resour
 
 resouse_categories <- c(unique(resource_ct_by_geoid$category))
 
-
-
-
-# -------------------- compute access score via distance weighting against number of resources
+# ----------------- Set up binning system of 0 to 15, 30 to 45, and 45 to 60
+# Default setting will be a 100% attribution and then change based upon user selection/settings.
 breaks <- c(0, 15, 30, 45, 60)
 tags <- c("0-15", "15-30", "30-45", "45-60 mins")
 
-#nyc_trvl_times_adj <- nyc_trvl_times %>%  filter(., minutes < 60)
+nyc_trvl_times_adj <- nyc_trvl_times_adj %>% 
+  filter(., minutes <= 60) %>% 
+  mutate(., minutes_bin = cut(minutes, breaks = breaks, include.lowest = TRUE, right = TRUE, labels = tags))
 
-nyc_trvl_times_adj <- nyc_trvl_times %>%  filter(., minutes < 60)
+# factor table is pre-loaded with defaults of 1 per travel minute bin
+prcnt_fctr_by_time_bin <- tibble(
+  minutes_bin = tags,
+  percent = rep(1, length(tags))
+)
+
+
+# -------------------- compute access score via distance weighting against number of resources
+
 
 just_geoids <- nyc_just_geoid_geom_sf %>% as_tibble() %>% select(., GEOID)
 
 
 access_score_by_geoid <- 
   just_geoids %>% 
-  left_join(., nyc_trvl_times_adj, by = c("GEOID" = "origin")) %>% 
-  left_join(., y=resource_ct_by_geoid, by = c("destination" = "resource_geoid")) %>%
-  mutate(., weighted_score = count / minutes) %>% 
-  group_by(GEOID, category) %>% 
+  left_join(., nyc_trvl_times_adj, by = c("GEOID" = "origin")) %>%
+  left_join(., resource_ct_by_geoid, by = c("destination" = "resource_geoid")) %>%
+  left_join(., prcnt_fctr_by_time_bin, by = "minutes_bin") %>% 
+  mutate(., weighted_score = if_else(is.na(minutes_bin),0, count * percent)) %>%
+  group_by(GEOID, category) %>%
   summarise(weighted_score = sum(weighted_score))
 
 # access_score_by_geoid <- 
@@ -178,20 +187,16 @@ access_score_by_geoid <-
 #   group_by(GEOID, category) %>% 
 #   summarise(weighted_score = sum(weighted_score))
 
+
 ### TO DO -> LOOK INTO WHY THERE'S A NA ROW re: category/access score
-access_score_by_geoid$weighted_score <- access_score_by_geoid$weighted_score %>% replace_na(0)
+# access_score_by_geoid$weighted_score <- access_score_by_geoid$weighted_score %>% replace_na(0)
 
 access_score_4_pal <- access_score_by_geoid %>% filter(., category == "early childhood center")
 pal <- colorNumeric("viridis", domain = access_score_4_pal$weighted_score)
 
 
-# ----------------- Set up binning system of 0 to 15, 30 to 45, and 45 to 60
-# Default setting will be a 100% attribution and then change based upon user selection/settings.
-nyc_trvl_times_adj <- nyc_trvl_times_adj %>% 
-  mutate(., minutes_bin = cut(minutes, breaks = breaks, include.lowest = TRUE, right = TRUE, labels = tags))
 
-# factor table is pre-loaded with defaults of 1 per travel minute bin
-prcnt_fctr_by_time_bin <- tibble(
-  minutes_bin = tags,
-  percent = rep(1, length(tags))
-)
+
+  
+  
+  

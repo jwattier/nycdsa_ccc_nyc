@@ -63,7 +63,7 @@ shinyServer(function(input, output, session) {
     DT::datatable(perc_factor_tbl())
   })
   
-
+  
   
   
   # II. Second page visualizations 
