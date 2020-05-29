@@ -153,7 +153,7 @@ resouse_categories <- c(unique(resource_ct_by_geoid$category))
 breaks <- c(0, 15, 30, 45, 60)
 tags <- c("0-15", "15-30", "30-45", "45-60 mins")
 
-nyc_trvl_times_adj <- nyc_trvl_times_adj %>% 
+nyc_trvl_times_adj <- nyc_trvl_times %>% 
   filter(., minutes <= 60) %>% 
   mutate(., minutes_bin = cut(minutes, breaks = breaks, include.lowest = TRUE, right = TRUE, labels = tags))
 
