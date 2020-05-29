@@ -71,7 +71,7 @@ shinyServer(function(input, output, session) {
       left_join(., nyc_trvl_times_adj, by = c("GEOID" = "origin")) %>%
       left_join(., resource_ct_by_geoid, by = c("destination" = "resource_geoid")) %>%
       left_join(., perc_factor_tbl, by = "minutes_bin") %>% 
-      mutate(., weighted_score = if_else(is.na(minutes_bin),as.integer(0), count * percent)) %>%
+      mutate(., weighted_score = if_else(is.na(minutes_bin),0, as.numeric(count * percent))) %>%
       group_by(GEOID, category) %>%
       summarise(weighted_score = sum(weighted_score))
   })
