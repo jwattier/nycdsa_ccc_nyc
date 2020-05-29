@@ -13,6 +13,8 @@ shinyServer(function(input, output, session) {
 
 
   output$accessMap<- renderLeaflet({
+    
+    access_score_by_geoid <- access_score_by_geoid_eventReactive()
 
     nyc_census_tracts_opendatanyc %>%
       as_tibble() %>%
@@ -50,20 +52,29 @@ shinyServer(function(input, output, session) {
   # Visual to display table of percent allocaitons
   # # output$
   # Section to update the percentage splits
-  perc_factor_tbl <- reactive({
+  perc_factor_tbl_reactive <- reactive({
     tibble(
-      minutes_bins = tags,
+      minutes_bin = tags,
       percent = c(input$first_bin, input$second_bin, input$third_bin, input$fourth_bin)
     )
   })
   
   
   output$perc_factor_trvl_time_bins <- DT::renderDataTable({
-     #DT::datatable(prcnt_fctr_by_time_bin)
-    DT::datatable(perc_factor_tbl())
+    DT::datatable(perc_factor_tbl_reactive())
   })
   
-  
+  access_score_by_geoid_eventReactive <- eventReactive(input$updateBttn, {
+    perc_factor_tbl <- perc_factor_tbl_reactive()
+    
+    just_geoids %>% 
+      left_join(., nyc_trvl_times_adj, by = c("GEOID" = "origin")) %>%
+      left_join(., resource_ct_by_geoid, by = c("destination" = "resource_geoid")) %>%
+      left_join(., perc_factor_tbl, by = "minutes_bin") %>% 
+      mutate(., weighted_score = if_else(is.na(minutes_bin),as.integer(0), count * percent)) %>%
+      group_by(GEOID, category) %>%
+      summarise(weighted_score = sum(weighted_score))
+  })
   
   
   # II. Second page visualizations 
@@ -170,6 +181,8 @@ shinyServer(function(input, output, session) {
     # # class(resource_ct_geoid_sf)
     # # colnames(resource_ct_geoid_sf)
     output$filteredAccessMap <- renderLeaflet({
+      access_score_by_geoid <- access_score_by_geoid_eventReactive()
+      
       filteredArea() %>%  as_tibble() %>% #filter(., estimate != 0) %>%
         left_join(x = ., y = access_score_by_geoid, by="GEOID") %>%
         filter(., category == input$select_category) %>%
@@ -270,6 +283,8 @@ shinyServer(function(input, output, session) {
     
     ### Section for Analysis Attempt
     output$scatter_plot <- renderPlot({
+      access_score_by_geoid <- access_score_by_geoid_eventReactive()
+      
       filteredArea() %>% as_tibble() %>%
         inner_join(x=., y=nyc_census_tract_population, by="GEOID") %>% 
         inner_join(x=., y=access_score_by_geoid, by="GEOID") %>% 
