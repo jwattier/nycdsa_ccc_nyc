@@ -22,7 +22,7 @@ shinyUI(dashboardPage(
           menuItem(text = "Allocation Split", tabName = "per_split", icon = icon("percent")),
           menuItem(text = "Explore", tabName = "explore", icon = icon("chart-area")),
           menuItem(text = "Demographic Analysis", tabName = "demogrph_analysis", icon=icon("chart-area")),
-          #menuItem(text = "Asset Inventory", tabName = "asset_inventory"),
+          menuItem(text = "Resource Upload", tabName = "resource_upload", icon=icon("file")),
           menuItem(text = "Deep Dive", tabName = "deep_dive", icon = icon("chart-area")),
           shinyWidgets::pickerInput(
             inputId = "borough",
@@ -62,12 +62,6 @@ shinyUI(dashboardPage(
                       value = 1, step = 0.10, round = FALSE, ticks = TRUE
           ),
           actionButton("updateBttn", "Update Access Score")
-          # shinyWidgets::actionBttn(
-          #   inputId = "updateBttn",
-          #   label = "Update Access Score",
-          #   style = "unite",
-          #   color = "primary"
-          # ),
             )
         ),
     dashboardBody(
@@ -81,6 +75,18 @@ shinyUI(dashboardPage(
                             leafletOutput("accessMap", width = "100%", height = 600)
                         ))
                     ),
+            tabItem(tabName = "resource_upload",
+                    fluidPage(
+                      fileInput(
+                        "resource_file", 
+                        "Choose CSV file",
+                        multiple = FALSE,
+                        accept = c("text/csv", 
+                                   "text/comma-separated-values, text/plain",
+                                   ".csv")
+                      )
+                    )
+            ),
             tabItem(tabName = "per_split",
                     fluidPage(
                       box(

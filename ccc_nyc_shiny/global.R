@@ -1,7 +1,7 @@
 # import needed libraries
 library(opentripplanner)
 library(DT)
-library(bbplot)
+# library(bbplot)
 library(geojsonsf)
 library(htmltools)
 library(readxl)
@@ -42,7 +42,7 @@ boro_cd_to_fips_mapping <- readxl::read_xlsx(paste0(file_path, file_name))
 
 file_name = "/2010 Census Tracts.geojson"
 file_geojson = paste0(file_path, file_name)
-nyc_census_tracts_opendatanyc <- geojson_sf(file_geojson) %>% lwgeom::st_make_valid() %>% 
+nyc_census_tracts_opendatanyc <- geojson_sf(file_geojson) %>% sf::st_make_valid() %>% 
   sf::st_cast("MULTIPOLYGON") 
 
 # done to conform census tract # to that of the pre-computed #s
