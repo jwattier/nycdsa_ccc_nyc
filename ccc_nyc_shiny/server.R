@@ -114,30 +114,7 @@ shinyServer(function(input, output, session) {
     })
     
     
-    
-    # filteredResourcePalette <- reactive({
-    #   filtered_resource_ct <- filteredArea() %>% as_tibble() %>% select(., GEOID) %>% 
-    #     inner_join(x=., y = resource_ct_geoid_sf, by = c("GEOID" = "resource_geoid"))
-    #   
-    #   colorNumeric("plasma", domain = filtered_resource_ct$count)
-    #     
-    # })
 
-    
-    # filteredPopulation <- reactive({
-    #   filteredArea() %>% summarise(population = sum(estimate))
-    #   })
-    # 
-    # output$population <- renderValueBox({
-    #   valueBox(
-    #     value = filteredPopulation(),
-    #     subtitle = "Total Area Population",
-    #     icon = icon("user-check")
-    #   )
-    # })
-
-
-    #    
     output$filteredMap <- renderLeaflet({
       filtered_population <- filteredArea() %>% as_tibble() %>%
         inner_join(x=., y=nyc_census_tract_population, by="GEOID")
@@ -176,10 +153,10 @@ shinyServer(function(input, output, session) {
       addLegend(pal = pal_population, values = ~estimate, opacity = 0.7, title = "Population",
                 position = "bottomright")
       })
-    # 
+    
+    
     # # map to show resources within the puma area selected
-    # # class(resource_ct_geoid_sf)
-    # # colnames(resource_ct_geoid_sf)
+    
     output$filteredAccessMap <- renderLeaflet({
       access_score_by_geoid <- access_score_by_geoid_eventReactive()
       
@@ -302,31 +279,32 @@ shinyServer(function(input, output, session) {
     # 
     # # Section for previewing the resource file upload
     # # reactive expression to wait for upload and then render Table to display results
+ 
+    # input$file1 will be NULL initially. After the user selects
+    # and uploads a file, it will be a data frame with 'name',
+    # 'size', 'type', and 'datapath' columns. The 'datapath'
+    # column will contain the local filenames where the data can
+    # be found.
+    resource_input_data <- reactive({
+
+      req(input$resource_file)
+
+      inFile <- input$resource_file
+
+      ext <- reader::get.ext(inFile$datapath)
+
+      switch(ext,
+        "csv" = readr::read_csv(file = inFile$datapath),
+        "xls" = readxl::read_excel(path = inFile$datapath),
+        "xlsx" = readxl::read_excel(path = inFile$datapath),
+        validate("Invalid file; Please upload a .csv, .xls, or .xlsx file")
+        )
+      })
     # 
-    # resource_input_data <- reactive({
-    # #   # input$file1 will be NULL initially. After the user selects
-    # #   # and uploads a file, it will be a data frame with 'name',
-    # #   # 'size', 'type', and 'datapath' columns. The 'datapath'
-    # #   # column will contain the local filenames where the data can
-    # #   # be found.
-    # #   req(input$resource_file)
-    # #   
-    # #   inFile <- input$resource_file
-    # #   
-    # #   ext <- reader::get.ext(inFile$datapath)
-    # #   
-    # #   switch(ext,
-    # #     "csv" = readr::read_csv(file = inFile$datapath),
-    # #     "xls" = readxl::read_excel(path = inFile$datapath),
-    # #     "xlsx" = readxl::read_excel(path = inFile$datapath),
-    # #     validate("Invalid file; Please upload a .csv, .xls, or .xlsx file")
-    # #   )
-    # })
-    # 
-    # output$new_resource_contents <- renderTable({
-    # #   head(resource_input_data())
-    # #   
-    # })
+    output$new_resource_contents <- renderTable({
+      head(resource_input_data())
+
+    })
     # 
     # 
     # # Section for displaying cumulative resource information

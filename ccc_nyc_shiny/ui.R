@@ -83,8 +83,11 @@ shinyUI(dashboardPage(
                         multiple = FALSE,
                         accept = c("text/csv", 
                                    "text/comma-separated-values, text/plain",
-                                   ".csv")
-                      )
+                                   ".csv", ".xlsx", ".xls")
+                      ),
+                      tableOutput("new_resource_contents"),
+                      textInput("category", "Resource Label:"),
+                      actionButton("addResource", "Add Resource to Resource Table")
                     )
             ),
             tabItem(tabName = "per_split",
@@ -102,14 +105,7 @@ shinyUI(dashboardPage(
         #                   tableOutput("new_resource_contents")
         #                   )
         #             ),
-        #             # fluidRow(
-        #             #     box(
-        #             #         # Output is a display of the allocations percentages should that option be selected
-        #             #     width = 8, status = "info",solidHeader = TRUE,
-        #             #     title = "Percent Weight for Resources",
-        #             #     DT::dataTableOutput("perc_table")
-        #             #     ))
-        #             # )
+
         #     tabItem(tabName = "asset_inventory",
         #             fluidPage(
         #               tabBox(title = "Community Asset Info", id = "asset_tabset",
