@@ -309,22 +309,25 @@ shinyServer(function(input, output, session) {
     # 
     # # Section for displaying cumulative resource information
     # 
-    # resource_tbl <- eventReactive(input$upload_resource, {
-    # #   input_table <- resource_input_data()
-    # #   
-    # #   add_resource(
-    # #     new_resource_tbl = input_table, name_col = "Location", type_col = "Category", capacity_amt_col = NA,
-    # #     capacity_unit_col = NA, geom_col = "latlong", current_resource_tbl = resource_sf)
-    # })
-    # 
-    # output$asset_listing <- DT::renderDataTable({
-    # #   #DT::datatable(resource_sf)
-    # #   if(is_empty(resource_tbl())){
-    # #     DT::datatable(resource_sf)
-    # #   } else{
-    # #   DT::datatable(resource_tbl())
-    # #     }
-    # })
+    resource_tbl <- eventReactive(input$addResource, {
+      input_table <- resource_input_data()
+      
+      colnames(input_table)[c(input$latitude_col, input$longitude_col)] <- c("Latitude","Longitude")
+
+      add_resource(
+        new_resource_tbl = input_table, name_col = "Location", type_col = input$new_resource_category, 
+        geom_col = "latlong", current_resource_tbl = resource_sf)
+    })
+     
+    output$asset_listing <- DT::renderDataTable({
+      resource_tbl <- resource_tbl()
+
+      if(is_empty(resource_tbl)){
+        DT::datatable(resource_sf)
+      } else{
+      DT::datatable(resource_tbl)
+        }
+    })
     # 
     # resource_ct_by_geoid_tbl <- reactive({
     #   # new_category <- resource_input_data() %>% .$Category %>% unique() 

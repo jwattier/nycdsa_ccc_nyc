@@ -3,6 +3,7 @@ library(opentripplanner)
 library(DT)
 # library(bbplot)
 library(geojsonsf)
+library(tidycensus)
 library(htmltools)
 library(readxl)
 library(leaflet)
@@ -84,8 +85,11 @@ nyc_food_retail <- read_csv(paste0(parent_path, "data/resources/retail_food/Reta
   mutate(., lat_nbr = as.numeric(lat), long_nbr = as.numeric(long)) %>% 
   st_as_sf(., coords = c("lat_nbr", "long_nbr"), crs=4326, agr = "constant")
 
-resource_sf <- add_resource(nyc_food_retail, name_col = 'DBA Name', type_col = 'Operation Type', capacity_amt_col = 'Square Footage',
-                            capacity_unit_col = "sqft", geom_col = "geometry", current_resource_tbl = NULL)
+resource_sf <- add_resource(nyc_food_retail, name_col = 'DBA Name', category_col = 'Operation Type', 
+                            # capacity_amt_col = 'Square Footage',
+                            # capacity_unit_col = "sqft", 
+                            geom_col = "geometry", current_resource_tbl = NULL
+                            )
 
 # 2) early childhood centers
 file_path = paste0(parent_path, "data/resources/early_childhood")
@@ -98,8 +102,8 @@ early_chood_ctrs_sf <-readxl::read_xlsx(
                 "text", "text", "text", "text")
 ) %>% st_as_sf(., coords = c("Long", "Lat"), crs = 4326)
 
-resource_sf <- add_resource(new_resource_tbl = early_chood_ctrs_sf, name_col = 'Address', type_col = "SiteType",
-                            capacity_amt_col = "Total Enrollment", capacity_unit_col = "enrollment", 
+resource_sf <- add_resource(new_resource_tbl = early_chood_ctrs_sf, name_col = 'Address', category_col = "SiteType",
+                            # capacity_amt_col = "Total Enrollment", capacity_unit_col = "enrollment", 
                             current_resource_tbl = resource_sf)
 
 # 3) optional set of assets 
@@ -109,8 +113,10 @@ asset_files <- asset_csv_files %>%
   map_dfr(readr::read_csv)
 
 custom_resource_sf <-add_resource(
-    new_resource_tbl = asset_files, name_col = "Description", type_col = "Category", capacity_amt_col = NA,
-    capacity_unit_col = NA, geom_col = "latlong", current_resource_tbl = resource_sf)
+    new_resource_tbl = asset_files, name_col = "Description", category_col = "Category", 
+    # capacity_amt_col = NA,
+    # capacity_unit_col = NA, 
+    geom_col = "latlong", current_resource_tbl = resource_sf)
 
 #--------------------- map resources to census areas
 # this numeric vector is ordered the same as the rows on the nyc_just_geoid_geom_sf

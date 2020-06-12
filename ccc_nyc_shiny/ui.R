@@ -86,7 +86,13 @@ shinyUI(dashboardPage(
                                    ".csv", ".xlsx", ".xls")
                       ),
                       tableOutput("new_resource_contents"),
-                      textInput("category", "Resource Label:"),
+                      textInput("new_resource_category", "Resource Label:"),
+                      numericInput("longitude_col", 
+                                   "Enter Column Position (#) of Longitude Col:",
+                                   min = 1, max = 1000, step = 1, value = 1),
+                      numericInput("latitude_col", 
+                                   "Enter Column Position (#) of Latitude Col:",
+                                   min = 1, max = 1000, step = 1, value = 1),
                       actionButton("addResource", "Add Resource to Resource Table")
                     )
             ),

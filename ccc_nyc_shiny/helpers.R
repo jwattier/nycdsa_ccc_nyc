@@ -3,20 +3,18 @@
 library(dplyr)
 library(leaflet)
 library(sf)
+library(tidycensus)
 
 
-add_resource <- function(new_resource_tbl, name_col, type_col, capacity_amt_col = NA, 
-                         capacity_unit_col = NA, geom_col = "geometry", current_resource_tbl=NULL){
+add_resource <- function(new_resource_tbl, name_col, category_col, geom_col = "geometry", current_resource_tbl=NULL){
   # current_resource_tbl is the tibble/data frame object 
   # name is the label provided to the location (e.g., the DBA name of a business)
   # type_col is the type category (e.g., Charter or DOE school in the case of schools) 
-  # capacity_amt_col is the column where the "# of units" is provided re: how a location is measure (e.g., sqft or number of seates/doctors
-  # capity_unit_col represents the unit of measure for the capacity_amt column 
   # geom_col is the location of the geometry column, assumed to be geometry
   
   
   column_names <- colnames(new_resource_tbl)
-  # assumption is that user will provide lat_long colums
+  # assumption is that user will provide lat_long columns
   if (geom_col != "geometry"){
     if (('Latitude' %in% column_names) && ('Longitude' %in% column_names)) {
       new_resource_tbl <- new_resource_tbl %>% st_as_sf(., coords = c("Longitude", "Latitude"), crs = 4326)
@@ -26,19 +24,12 @@ add_resource <- function(new_resource_tbl, name_col, type_col, capacity_amt_col 
   total_rows <- nrow(new_resource_tbl)
   
   # if else condition to handle instances where the capacity amount column is NA
-  if (is.na(capacity_amt_col)){
-    new_addition <- new_resource_tbl %>% 
-      select(., name = name_col, type = type_col) %>%
-      mutate(., capacity_unit_col = rep(capacity_unit_col, length.out = total_rows)
-                                        , capacity_amt = rep(capacity_amt_col, length.out = total_rows))
-    
-  } else {
-    new_addition <- new_resource_tbl %>% 
-      select(., name = name_col, type = type_col, capacity_amt = capacity_amt_col) %>%
-      mutate(., capacity_unit_col = rep(capacity_unit_col, length.out = total_rows))
-  }
-    
-    
+  new_addition <- new_resource_tbl %>% 
+      mutate(., 
+             name = rep(name_col, length.out = total_rows), 
+             category = rep(category_col, length.out = total_rows)
+      ) %>% 
+      select(., name, category, geometry)
     
   if (is.null(current_resource_tbl) == TRUE){
     return(
