@@ -10,7 +10,6 @@
 parent_path = "./"
 
 source(paste0(parent_path, "helpers.R"))
-library(shiny)
 
 
 # Define UI for application that draws a histogram

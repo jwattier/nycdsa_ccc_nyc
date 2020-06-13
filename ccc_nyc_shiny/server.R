@@ -322,7 +322,7 @@ shinyServer(function(input, output, session) {
     output$asset_listing <- DT::renderDataTable({
       resource_tbl <- resource_tbl()
 
-      if(is_empty(resource_tbl)){
+      if(is_null(resource_tbl)){
         DT::datatable(resource_sf)
       } else{
       DT::datatable(resource_tbl)
