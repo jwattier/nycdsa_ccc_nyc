@@ -17,7 +17,7 @@ add_resource <- function(new_resource_tbl, name_col, category_col, geom_col = "g
   # assumption is that user will provide lat_long columns
   if (geom_col != "geometry"){
     if (('Latitude' %in% column_names) && ('Longitude' %in% column_names)) {
-      new_resource_tbl <- new_resource_tbl %>% st_as_sf(., coords = c("Longitude", "Latitude"), crs = 4326)
+      new_resource_tbl <- new_resource_tbl %>% sf::st_as_sf(., coords = c("Longitude", "Latitude"), crs = 4326)
     }
   }
   

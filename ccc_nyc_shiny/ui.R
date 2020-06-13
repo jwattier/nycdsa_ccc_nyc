@@ -23,6 +23,7 @@ shinyUI(dashboardPage(
           menuItem(text = "Explore", tabName = "explore", icon = icon("chart-area")),
           menuItem(text = "Demographic Analysis", tabName = "demogrph_analysis", icon=icon("chart-area")),
           menuItem(text = "Resource Upload", tabName = "resource_upload", icon=icon("file")),
+          menuItem(text = "Resource Inventory", tabName = "asset_inventory", icon = icon("map")),
           menuItem(text = "Deep Dive", tabName = "deep_dive", icon = icon("chart-area")),
           shinyWidgets::pickerInput(
             inputId = "borough",
@@ -112,14 +113,11 @@ shinyUI(dashboardPage(
         #                   )
         #             ),
 
-        #     tabItem(tabName = "asset_inventory",
-        #             fluidPage(
-        #               tabBox(title = "Community Asset Info", id = "asset_tabset",
-        #                      tabPanel("Asset List", DT::dataTableOutput("asset_listing")),
-        #                      tabPanel("Asset Counts", DT::dataTableOutput("resource_ct_tbl")),
-        #                      tabPanel("Asset Map", leafletOutput("resource_point_map"))
-        #               )
-        #             )),
+            tabItem(tabName = "asset_inventory",
+                    fluidPage(
+                             DT::dataTableOutput("asset_listing")
+                             )
+                    ),
         #     tabItem(tabName = "access_score_by_geoid",
         #             fluidPage(
         #               DT::dataTableOutput("access_score_tbl")

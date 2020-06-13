@@ -312,10 +312,10 @@ shinyServer(function(input, output, session) {
     resource_tbl <- eventReactive(input$addResource, {
       input_table <- resource_input_data()
       
-      colnames(input_table)[c(input$latitude_col, input$longitude_col)] <- c("Latitude","Longitude")
+      # colnames(input_table)[c(input$latitude_col, input$longitude_col)] <- c("Latitude","Longitude")
 
       add_resource(
-        new_resource_tbl = input_table, name_col = "Location", type_col = input$new_resource_category, 
+        new_resource_tbl = input_table, name_col = "Location", category_col = input$new_resource_category, 
         geom_col = "latlong", current_resource_tbl = resource_sf)
     })
      
