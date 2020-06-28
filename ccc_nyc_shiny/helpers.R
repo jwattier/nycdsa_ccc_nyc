@@ -28,14 +28,11 @@ add_resource <- function(new_resource_tbl, name_col, category_col, geom_col = "g
   
   if (name_col %in% column_names && category_col %in%  column_names){
     
-    # colnames(new_resource_tbl)[c(name_col, category_col)] <- c("name", "category")
-    
     new_addition <- new_resource_tbl %>% 
-      mutate(., 
-             name = new_resource_tbl[, c(name_col)],
-             category = new_resource_tbl[, c(category_col)]
-             ) %>% 
-      select(., name, category, geometry)
+      select(., 
+             name = name_col,
+             category = category_col
+             )
     
   } else {
     new_addition <- new_resource_tbl %>% 

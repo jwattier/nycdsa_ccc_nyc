@@ -190,7 +190,7 @@ pal <- colorNumeric("viridis", domain = access_score_4_pal$weighted_score)
 
 ### Output resources to file ## TODO
 # file is located in the resources sub-directory
-resource_file <- paste0(parent_path, "resources/resource_list.geojson")
+resource_fileg <- paste0(parent_path, "resources/resource_list.geojson")
 
   
   
