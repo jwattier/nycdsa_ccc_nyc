@@ -1,9 +1,9 @@
 # import needed libraries
-library(opentripplanner)
+# library(opentripplanner)
 library(DT)
 # library(bbplot)
 library(geojsonsf)
-library(tidycensus)
+# library(tidycensus)
 library(htmltools)
 library(readxl)
 library(leaflet)
@@ -175,7 +175,6 @@ prcnt_fctr_by_time_bin <- tibble(
 
 just_geoids <- nyc_just_geoid_geom_sf %>% as_tibble() %>% select(., GEOID)
 
-
 access_score_by_geoid <- 
   just_geoids %>% 
   left_join(., nyc_trvl_times_adj, by = c("GEOID" = "origin")) %>%
@@ -185,23 +184,13 @@ access_score_by_geoid <-
   group_by(GEOID, category) %>%
   summarise(weighted_score = sum(weighted_score))
 
-# access_score_by_geoid <- 
-#   just_geoids %>% 
-#   left_join(., nyc_trvl_times_adj, by = c("GEOID" = "origin")) %>% 
-#   left_join(., y=resource_ct_by_geoid, by = c("destination" = "resource_geoid")) %>%
-#   mutate(., weighted_score = count / minutes) %>% 
-#   group_by(GEOID, category) %>% 
-#   summarise(weighted_score = sum(weighted_score))
-
-
-### TO DO -> LOOK INTO WHY THERE'S A NA ROW re: category/access score
-# access_score_by_geoid$weighted_score <- access_score_by_geoid$weighted_score %>% replace_na(0)
-
 access_score_4_pal <- access_score_by_geoid %>% filter(., category == "early childhood center")
 pal <- colorNumeric("viridis", domain = access_score_4_pal$weighted_score)
 
 
-
+### Output resources to file ## TODO
+# file is located in the resources sub-directory
+resource_file <- paste0(parent_path, "resources/resource_list.geojson")
 
   
   

@@ -23,14 +23,30 @@ add_resource <- function(new_resource_tbl, name_col, category_col, geom_col = "g
   
   total_rows <- nrow(new_resource_tbl)
   
-  # if else condition to handle instances where the capacity amount column is NA
-  new_addition <- new_resource_tbl %>% 
+  # if else condition to handle instances where the name or category input are column names or
+  # constant inputs that apply to all values recieved
+  
+  if (name_col %in% column_names && category_col %in%  column_names){
+    
+    # colnames(new_resource_tbl)[c(name_col, category_col)] <- c("name", "category")
+    
+    new_addition <- new_resource_tbl %>% 
+      mutate(., 
+             name = new_resource_tbl[, c(name_col)],
+             category = new_resource_tbl[, c(category_col)]
+             ) %>% 
+      select(., name, category, geometry)
+    
+  } else {
+    new_addition <- new_resource_tbl %>% 
       mutate(., 
              name = rep(name_col, length.out = total_rows), 
              category = rep(category_col, length.out = total_rows)
       ) %>% 
       select(., name, category, geometry)
-    
+  }
+
+      
   if (is.null(current_resource_tbl) == TRUE){
     return(
       new_addition

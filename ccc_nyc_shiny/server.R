@@ -320,13 +320,15 @@ shinyServer(function(input, output, session) {
     })
      
     output$asset_listing <- DT::renderDataTable({
-      resource_tbl <- resource_tbl()
+      DT::datatable(sf::read_sf(resource_file))
+      
+      # resource_tbl <- resource_tbl()
 
-      if(is_null(resource_tbl)){
-        DT::datatable(resource_sf)
-      } else{
-      DT::datatable(resource_tbl)
-        }
+      # if(is_null(resource_tbl)){
+      #   DT::datatable(resource_sf)
+      # } else{
+      # DT::datatable(resource_tbl)
+      #   }
     })
     # 
     # resource_ct_by_geoid_tbl <- reactive({
