@@ -30,7 +30,7 @@ options(shiny.maxRequestSize = 9*1024^2)
 
 options(tigris_use_cache = TRUE)
 
-#parent_path = "./ccc_nyc_shiny/"
+# parent_path = "./ccc_nyc_shiny/"
 parent_path = "./"
 
 source(paste0(parent_path, "helpers.R"))
@@ -194,4 +194,5 @@ resource_fileg <- paste0(parent_path, "resources/resource_list.geojson")
 
   
   
-  
+# ------------------- Update Resource File prior to finishing pre-processing
+update_resource_file(resource_input = resource_sf)

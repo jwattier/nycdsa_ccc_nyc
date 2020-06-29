@@ -320,7 +320,9 @@ shinyServer(function(input, output, session) {
     })
      
     output$asset_listing <- DT::renderDataTable({
-      DT::datatable(sf::read_sf(resource_file))
+      resource_file <- read_resource_file()
+      
+      DT::datatable(resource_file)
       
       # resource_tbl <- resource_tbl()
 

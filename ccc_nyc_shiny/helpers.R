@@ -5,6 +5,7 @@ library(leaflet)
 library(sf)
 library(tidycensus)
 
+### Resource Table Management
 
 add_resource <- function(new_resource_tbl, name_col, category_col, geom_col = "geometry", current_resource_tbl=NULL){
   # current_resource_tbl is the tibble/data frame object 
@@ -54,14 +55,21 @@ add_resource <- function(new_resource_tbl, name_col, category_col, geom_col = "g
   
 }
 
-# resource_sf
-# new_stuff <- readr::read_csv(file = "./data/resources/new_csv_file/Assets.csv")
-# 
-# input_table <- new_stuff
-# 
-# add_resource(
-#   new_resource_tbl = input_table, name_col = "Location", type_col = "Category", capacity_amt_col = NA,
-#   capacity_unit_col = NA, geom_col = "latlong", current_resource_tbl = resource_sf)
+update_resource_file <- function(resource_input){
+  resource_file = paste0(parent_path, "resources/resource_list.geojson")
+  
+  if(file.exists(resource_file)){
+    file.remove(resource_file)
+  }
+  
+  sf::st_write(obj = resource_input, dsn = resource_file)
+}
+
+read_resource_file <- function(){
+  resource_file = paste0(parent_path, "resources/resource_list.geojson")
+  
+  return(sf::st_read(dsn = resource_file))
+}
 
 find_tvl_radius <- function(geometry_sf, geo_id, travel_time_cutoff){
   geometry_sf %>% 
