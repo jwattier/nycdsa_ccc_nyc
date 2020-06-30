@@ -83,8 +83,6 @@ find_tvl_radius <- function(geometry_sf, geo_id, travel_time_cutoff){
     # leaflet::leaflet() %>% addProviderTiles("CartoDB.DarkMatter") %>% addPolygons()
     # 
 }
-#find_tvl_radius(geometry_sf = nyc_just_geoid_geom_sf, geo_id = "36005000100", travel_time_cutoff = 60)
-# 
 
 show_resources_in_tvl_radius <- function(resources_sf, geo_id_vctr){
   # returns sf pertaining to geoids in the travel time range derived from "find tvl radius" function

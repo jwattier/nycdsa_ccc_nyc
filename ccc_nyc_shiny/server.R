@@ -309,15 +309,17 @@ shinyServer(function(input, output, session) {
     # 
     # # Section for displaying cumulative resource information
     # 
-    resource_tbl <- eventReactive(input$addResource, {
+    observeEvent(input$addResource, {
       input_table <- resource_input_data()
-      
-      # colnames(input_table)[c(input$latitude_col, input$longitude_col)] <- c("Latitude","Longitude")
+      resource_file <- read_resource_file()
 
-      add_resource(
+      new_resource_tbl <- add_resource(
         new_resource_tbl = input_table, name_col = "Location", category_col = input$new_resource_category, 
-        geom_col = "latlong", current_resource_tbl = resource_sf)
-    })
+        geometry_col = "latlong", current_resource_tbl = resource_file)
+      
+      update_resource_file(resource_input = new_resource_tbl)
+      
+      })
      
     output$asset_listing <- DT::renderDataTable({
       resource_file <- read_resource_file()
