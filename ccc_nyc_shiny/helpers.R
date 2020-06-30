@@ -5,8 +5,9 @@ library(leaflet)
 library(sf)
 library(tidycensus)
 
-### Resource Table Management
+############################################## 1. Resource Table Management
 
+# 1A Add Resource to New or Pre-existing table
 add_resource <- function(new_resource_tbl, name_col, category_col, geometry_col = "geometry", current_resource_tbl=NULL){
   # current_resource_tbl is the tibble/data frame object 
   # name is the label provided to the location (e.g., the DBA name of a business)
@@ -53,6 +54,7 @@ add_resource <- function(new_resource_tbl, name_col, category_col, geometry_col 
   
 }
 
+# 2A Update Resource GeoJson file
 update_resource_file <- function(resource_input){
   resource_file = paste0(parent_path, "resources/resource_list.geojson")
   
@@ -63,6 +65,7 @@ update_resource_file <- function(resource_input){
   sf::st_write(obj = resource_input, dsn = resource_file)
 }
 
+# 3A Read-In Resource GeoJson file
 read_resource_file <- function(){
   resource_file = paste0(parent_path, "resources/resource_list.geojson")
   

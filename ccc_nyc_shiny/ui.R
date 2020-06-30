@@ -96,6 +96,16 @@ shinyUI(dashboardPage(
                       actionButton("addResource", "Add Resource to Resource Table")
                     )
             ),
+            tabItem(tabName = "asset_inventory",
+                    fluidPage(
+                      tabBox(
+                        title = "Asset Information", width = 12,
+                        tabPanel("Asset Listing", DT::dataTableOutput("asset_listing")),
+                        tabPanel("Resource by Census Tract", )
+                      )
+                    )
+              
+            ),
             tabItem(tabName = "per_split",
                     fluidPage(
                       box(
@@ -106,21 +116,11 @@ shinyUI(dashboardPage(
                       ))
               
             ),
-        #     tabItem(tabName = "resource",
-        #                 fluidPage(
-        #                   tableOutput("new_resource_contents")
-        #                   )
-        #             ),
 
-            tabItem(tabName = "asset_inventory",
+            tabItem(tabName = "access_score_by_geoid",
                     fluidPage(
-                             DT::dataTableOutput("asset_listing")
-                             )
-                    ),
-        #     tabItem(tabName = "access_score_by_geoid",
-        #             fluidPage(
-        #               DT::dataTableOutput("access_score_tbl")
-        #             )),
+                      DT::dataTableOutput("access_score_tbl")
+                    )),
             tabItem(tabName = "explore",
         #             # fluidRow(
         #             #     valueBoxOutput("population")
