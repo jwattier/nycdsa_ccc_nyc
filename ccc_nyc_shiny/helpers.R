@@ -7,7 +7,7 @@ library(tidycensus)
 
 ### Resource Table Management
 
-add_resource <- function(new_resource_tbl, name_col, category_col, geom_col = "geometry", current_resource_tbl=NULL){
+add_resource <- function(new_resource_tbl, name_col, category_col, geometry_col = "geometry", current_resource_tbl=NULL){
   # current_resource_tbl is the tibble/data frame object 
   # name is the label provided to the location (e.g., the DBA name of a business)
   # type_col is the type category (e.g., Charter or DOE school in the case of schools) 
@@ -16,7 +16,7 @@ add_resource <- function(new_resource_tbl, name_col, category_col, geom_col = "g
   
   column_names <- colnames(new_resource_tbl)
   # assumption is that user will provide lat_long columns
-  if (geom_col != "geometry"){
+  if (geometry_col != "geometry"){
     if (('Latitude' %in% column_names) && ('Longitude' %in% column_names)) {
       new_resource_tbl <- new_resource_tbl %>% sf::st_as_sf(., coords = c("Longitude", "Latitude"), crs = 4326)
     }
@@ -29,11 +29,9 @@ add_resource <- function(new_resource_tbl, name_col, category_col, geom_col = "g
   
   if (name_col %in% column_names && category_col %in%  column_names){
     
-    new_addition <- new_resource_tbl %>% 
-      select(., 
-             name = name_col,
-             category = category_col
-             )
+    new_addition <- new_resource_tbl %>% select(., name_col, category_col, geometry)
+    
+    colnames(new_addition) <- c("name", "category", "geometry")
     
   } else {
     new_addition <- new_resource_tbl %>% 

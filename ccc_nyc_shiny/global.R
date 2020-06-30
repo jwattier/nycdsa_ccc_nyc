@@ -88,7 +88,7 @@ nyc_food_retail <- read_csv(paste0(parent_path, "data/resources/retail_food/Reta
 resource_sf <- add_resource(nyc_food_retail, name_col = 'DBA Name', category_col = 'Operation Type', 
                             # capacity_amt_col = 'Square Footage',
                             # capacity_unit_col = "sqft", 
-                            geom_col = "geometry", current_resource_tbl = NULL
+                            geometry_col = "geometry", current_resource_tbl = NULL
                             )
 
 # 2) early childhood centers
@@ -116,7 +116,7 @@ custom_resource_sf <-add_resource(
     new_resource_tbl = asset_files, name_col = "Description", category_col = "Category", 
     # capacity_amt_col = NA,
     # capacity_unit_col = NA, 
-    geom_col = "latlong", current_resource_tbl = resource_sf)
+    geometry_col = "latlong", current_resource_tbl = resource_sf)
 
 #--------------------- map resources to census areas
 # this numeric vector is ordered the same as the rows on the nyc_just_geoid_geom_sf
