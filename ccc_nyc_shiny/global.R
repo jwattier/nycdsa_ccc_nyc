@@ -196,3 +196,4 @@ resource_fileg <- paste0(parent_path, "resources/resource_list.geojson")
   
 # ------------------- Update Resource File prior to finishing pre-processing
 update_resource_file(resource_input = resource_sf)
+update_resource_count_file(resource_count_input = resource_ct_by_geoid)

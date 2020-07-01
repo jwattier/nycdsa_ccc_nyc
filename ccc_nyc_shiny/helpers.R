@@ -94,6 +94,7 @@ show_resources_in_tvl_radius <- function(resources_sf, geo_id_vctr){
     addProviderTiles("CartoDB.DarkMatter") %>% addPolygons()
 }
 
+# Resource Count Table
 
 update_resource_ct_sf <- function(current_resource_ct_table, new_resource_sf
                                   , census_geo_sf, resource_category,travel_time_cutoff = 60){
@@ -115,6 +116,28 @@ update_resource_ct_sf <- function(current_resource_ct_table, new_resource_sf
   } else {
     return(bind_rows(current_resource_ct_table, new_addition))
   }
+}
+
+update_resource_count_file <- function(resource_count_input){
+  resource_count_file = paste0(parent_path, "resources/resource_count_by_geo.csv")
+  
+  if(file.exists(resource_count_file)){
+    file.remove(resource_count_file)
+  }
+  
+  readr::write_excel_csv(x = resource_count_input, path = resource_count_file)
+}
+
+read_resource_count_file <- function(){
+  resource_ct_file = paste0(parent_path, "resources/resource_count_by_geo.csv")
+  
+  return(
+    readr::read_csv(
+      file = resource_ct_file, 
+      col_types = list(col_character(), col_character(), col_integer())
+      #, col_names = c("resource_geoid", "category", "count")
+      )
+    )
 }
 
 update_access_calc_tbl <- function(current_accesss_score_tbl, new_resource_category, resource_ct_tbl, travel_time_cutoff = 60){

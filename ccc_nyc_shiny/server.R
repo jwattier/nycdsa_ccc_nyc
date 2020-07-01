@@ -320,11 +320,13 @@ shinyServer(function(input, output, session) {
       update_resource_file(resource_input = new_resource_tbl)
       
       })
+    
+    resource_file <- reactiveFileReader(1000, session, "./resources/resource_list.geojson", sf::st_read)
      
     output$asset_listing <- DT::renderDataTable({
-      resource_file <- read_resource_file()
+      # resource_file <- read_resource_file()
       
-      DT::datatable(resource_file)
+      DT::datatable(resource_file())
       
       # resource_tbl <- resource_tbl()
 
@@ -333,6 +335,33 @@ shinyServer(function(input, output, session) {
       # } else{
       # DT::datatable(resource_tbl)
       #   }
+    })
+    
+    # resource_count_file_reactive <- reactiveFileReader(1000, session = session, "./resources/resource_count_by_geo.csv", read.csv)
+    
+    observeEvent(input$updateResourceCtTbl, {
+      # resource_ct_file <- resource_count_file_reactive()
+      new_resource_file <- read_resource_file()
+      resource_ct_table <- read_resource_count_file()
+      
+      new_resource_ct_by_geoid <- update_resource_ct_sf(current_resource_ct_table = resource_ct_table, 
+                                                    new_resource_sf = new_resource_file,
+                                                    census_geo_sf = nyc_just_geoid_geom_sf, 
+                                                    resource_category = input$new_resource_category,
+                                                    travel_time_cutoff = 60)
+      
+      update_resource_count_file(resource_count_input = new_resource_ct_by_geoid)
+    })
+    
+    resource_ct_file <- reactiveFileReader(1000, session, "./resources/resource_count_by_geo.csv", readr::read_csv)
+    
+    
+    output$resource_count_by_geo <- DT::renderDataTable({
+      #resource_ct_file <- read_resource_count_file()
+      DT::datatable(resource_ct_file())
+      #resource_count_file <- resource_count_file_reactive()
+      
+      #resource_count_file
     })
     # 
     # resource_ct_by_geoid_tbl <- reactive({

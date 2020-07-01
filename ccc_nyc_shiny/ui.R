@@ -100,8 +100,11 @@ shinyUI(dashboardPage(
                     fluidPage(
                       tabBox(
                         title = "Asset Information", width = 12,
-                        tabPanel("Asset Listing", DT::dataTableOutput("asset_listing")),
-                        tabPanel("Resource by Census Tract", )
+                        tabPanel("Asset Listing", 
+                                 DT::dataTableOutput("asset_listing"), 
+                                 actionButton("updateResourceCtTbl", "Update by Census Tract Resource Count Table")
+                                 ),
+                        tabPanel("Resource by Census Tract", DT::dataTableOutput("resource_count_by_geo"))
                       )
                     )
               
