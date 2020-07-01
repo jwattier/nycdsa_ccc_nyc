@@ -104,11 +104,13 @@ shinyUI(dashboardPage(
                                  DT::dataTableOutput("asset_listing"), 
                                  actionButton("updateResourceCtTbl", "Update by Census Tract Resource Count Table")
                                  ),
-                        tabPanel("Resource by Census Tract", DT::dataTableOutput("resource_count_by_geo"))
+                        tabPanel("Resource by Census Tract", 
+                                 DT::dataTableOutput("resource_count_by_geo"),
+                                 actionButton("updateAccessScorebyGeoID", "Update Access Score Table")
+                                 )
+                        )
                       )
-                    )
-              
-            ),
+                    ),
             tabItem(tabName = "per_split",
                     fluidPage(
                       box(

@@ -363,10 +363,11 @@ shinyServer(function(input, output, session) {
     access_score_file <- reactiveFileReader(1000, session, "./resources/access_score_by_geo.csv", readr::read_csv)
     
     observeEvent(input$updateAccessScorebyGeoID, {
-      resource_ct_file <- resource_ct_file()
+      resource_ct_file <- resource_ct_file() %>% 
+        mutate(., resource_geoid = as.character(resource_geoid))
       
       update_access_calc_tbl(
-        current_accesss_score_tbl = ,
+        current_accesss_score_tbl = access_score_by_geoid,
         new_resource_category = input$new_resource_category,
         resource_ct_tbl = resource_ct_file
         )

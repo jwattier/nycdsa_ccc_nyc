@@ -145,7 +145,7 @@ update_access_calc_tbl <- function(current_accesss_score_tbl, new_resource_categ
     left_join(., nyc_trvl_times_adj, by = c("GEOID" = "origin")) %>% 
     filter(., minutes <= travel_time_cutoff) %>% 
     left_join(., y=resource_ct_tbl, by = c("destination" = "resource_geoid")) %>%
-    filter(., category == new_resource_category)
+    filter(., category == new_resource_category) %>% 
     mutate(., weighted_score = count / minutes) %>% 
     group_by(GEOID, category) %>% 
     summarise(weighted_score = sum(weighted_score))
