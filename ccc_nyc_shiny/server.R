@@ -357,12 +357,23 @@ shinyServer(function(input, output, session) {
     
     
     output$resource_count_by_geo <- DT::renderDataTable({
-      #resource_ct_file <- read_resource_count_file()
       DT::datatable(resource_ct_file())
-      #resource_count_file <- resource_count_file_reactive()
-      
-      #resource_count_file
     })
+    
+    access_score_file <- reactiveFileReader(1000, session, "./resources/access_score_by_geo.csv", readr::read_csv)
+    
+    observeEvent(input$updateAccessScorebyGeoID, {
+      resource_ct_file <- resource_ct_file()
+      
+      update_access_calc_tbl(
+        current_accesss_score_tbl = ,
+        new_resource_category = input$new_resource_category,
+        resource_ct_tbl = resource_ct_file
+        )
+      
+    }
+      
+    )
     # 
     # resource_ct_by_geoid_tbl <- reactive({
     #   # new_category <- resource_input_data() %>% .$Category %>% unique() 
