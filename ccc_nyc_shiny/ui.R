@@ -107,7 +107,10 @@ shinyUI(dashboardPage(
                         tabPanel("Resource by Census Tract", 
                                  DT::dataTableOutput("resource_count_by_geo"),
                                  actionButton("updateAccessScorebyGeoID", "Update Access Score Table")
-                                 )
+                                 ),
+                        tabPanel("Access Score by Census Tract",
+                                 DT::dataTableOutput("access_score_by_geo")
+                        )
                         )
                       )
                     ),

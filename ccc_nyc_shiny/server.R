@@ -360,21 +360,37 @@ shinyServer(function(input, output, session) {
       DT::datatable(resource_ct_file())
     })
     
-    access_score_file <- reactiveFileReader(1000, session, "./resources/access_score_by_geo.csv", readr::read_csv)
     
     observeEvent(input$updateAccessScorebyGeoID, {
       resource_ct_file <- resource_ct_file() %>% 
         mutate(., resource_geoid = as.character(resource_geoid))
       
-      update_access_calc_tbl(
+      new_access_score_tbl <- update_access_calc_tbl(
         current_accesss_score_tbl = access_score_by_geoid,
         new_resource_category = input$new_resource_category,
         resource_ct_tbl = resource_ct_file
         )
       
-    }
-      
+      update_access_score_file(access_score_input =  new_access_score_tbl)
+      }
     )
+    
+    access_score_file <- reactiveFileReader(1000, session, "./resources/access_score_by_geo.csv", readr::read_csv)
+    
+    access_score_file_cleaned <- reactive({
+      access_score_file() %>% 
+        mutate(., GEOID = as.character(GEOID)) %>%
+        filter(., !is.na(category) == TRUE) %>% as_tibble()
+    })
+    
+    output$access_score_by_geo <- DT::renderDataTable({
+      # access_score_file <- access_score_file() %>% filter(!is.na(category) == TRUE)
+      # access_score_file <- readr::read_csv("./resources/access_score_by_geo.csv") %>% 
+      #   mutate(., GEOID = as.character(GEOID)) %>%
+      #   filter(., !is.na(category) == TRUE) %>% as_tibble()
+      # 
+      DT::dataTableOutput(access_score_file_cleaned())
+    })
     # 
     # resource_ct_by_geoid_tbl <- reactive({
     #   # new_category <- resource_input_data() %>% .$Category %>% unique() 

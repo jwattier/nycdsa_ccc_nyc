@@ -140,14 +140,18 @@ read_resource_count_file <- function(){
     )
 }
 
+############################# Acces Score Mechanics
+
+# Update Access Score Table
 update_access_calc_tbl <- function(current_accesss_score_tbl, new_resource_category, resource_ct_tbl, travel_time_cutoff = 60){
   new_addition <- just_geoids %>% 
     left_join(., nyc_trvl_times_adj, by = c("GEOID" = "origin")) %>% 
     filter(., minutes <= travel_time_cutoff) %>% 
     left_join(., y=resource_ct_tbl, by = c("destination" = "resource_geoid")) %>%
     filter(., category == new_resource_category) %>% 
-    mutate(., weighted_score = count / minutes) %>% 
-    group_by(GEOID, category) %>% 
+    left_join(., prcnt_fctr_by_time_bin, by = "minutes_bin") %>% 
+    mutate(., weighted_score = if_else(is.na(minutes_bin),0, count * percent)) %>%
+    group_by(GEOID, category) %>%
     summarise(weighted_score = sum(weighted_score))
     
   if (is.null(current_accesss_score_tbl) == TRUE){
@@ -157,6 +161,28 @@ update_access_calc_tbl <- function(current_accesss_score_tbl, new_resource_categ
   }
 }
 
+# Update Access Score File
+read_access_score_file <- function(){
+  access_score_file = paste0(parent_path, "resources/access_score_by_geo.csv")
+  
+  return(
+    readr::read_csv(
+      file = access_score_file, 
+      col_types = list(col_character(), col_character(), col_double())
+      #, col_names = c("resource_geoid", "category", "count")
+    )
+  )
+}
+
+update_access_score_file <- function(access_score_input){
+  access_score_file = paste0(parent_path, "resources/access_score_by_geo.csv")
+  
+  if(file.exists(access_score_file)){
+    file.remove(access_score_file)
+  }
+  
+  readr::write_excel_csv(x = access_score_input, path = access_score_file)
+}
 
 # rewrite later to take input from the find_tvl_radius funcitons 
 calc_access_score_detail <- function(census_sf_object, geo_id, resource_category, travel_time_cutoff){
