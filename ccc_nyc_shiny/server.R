@@ -104,7 +104,7 @@ shinyServer(function(input, output, session) {
                            .$category
                            )
     
-    shinyWidgets::updatePickerInput(
+    updateSelectizeInput(
       session = session,
       inputId = "select_category",
       choices = resource_categories,
