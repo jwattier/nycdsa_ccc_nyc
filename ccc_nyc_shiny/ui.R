@@ -94,6 +94,7 @@ shinyUI(dashboardPage(
                                    "Enter Column Position (#) of Latitude Col:",
                                    min = 1, max = 1000, step = 1, value = 1),
                       actionButton("addResource", "Add Resource to Resource Table")
+                      #,leaflet::leafletOutput()
                     )
             ),
             tabItem(tabName = "asset_inventory",

@@ -66,10 +66,12 @@ shinyServer(function(input, output, session) {
   
   access_score_by_geoid_eventReactive <- eventReactive(input$updateBttn, {
     perc_factor_tbl <- perc_factor_tbl_reactive()
+    resource_ct_tbl <- resource_ct_file()  %>% 
+      mutate(., resource_geoid = as.character(resource_geoid))
     
     just_geoids %>% 
       left_join(., nyc_trvl_times_adj, by = c("GEOID" = "origin")) %>%
-      left_join(., resource_ct_by_geoid, by = c("destination" = "resource_geoid")) %>%
+      left_join(., resource_ct_tbl, by = c("destination" = "resource_geoid")) %>%
       left_join(., perc_factor_tbl, by = "minutes_bin") %>% 
       mutate(., weighted_score = if_else(is.na(minutes_bin),0, as.numeric(count * percent))) %>%
       group_by(GEOID, category) %>%
@@ -84,7 +86,9 @@ shinyServer(function(input, output, session) {
   observe({
     puma_codes <- unique(nyc_census_tracts_opendatanyc %>%
                           filter(nyc_census_tracts_opendatanyc$boro_name %in% input$borough) %>%
-                            .$puma)
+                            .$puma
+                         )
+    
     shinyWidgets::updatePickerInput(
       session = session,
       inputId = "puma",
@@ -92,6 +96,21 @@ shinyServer(function(input, output, session) {
       selected = puma_codes[1]
     )  
 
+  })
+  
+  # change the unique list of resources 
+  observe({
+    resource_categories <- unique(resource_ct_file() %>%
+                           .$category
+                           )
+    
+    shinyWidgets::updatePickerInput(
+      session = session,
+      inputId = "select_category",
+      choices = resource_categories,
+      selected = resource_categories[1]
+    )  
+    
   })
   
   # update census tracts based upon PUMA 
@@ -353,6 +372,7 @@ shinyServer(function(input, output, session) {
       update_resource_count_file(resource_count_input = new_resource_ct_by_geoid)
     })
     
+    # resource_ct_file <- reactiveFileReader(1000, session, "./resources/resource_count_by_geo.csv", readr::read_csv)
     resource_ct_file <- reactiveFileReader(1000, session, "./resources/resource_count_by_geo.csv", readr::read_csv)
     
     
@@ -384,12 +404,7 @@ shinyServer(function(input, output, session) {
     })
     
     output$access_score_by_geo <- DT::renderDataTable({
-      # access_score_file <- access_score_file() %>% filter(!is.na(category) == TRUE)
-      # access_score_file <- readr::read_csv("./resources/access_score_by_geo.csv") %>% 
-      #   mutate(., GEOID = as.character(GEOID)) %>%
-      #   filter(., !is.na(category) == TRUE) %>% as_tibble()
-      # 
-      DT::dataTableOutput(access_score_file_cleaned())
+      DT::datatable(access_score_file_cleaned())
     })
     # 
     # resource_ct_by_geoid_tbl <- reactive({
