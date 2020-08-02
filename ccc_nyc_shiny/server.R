@@ -351,6 +351,15 @@ shinyServer(function(input, output, session) {
       head(resource_input_data())
 
     })
+    
+    output$new_resource_map <- leaflet::renderLeaflet({
+      resource_input_data() %>% 
+        leaflet() %>% 
+        addTiles() %>% 
+        addMarkers(
+          clusterOptions = markerClusterOptions
+        )
+    })
     # 
     # 
     # # Section for displaying cumulative resource information
@@ -390,10 +399,10 @@ shinyServer(function(input, output, session) {
     observeEvent(input$updateResourceCtTbl, {
       # resource_ct_file <- resource_count_file_reactive()
       new_resource_file <- read_resource_file()
-      resource_ct_table <- read_resource_count_file()
+      resource_ct_tbl <- read_resource_count_file()
       
-      new_resource_ct_by_geoid <- update_resource_ct_sf(current_resource_ct_table = resource_ct_table, 
-                                                    new_resource_sf = new_resource_file,
+      new_resource_ct_by_geoid <- update_resource_ct_sf(current_resource_ct_table = resource_ct_tbl, 
+                                                    new_resource_sf = new_resource_fil   e,
                                                     census_geo_sf = nyc_just_geoid_geom_sf, 
                                                     resource_category = input$new_resource_category,
                                                     travel_time_cutoff = 60)

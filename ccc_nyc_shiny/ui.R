@@ -77,35 +77,43 @@ shinyUI(dashboardPage(
                     ),
             tabItem(tabName = "resource_upload",
                     fluidPage(
-                      fileInput(
-                        "resource_file", 
-                        "Choose CSV file",
-                        multiple = FALSE,
-                        accept = c("text/csv", 
-                                   "text/comma-separated-values, text/plain",
-                                   ".csv", ".xlsx", ".xls")
-                      ),
-                      textInput("new_resource_category", "Resource Label:"),
-                      selectizeInput(
-                        "new_resource_description", 
-                        "Resource Name/Description Column:",
-                        choices = NULL,
-                        selected = NULL
-                        ),
-                      selectizeInput(
-                        "new_resource_longtitude", 
-                        "Longitude Column:",
-                        choices = NULL,
-                        selected = NULL
-                      ),
-                      selectizeInput(
-                        "new_resource_latitude", 
-                        "Latitude Column:",
-                        choices = NULL,
-                        selected = NULL
-                      ),
-                      actionButton("addResource", "Add Resource to Resource Table"),
-                      tableOutput("new_resource_contents")
+                      tabBox(
+                        title = "New Asset", width = 12,
+                        tabPanel("File Upload",
+                          fileInput(
+                          "resource_file", 
+                          "Choose CSV file",
+                          multiple = FALSE,
+                          accept = c("text/csv", 
+                                     "text/comma-separated-values, text/plain",
+                                     ".csv", ".xlsx", ".xls")
+                          ),
+                          textInput("new_resource_category", "Resource Label:"),
+                          selectizeInput(
+                            "new_resource_description", 
+                            "Resource Name/Description Column:",
+                            choices = NULL,
+                            selected = NULL
+                            ),
+                          selectizeInput(
+                            "new_resource_longtitude", 
+                            "Longitude Column:",
+                            choices = NULL,
+                            selected = NULL
+                          ),
+                          selectizeInput(
+                            "new_resource_latitude", 
+                            "Latitude Column:",
+                            choices = NULL,
+                            selected = NULL
+                          ),
+                          actionButton("addResource", "Add Resource to Resource Table"),
+                          tableOutput("new_resource_contents")
+                          ),
+                        tabPanel("New Resource Map",
+                          leafletOutput("new_resource_map")
+                        )
+                      )
                     )
             ),
             tabItem(tabName = "asset_inventory",
