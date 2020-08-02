@@ -360,7 +360,9 @@ shinyServer(function(input, output, session) {
       resource_file <- read_resource_file()
 
       new_resource_tbl <- add_resource(
-        new_resource_tbl = input_table, name_col = "Location", category_col = input$new_resource_category, 
+        new_resource_tbl = input_table, 
+        name_col = input$new_resource_description, 
+        category_col = input$new_resource_category, 
         geometry_col = "latlong", current_resource_tbl = resource_file)
       
       update_resource_file(resource_input = new_resource_tbl)

@@ -34,13 +34,14 @@ add_resource <- function(new_resource_tbl, name_col, category_col, geometry_col 
     
     colnames(new_addition) <- c("name", "category", "geometry")
     
-  } else {
-    new_addition <- new_resource_tbl %>% 
+  } else if (name_col %in% column_names) {
+    new_addition <- new_resource_tbl %>%
       mutate(., 
-             name = rep(name_col, length.out = total_rows), 
              category = rep(category_col, length.out = total_rows)
       ) %>% 
-      select(., name, category, geometry)
+      select(., name_col, category, geometry)
+    
+    colnames(new_addition) <- c("name", "category", "geometry")
   }
 
       
