@@ -319,6 +319,33 @@ shinyServer(function(input, output, session) {
         validate("Invalid file; Please upload a .csv, .xls, or .xlsx file")
         )
       })
+    ### update column options for selecting name, longitude, and latitude 
+    observe({
+      new_resource_data <- resource_input_data()
+      file_columns <- colnames(new_resource_data)
+      
+      updateSelectizeInput(
+        session = session,
+        inputId = "new_resource_description",
+        choices = file_columns,
+        selected = file_columns[1]
+      )
+      
+      updateSelectizeInput(
+        session = session,
+        inputId = "new_resource_longtitude",
+        choices = file_columns,
+        selected = file_columns[1]
+      )
+      
+      updateSelectizeInput(
+        session = session,
+        inputId = "new_resource_latitude",
+        choices = file_columns,
+        selected = file_columns[1]
+      )
+    })
+    
     # 
     output$new_resource_contents <- renderTable({
       head(resource_input_data())

@@ -85,16 +85,27 @@ shinyUI(dashboardPage(
                                    "text/comma-separated-values, text/plain",
                                    ".csv", ".xlsx", ".xls")
                       ),
-                      tableOutput("new_resource_contents"),
                       textInput("new_resource_category", "Resource Label:"),
-                      numericInput("longitude_col", 
-                                   "Enter Column Position (#) of Longitude Col:",
-                                   min = 1, max = 1000, step = 1, value = 1),
-                      numericInput("latitude_col", 
-                                   "Enter Column Position (#) of Latitude Col:",
-                                   min = 1, max = 1000, step = 1, value = 1),
-                      actionButton("addResource", "Add Resource to Resource Table")
-                      #,leaflet::leafletOutput()
+                      selectizeInput(
+                        "new_resource_description", 
+                        "Resource Name/Description Column:",
+                        choices = NULL,
+                        selected = NULL
+                        ),
+                      selectizeInput(
+                        "new_resource_longtitude", 
+                        "Longitude Column:",
+                        choices = NULL,
+                        selected = NULL
+                      ),
+                      selectizeInput(
+                        "new_resource_latitude", 
+                        "Latitude Column:",
+                        choices = NULL,
+                        selected = NULL
+                      ),
+                      actionButton("addResource", "Add Resource to Resource Table"),
+                      tableOutput("new_resource_contents")
                     )
             ),
             tabItem(tabName = "asset_inventory",
