@@ -121,12 +121,10 @@ shinyUI(dashboardPage(
                       tabBox(
                         title = "Asset Information", width = 12,
                         tabPanel("Asset Listing", 
-                                 DT::dataTableOutput("asset_listing"), 
-                                 actionButton("updateResourceCtTbl", "Update by Census Tract Resource Count Table")
+                                 DT::dataTableOutput("asset_listing"),
                                  ),
                         tabPanel("Resource by Census Tract", 
                                  DT::dataTableOutput("resource_count_by_geo"),
-                                 actionButton("updateAccessScorebyGeoID", "Update Access Score Table")
                                  ),
                         tabPanel("Access Score by Census Tract",
                                  DT::dataTableOutput("access_score_by_geo")
