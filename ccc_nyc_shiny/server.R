@@ -402,7 +402,7 @@ shinyServer(function(input, output, session) {
       resource_ct_tbl <- read_resource_count_file()
       
       new_resource_ct_by_geoid <- update_resource_ct_sf(current_resource_ct_table = resource_ct_tbl, 
-                                                    new_resource_sf = new_resource_fil   e,
+                                                    new_resource_sf = new_resource_file,
                                                     census_geo_sf = nyc_just_geoid_geom_sf, 
                                                     resource_category = input$new_resource_category,
                                                     travel_time_cutoff = 60)
