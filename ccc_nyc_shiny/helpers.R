@@ -105,21 +105,6 @@ update_resource_ct_sf <- function(current_resource_ct_table, new_resource_sf
     group_by(GEOID, category) %>% count() %>% select(., resource_geoid = GEOID, category, count = n)
   )
   
-  # count_by_census_area_vector <- st_intersects(x=census_geo_sf,
-  #                                       y=new_resource_sf, sparse = FALSE) %>% apply(., 1, sum)
-  # 
-  # 
-  # new_addition <- tibble(
-  #   resource_geoid = census_geo_sf$GEOID,
-  #   category = rep(resource_category, length.out = nrow(census_geo_sf)),
-  #   count = count_by_census_area_vector
-  # )
-  # 
-  # if (is.null(current_resource_ct_table) == TRUE){
-  #   return(new_addition)
-  # } else {
-  #   return(bind_rows(current_resource_ct_table, new_addition))
-  # }
 }
 
 update_resource_count_file <- function(resource_count_input){

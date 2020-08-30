@@ -365,6 +365,8 @@ shinyServer(function(input, output, session) {
     # # Section for displaying cumulative resource information
     # 
     observeEvent(input$addResource, {
+      
+      #1 Add resource to resource table
       input_table <- resource_input_data()
       resource_file <- read_resource_file()
 
@@ -376,6 +378,27 @@ shinyServer(function(input, output, session) {
       
       update_resource_file(resource_input = new_resource_tbl)
       
+      #2 Update resource count by geo id
+      resource_ct_tbl <- read_resource_count_file()
+      
+      new_resource_ct_by_geoid <- update_resource_ct_sf(current_resource_ct_table = resource_ct_tbl, 
+                                                        new_resource_sf = new_resource_tbl,
+                                                        census_geo_sf = nyc_just_geoid_geom_sf, 
+                                                        resource_category = input$new_resource_category,
+                                                        travel_time_cutoff = 60)
+      
+      update_resource_count_file(resource_count_input = new_resource_ct_by_geoid)
+      
+      #3 Update Access Score Table
+      
+      new_access_score_tbl <- update_access_calc_tbl(
+        current_accesss_score_tbl = access_score_by_geoid,
+        new_resource_category = input$new_resource_category,
+        resource_ct_tbl = new_resource_ct_by_geoid
+      )
+      
+      update_access_score_file(access_score_input =  new_access_score_tbl)
+      
       })
     
     resource_file <- reactiveFileReader(1000, session, "./resources/resource_list.geojson", sf::st_read)
@@ -385,30 +408,8 @@ shinyServer(function(input, output, session) {
       
       DT::datatable(resource_file())
       
-      # resource_tbl <- resource_tbl()
-
-      # if(is_null(resource_tbl)){
-      #   DT::datatable(resource_sf)
-      # } else{
-      # DT::datatable(resource_tbl)
-      #   }
     })
     
-    # resource_count_file_reactive <- reactiveFileReader(1000, session = session, "./resources/resource_count_by_geo.csv", read.csv)
-    
-    observeEvent(input$updateResourceCtTbl, {
-      # resource_ct_file <- resource_count_file_reactive()
-      new_resource_file <- read_resource_file()
-      resource_ct_tbl <- read_resource_count_file()
-      
-      new_resource_ct_by_geoid <- update_resource_ct_sf(current_resource_ct_table = resource_ct_tbl, 
-                                                    new_resource_sf = new_resource_file,
-                                                    census_geo_sf = nyc_just_geoid_geom_sf, 
-                                                    resource_category = input$new_resource_category,
-                                                    travel_time_cutoff = 60)
-      
-      update_resource_count_file(resource_count_input = new_resource_ct_by_geoid)
-    })
     
     # resource_ct_file <- reactiveFileReader(1000, session, "./resources/resource_count_by_geo.csv", readr::read_csv)
     resource_ct_file <- reactiveFileReader(1000, session, "./resources/resource_count_by_geo.csv", readr::read_csv)
@@ -419,19 +420,6 @@ shinyServer(function(input, output, session) {
     })
     
     
-    observeEvent(input$updateAccessScorebyGeoID, {
-      resource_ct_file <- resource_ct_file() %>% 
-        mutate(., resource_geoid = as.character(resource_geoid))
-      
-      new_access_score_tbl <- update_access_calc_tbl(
-        current_accesss_score_tbl = access_score_by_geoid,
-        new_resource_category = input$new_resource_category,
-        resource_ct_tbl = resource_ct_file
-        )
-      
-      update_access_score_file(access_score_input =  new_access_score_tbl)
-      }
-    )
     
     access_score_file <- reactiveFileReader(1000, session, "./resources/access_score_by_geo.csv", readr::read_csv)
     
