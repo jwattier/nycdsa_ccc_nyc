@@ -352,12 +352,24 @@ shinyServer(function(input, output, session) {
 
     })
     
+    ### parse new file for purpose of displaying on map
+    new_resource_processed <- reactive({
+      resource_input_data() %>%
+        mutate(locations = stringr::str_locate_all(Description, ":")) %>% 
+        unnest_wider(locations, c(1)) %>% 
+        select(., Location, Latitude, Longitude, Category, first_index = locations11, second_index = locations12, Description) %>% 
+        mutate(Name = str_trim(str_sub(.$Description, start= first_index + 1, end= second_index - first_index))) %>% 
+        mutate(Name_Plus = paste(Location, Name, sep = " : "))
+    })
+    
     output$new_resource_map <- leaflet::renderLeaflet({
-      resource_input_data() %>% 
+      new_resource_processed() %>% 
+      # resource_input_data() %>% 
         leaflet() %>% 
         addTiles() %>% 
         addMarkers(
-          clusterOptions = markerClusterOptions
+          clusterOptions = markerClusterOptions,
+          label = ~htmlEscape(Name_Plus)
         )
     })
     # 

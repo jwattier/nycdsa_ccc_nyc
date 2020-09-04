@@ -1,0 +1,96 @@
+---
+title: "test_with_stringr"
+author: "jwattier"
+date: "8/30/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+library(tidyverse)
+library(sf)
+```
+
+
+```{r pressure, echo=FALSE}
+file <- readr::read_csv(file = "./data/resources/custom/Assets.csv")
+file
+```
+```{r}
+file %>% mutate(
+  .,
+  first_index = map_int(x, )
+  )
+```
+```{r}
+takeFirstColumn <- function(matrixInput){
+  return(matrixInput[1:2, 1])
+}
+```
+
+```{r}
+coordinates %>% map_df(coordinates$locations, function(.x){
+  return(first_index = .x[1, 1])
+})
+```
+```{r}
+# coordinates %>% flatten(.) 
+coordinates %>% unnest_wider(locations, c(1)) %>% select(., first_index = locations11, second_index = locations12)
+```
+
+
+```{r}
+coordinates <- file %>% mutate(locations = stringr::str_locate_all(Description, ":")) %>% 
+  unnest_wider(locations, c(1)) %>% 
+  select(., Location, Latitude, Longitude, Category, first_index = locations11, second_index = locations12, Description)
+
+```
+
+
+```{r}
+coordinates %>% mutate(Name = str_trim(str_sub(.$Description, start= first_index + 1, end= second_index - first_index)))
+```
+
+```{r}
+ate(., first = stringr::str_locate(Description, ":"))
+```
+
+```{r}
+coordinates$locations[[1]]
+
+```
+
+```{r}
+coordinates %>% unnest(locations, keep_empty = TRUE)
+```
+
+```{r}
+coordinates %>% unnest_wider(., locations)
+```
+
+```{r}
+coordinates
+typeof(coordinates$locations[[1]])
+
+coordinates %>% as_tibble()
+```
+```{r}
+example_matrix <- coordinates$locations[[1]]
+
+example_matrix[1:2, 1]
+
+
+```
+```{r}
+coordinates %>% mutate(., start_location = locations[, 1])
+```
+
