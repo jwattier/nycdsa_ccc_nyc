@@ -45,10 +45,12 @@ shinyUI(dashboardPage(
                          label="Census Tract:",
                          choices = sort(unique(nyc_census_tracts_opendatanyc$GEOID))
                          ),
-            selectizeInput(inputId="select_category",
-                           label="Resource Category:",
-                           choices = resouse_categories
-                           ),
+          selectizeInput(inputId="select_category",
+                         label="Resource Category:",
+                         choices = resouse_categories
+                         ),
+          actionButton("updateBttn", "Update Access Score"),
+          downloadButton("downloadAccessScore", "Download Access Score Data"),
           sliderInput("first_bin", "0 to 15 Mins Factor", min = 0, max = 1, 
                       value = 1, step = 0.10, round = FALSE, ticks = TRUE
                       ),
@@ -60,10 +62,9 @@ shinyUI(dashboardPage(
           ),
           sliderInput("fourth_bin", "45 to 60 Mins Factor", min = 0, max = 1, 
                       value = 1, step = 0.10, round = FALSE, ticks = TRUE
-          ),
-          actionButton("updateBttn", "Update Access Score")
-            )
-        ),
+          )
+        )
+      ),
     dashboardBody(
       tabItems(
             tabItem(tabName = "map",

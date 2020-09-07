@@ -444,6 +444,16 @@ shinyServer(function(input, output, session) {
     output$access_score_by_geo <- DT::renderDataTable({
       DT::datatable(access_score_file_cleaned())
     })
+    
+    ### Access Score Download
+    output$downloadAccessScore <- downloadHandler(
+      filename = function(){
+        paste("Access Score ",as.character(lubridate::today()), ".csv", sep = "")
+      },
+      content = function(file){
+        write_csv(access_score_file_cleaned(), file)
+      }
+    )
     # 
     # resource_ct_by_geoid_tbl <- reactive({
     #   # new_category <- resource_input_data() %>% .$Category %>% unique() 
@@ -614,7 +624,7 @@ shinyServer(function(input, output, session) {
           ggplot(data = ., mapping = aes(x = minutes_bin, y = count)) + 
           geom_col(fill="#1380A1") +
           geom_hline(yintercept = 0, size=1, colour = "#333333") +
-          bbc_style() +
+          # bbc_style() +
           labs(
             title = "# of Resources by Travel Time"
           )
