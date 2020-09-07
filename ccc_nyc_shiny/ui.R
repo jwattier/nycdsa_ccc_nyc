@@ -50,7 +50,6 @@ shinyUI(dashboardPage(
                          choices = resouse_categories
                          ),
           actionButton("updateBttn", "Update Access Score"),
-          downloadButton("downloadAccessScore", "Download Access Score Data"),
           sliderInput("first_bin", "0 to 15 Mins Factor", min = 0, max = 1, 
                       value = 1, step = 0.10, round = FALSE, ticks = TRUE
                       ),
@@ -119,17 +118,34 @@ shinyUI(dashboardPage(
             ),
             tabItem(tabName = "asset_inventory",
                     fluidPage(
-                      tabBox(
-                        title = "Asset Information", width = 12,
+                      tabsetPanel(
+                        type = "tabs",
+                        ## title = "Asset Information", width = 12,
                         tabPanel("Asset Listing", 
                                  DT::dataTableOutput("asset_listing"),
                                  ),
                         tabPanel("Resource by Census Tract", 
                                  DT::dataTableOutput("resource_count_by_geo"),
                                  ),
-                        tabPanel("Access Score by Census Tract",
-                                 DT::dataTableOutput("access_score_by_geo")
-                        )
+                        # tabPanel("Access Score by Census Tract",
+                        #          fluidPage(
+                        #            DT::dataTableOutput("access_score_by_geo"),
+                        #            downloadBttn("downloadAccessDate", "Download Access Data")
+                        #            )
+                        #          ),
+                        tabPanel(  "Access Score by Census Tract",
+                                  
+                        dropdownButton(
+                          downloadBttn("downloadAccessDate", "Download Access Data"),
+                          verbatimTextOutput("Hi, I'm a second element"),
+                             
+                          circle = TRUE, status = "primary",
+                          icon = icon("gear"), width = "300px",
+                          
+                          tooltip = tooltipOptions(title = "Click to download Access Score DAta !")
+                            ),
+                          DT::dataTableOutput("access_score_by_geo"),
+                          )
                         )
                       )
                     ),
