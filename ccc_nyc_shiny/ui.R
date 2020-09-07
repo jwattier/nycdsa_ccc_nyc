@@ -137,12 +137,12 @@ shinyUI(dashboardPage(
                                   
                         dropdownButton(
                           downloadBttn("downloadAccessDate", "Download Access Data"),
-                          verbatimTextOutput("Hi, I'm a second element"),
+                          
                              
                           circle = TRUE, status = "primary",
                           icon = icon("gear"), width = "300px",
                           
-                          tooltip = tooltipOptions(title = "Click to download Access Score DAta !")
+                          tooltip = tooltipOptions(title = "Click to download Access Score Data")
                             ),
                           DT::dataTableOutput("access_score_by_geo"),
                           )
