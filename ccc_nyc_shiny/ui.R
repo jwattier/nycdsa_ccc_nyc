@@ -11,9 +11,8 @@ parent_path = "./"
 
 source(paste0(parent_path, "helpers.R"))
 
-
-# Define UI for application that draws a histogram
-shinyUI(dashboardPage(
+shinyUI(
+  dashboardPage(
     dashboardHeader(title = "CCC NYC Analysis"),
     dashboardSidebar(
         sidebarMenu(
@@ -82,12 +81,13 @@ shinyUI(dashboardPage(
                         tabPanel("File Upload",
                           fileInput(
                           "resource_file", 
-                          "Choose CSV file",
+                          "Choose CSV or Excel file",
                           multiple = FALSE,
                           accept = c("text/csv", 
                                      "text/comma-separated-values, text/plain",
                                      ".csv", ".xlsx", ".xls")
                           ),
+                          shinyWidgets::useSweetAlert(),
                           textInput("new_resource_category", "Resource Label:"),
                           selectizeInput(
                             "new_resource_description", 

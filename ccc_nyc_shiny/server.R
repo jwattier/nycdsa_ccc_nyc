@@ -318,7 +318,20 @@ shinyServer(function(input, output, session) {
         "xlsx" = readxl::read_excel(path = inFile$datapath),
         validate("Invalid file; Please upload a .csv, .xls, or .xlsx file")
         )
+      
       })
+    
+    ### message notifcation for button click
+    observeEvent(input$resource_file,{
+        sendSweetAlert(
+        session = session,
+        title = "Success!",
+        text = "Resource File Has Been Uploaded",
+        type = "success"
+        )
+      }
+    )
+    
     ### update column options for selecting name, longitude, and latitude 
     observe({
       new_resource_data <- resource_input_data()
@@ -400,7 +413,7 @@ shinyServer(function(input, output, session) {
                                                         travel_time_cutoff = 60)
       
       update_resource_count_file(resource_count_input = new_resource_ct_by_geoid)
-      
+
       #3 Update Access Score Table
       
       new_access_score_tbl <- update_access_calc_tbl(
@@ -411,6 +424,13 @@ shinyServer(function(input, output, session) {
       
       update_access_score_file(access_score_input =  new_access_score_tbl)
       
+      ### message notification for button click
+      show_alert(
+        title = "Success!",
+        text = "New Resource has been added to the analysis!",
+        type = "success"
+      )
+      
       })
     
     resource_file <- reactiveFileReader(1000, session, "./resources/resource_list.geojson", sf::st_read)
@@ -419,6 +439,8 @@ shinyServer(function(input, output, session) {
       # resource_file <- read_resource_file()
       
       DT::datatable(resource_file())
+      
+      
       
     })
     
