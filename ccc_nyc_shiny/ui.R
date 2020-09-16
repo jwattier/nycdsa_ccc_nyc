@@ -12,14 +12,37 @@ parent_path = "./"
 source(paste0(parent_path, "helpers.R"))
 
 shinyUI(
-  dashboardPage(
-    dashboardHeader(title = "CCC NYC Analysis"),
+  dashboardPagePlus(
+    title = "CCC New York Analysis Dashboard",
+    dashboardHeaderPlus(
+      title = "CCC NYC Analysis",
+      enable_rightsidebar = TRUE,
+      rightSidebarIcon = "gears",
+      left_menu = tagList(
+        dropdownBlock(
+          id = "mydropdown",
+          title = "Travel Time Weighting Factors",
+          icon = icon("globe"),
+          sliderInput("first_bin", "0 to 15 Mins Factor", min = 0, max = 1, 
+                      value = 1, step = 0.10, round = FALSE, ticks = TRUE
+          ),
+          sliderInput("second_bin", "15 to 30 Mins Factor", min = 0, max = 1, 
+                      value = 1, step = 0.10, round = FALSE, ticks = TRUE
+          ),
+          sliderInput("third_bin", "30 to 45 Mins Factor", min = 0, max = 1, 
+                      value = 1, step = 0.10, round = FALSE, ticks = TRUE
+          ),
+          sliderInput("fourth_bin", "45 to 60 Mins Factor", min = 0, max = 1, 
+                      value = 1, step = 0.10, round = FALSE, ticks = TRUE
+          )
+        ),
+        )
+      ),
     dashboardSidebar(
         sidebarMenu(
           menuItem(text = "Map", tabName = "map", icon = icon("map")),
-          menuItem(text = "Allocation Split", tabName = "per_split", icon = icon("percent")),
+          # menuItem(text = "Allocation Split", tabName = "per_split", icon = icon("percent")),
           menuItem(text = "Explore", tabName = "explore", icon = icon("chart-area")),
-          menuItem(text = "Demographic Analysis", tabName = "demogrph_analysis", icon=icon("chart-area")),
           menuItem(text = "Resource Upload", tabName = "resource_upload", icon=icon("file")),
           menuItem(text = "Resource Inventory", tabName = "asset_inventory", icon = icon("map")),
           menuItem(text = "Deep Dive", tabName = "deep_dive", icon = icon("chart-area")),
@@ -48,19 +71,7 @@ shinyUI(
                          label="Resource Category:",
                          choices = resouse_categories
                          ),
-          actionButton("updateBttn", "Update Access Score"),
-          sliderInput("first_bin", "0 to 15 Mins Factor", min = 0, max = 1, 
-                      value = 1, step = 0.10, round = FALSE, ticks = TRUE
-                      ),
-          sliderInput("second_bin", "15 to 30 Mins Factor", min = 0, max = 1, 
-                      value = 1, step = 0.10, round = FALSE, ticks = TRUE
-          ),
-          sliderInput("third_bin", "30 to 45 Mins Factor", min = 0, max = 1, 
-                      value = 1, step = 0.10, round = FALSE, ticks = TRUE
-          ),
-          sliderInput("fourth_bin", "45 to 60 Mins Factor", min = 0, max = 1, 
-                      value = 1, step = 0.10, round = FALSE, ticks = TRUE
-          )
+          actionButton("updateBttn", "Update Access Score")
         )
       ),
     dashboardBody(
@@ -136,7 +147,7 @@ shinyUI(
                         tabPanel(  "Access Score by Census Tract",
                                   
                         dropdownButton(
-                          downloadBttn("downloadAccessDate", "Download Access Data"),
+                          downloadBttn("downloadAccessScore", "Download Access Data"),
                           
                              
                           circle = TRUE, status = "primary",
@@ -290,4 +301,5 @@ shinyUI(
              
         ))
 )
+
 
