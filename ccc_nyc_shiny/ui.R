@@ -36,12 +36,17 @@ shinyUI(
                       value = 1, step = 0.10, round = FALSE, ticks = TRUE
           )
         ),
+        dropdownBlock(
+          id = "downloadDropDown",
+          title = "Download Files",
+          icon = icon("globe"),
+          downloadBttn("downloadAccessScore", "Download Access Data")
+          )
         )
       ),
     dashboardSidebar(
         sidebarMenu(
           menuItem(text = "Map", tabName = "map", icon = icon("map")),
-          # menuItem(text = "Allocation Split", tabName = "per_split", icon = icon("percent")),
           menuItem(text = "Explore", tabName = "explore", icon = icon("chart-area")),
           menuItem(text = "Resource Upload", tabName = "resource_upload", icon=icon("file")),
           menuItem(text = "Resource Inventory", tabName = "asset_inventory", icon = icon("map")),
@@ -146,15 +151,15 @@ shinyUI(
                         #          ),
                         tabPanel(  "Access Score by Census Tract",
                                   
-                        dropdownButton(
-                          downloadBttn("downloadAccessScore", "Download Access Data"),
-                          
-                             
-                          circle = TRUE, status = "primary",
-                          icon = icon("gear"), width = "300px",
-                          
-                          tooltip = tooltipOptions(title = "Click to download Access Score Data")
-                            ),
+                        # dropdownButton(
+                        #   downloadBttn("downloadAccessScore", "Download Access Data"),
+                        #   
+                        #      
+                        #   circle = TRUE, status = "primary",
+                        #   icon = icon("gear"), width = "300px",
+                        #   
+                        #   tooltip = tooltipOptions(title = "Click to download Access Score Data")
+                        #     ),
                           DT::dataTableOutput("access_score_by_geo"),
                           )
                         )
