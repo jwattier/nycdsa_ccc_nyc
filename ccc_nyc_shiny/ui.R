@@ -106,7 +106,13 @@ shinyUI(
                                      ".csv", ".xlsx", ".xls")
                           ),
                           shinyWidgets::useSweetAlert(),
-                          textInput("new_resource_category", "Resource Label:"),
+                          #  textInput("new_resource_category", "Resource Label:"),
+                          selectizeInput(
+                            "new_resource_category",
+                            "Resource Category Column:",
+                            choices = NULL,
+                            selected = NULL
+                                         ),
                           selectizeInput(
                             "new_resource_description", 
                             "Resource Name/Description Column:",

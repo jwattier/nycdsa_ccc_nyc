@@ -336,7 +336,14 @@ shinyServer(function(input, output, session) {
     observe({
       new_resource_data <- resource_input_data()
       file_columns <- colnames(new_resource_data)
-      
+ 
+      updateSelectizeInput(
+        session = session,
+        inputId = "new_resource_category",
+        choices = file_columns,
+        selected = file_columns[1]
+      )
+           
       updateSelectizeInput(
         session = session,
         inputId = "new_resource_description",

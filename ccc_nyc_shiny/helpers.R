@@ -8,48 +8,73 @@ library(tidycensus)
 ############################################## 1. Resource Table Management
 
 # 1A Add Resource to New or Pre-existing table
-add_resource <- function(new_resource_tbl, name_col, category_col, geometry_col = "geometry", current_resource_tbl=NULL){
+add_resource <- function(new_resource_tbl, name_col, category_col,
+                         geometry_col = "geometry", current_resource_tbl=NULL
+                         , lat_col = "Latitude", lon_col = "Longitude"){
   # current_resource_tbl is the tibble/data frame object 
   # name is the label provided to the location (e.g., the DBA name of a business)
   # type_col is the type category (e.g., Charter or DOE school in the case of schools) 
   # geom_col is the location of the geometry column, assumed to be geometry
   
   
-  column_names <- colnames(new_resource_tbl)
-  # assumption is that user will provide lat_long columns
-  if (geometry_col != "geometry"){
-    if (('Latitude' %in% column_names) && ('Longitude' %in% column_names)) {
-      new_resource_tbl <- new_resource_tbl %>% sf::st_as_sf(., coords = c("Longitude", "Latitude"), crs = 4326)
-    }
-  }
+  # add test to raise error if these are not in the column names
+  selectedColumns <- c(name_col, category_col, lat_col, lon_col)
   
-  total_rows <- nrow(new_resource_tbl)
-  
-  # if else condition to handle instances where the name or category input are column names or
-  # constant inputs that apply to all values received
-  
-  if (name_col %in% column_names && category_col %in%  column_names){
-    
-    new_addition <- new_resource_tbl %>% select(., name_col, category_col, geometry)
-    
-    colnames(new_addition) <- c("name", "category", "geometry")
-    
-  } else if (name_col %in% column_names) {
-    new_addition <- new_resource_tbl %>%
-      mutate(., 
-             category = rep(category_col, length.out = total_rows)
-      ) %>% 
-      select(., name_col, category, geometry)
-    
-    colnames(new_addition) <- c("name", "category", "geometry")
-  }
-
-      
-  if (is.null(current_resource_tbl) == TRUE){
-    return(new_addition)
+  if(geometry_col != "geometry"){
+    new_resource_tbl <- new_resource_tbl %>% 
+      select(all_of(selectedColumns)) %>% 
+      sf::st_as_sf(.,coords = c(lon_col, lat_col), crs = 4326)
   } else {
-    return(rbind(current_resource_tbl, new_addition))
+    selectedColumns <- c(name_col, category_col, geometry_col)
+    
+    new_resource_tbl <- new_resource_tbl %>% 
+      select(all_of(selectedColumns)) %>% 
+      sf::st_as_sf(., crs = 4326)
   }
+  
+  colnames(new_resource_tbl) <- c("name", "category", "geometry")
+  
+  if (is.null(current_resource_tbl) == TRUE){
+    return(new_resource_tbl)
+  } else {
+    return(rbind(current_resource_tbl, new_resource_tbl))
+  }
+  
+  # column_names <- colnames(new_resource_tbl)
+  # # assumption is that user will provide lat_long columns
+  # if (geometry_col != "geometry"){
+  #   if (('Latitude' %in% column_names) && ('Longitude' %in% column_names)) {
+  #     new_resource_tbl <- new_resource_tbl %>% sf::st_as_sf(., coords = c("Longitude", "Latitude"), crs = 4326)
+  #   }
+  # }
+  
+  # total_rows <- nrow(new_resource_tbl)
+  # 
+  # # if else condition to handle instances where the name or category input are column names or
+  # # constant inputs that apply to all values received
+  # 
+  # if (name_col %in% column_names && category_col %in%  column_names){
+  #   
+  #   new_addition <- new_resource_tbl %>% select(., name_col, category_col, geometry)
+  #   
+  #   colnames(new_addition) <- c("name", "category", "geometry")
+  #   
+  # } else if (name_col %in% column_names) {
+  #   new_addition <- new_resource_tbl %>%
+  #     mutate(., 
+  #            category = rep(category_col, length.out = total_rows)
+  #     ) %>% 
+  #     select(., name_col, category, geometry)
+  #   
+  #   colnames(new_addition) <- c("name", "category", "geometry")
+  # }
+  # 
+  #     
+  # if (is.null(current_resource_tbl) == TRUE){
+  #   return(new_addition)
+  # } else {
+  #   return(rbind(current_resource_tbl, new_addition))
+  # }
   
 }
 
