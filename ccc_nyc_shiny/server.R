@@ -467,6 +467,28 @@ shinyServer(function(input, output, session) {
       DT::datatable(access_score_file_cleaned())
     })
     
+######### DOWNLOAD FILE SECTION #########
+    
+    ### Resource Location Download
+    output$downloadResourceList <- downloadHandler(
+      filename = function(){
+        paste("Resource List ",as.character(lubridate::today()), ".geojson", sep = "")
+      },
+      content = function(file){
+       sf::st_write(resource_file(), file)
+      }
+    )
+    
+    ### Resource Count by GeoID Download
+    output$downloadResourceCtbyGEOID <- downloadHandler(
+      filename = function(){
+        paste("Resource Count by GEOID ",as.character(lubridate::today()), ".csv", sep = "")
+      },
+      content = function(file){
+        write_csv(resource_ct_file(), file)
+      }
+    )
+    
     ### Access Score Download
     output$downloadAccessScore <- downloadHandler(
       filename = function(){
