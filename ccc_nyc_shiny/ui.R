@@ -23,6 +23,7 @@ shinyUI(
           id = "mydropdown",
           title = "Travel Time Weighting Factors",
           icon = icon("globe"),
+          actionButton("updateBttn", "Update Access Score"),
           sliderInput("first_bin", "0 to 15 Mins Factor", min = 0, max = 1, 
                       value = 1, step = 0.10, round = FALSE, ticks = TRUE
           ),
@@ -34,8 +35,7 @@ shinyUI(
           ),
           sliderInput("fourth_bin", "45 to 60 Mins Factor", min = 0, max = 1, 
                       value = 1, step = 0.10, round = FALSE, ticks = TRUE
-          ),
-          actionButton("updateBttn", "Update Access Score")
+          )
         ),
         dropdownBlock(
           id = "downloadDropDown",

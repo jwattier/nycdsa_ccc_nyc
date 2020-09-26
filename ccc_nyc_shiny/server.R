@@ -82,6 +82,17 @@ shinyServer(function(input, output, session) {
   ignoreNULL = FALSE
   )
   
+  ### message notifcation for button click
+  observeEvent(input$updateBttn,{
+    sendSweetAlert(
+      session = session,
+      title = "Success!",
+      text = "Access Score has been updated based upon new travel time factors",
+      type = "success"
+    )
+  }
+  )
+  
   
   # II. Second page visualizations 
   
