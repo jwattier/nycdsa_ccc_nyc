@@ -34,7 +34,8 @@ shinyUI(
           ),
           sliderInput("fourth_bin", "45 to 60 Mins Factor", min = 0, max = 1, 
                       value = 1, step = 0.10, round = FALSE, ticks = TRUE
-          )
+          ),
+          actionButton("updateBttn", "Update Access Score")
         ),
         dropdownBlock(
           id = "downloadDropDown",
@@ -77,8 +78,7 @@ shinyUI(
           selectizeInput(inputId="select_category",
                          label="Resource Category:",
                          choices = resouse_categories
-                         ),
-          actionButton("updateBttn", "Update Access Score")
+                         )
         )
       ),
     dashboardBody(
