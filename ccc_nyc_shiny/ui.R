@@ -44,7 +44,7 @@ shinyUI(
           downloadBttn("downloadResourceList", "Download Resource List"),
           downloadBttn("downloadResourceCtbyGEOID", "Download Resource Count by GEOID"),
           downloadBttn("downloadAccessScore", "Download Access Data"),
-          downloadBttn("downloadCombinedOutputFile", "Download Access Data")
+          downloadBttn("downloadCombinedOutputFile", "Download Combined Geo and Access Score Data")
           )
         )
       ),

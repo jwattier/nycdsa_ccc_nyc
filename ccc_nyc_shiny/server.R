@@ -526,19 +526,19 @@ shinyServer(function(input, output, session) {
       
       access_score_by_geoid <- access_score_by_geoid_eventReactive()
       
-      nyc_census_tracts_opendatanyc %>%  
-        select(., puma, boro_name, ntaname, ntacode, fips_country_code, GEOID) %>% 
+      nyc_census_tracts_opendatanyc %>% 
+        as_tibble() %>% 
+        select(., boro_name, fips_country_code, ntaname, ntacode, puma_code = puma,  census_tract_nbr = GEOID) %>% 
         left_join(x = ., y = access_score_by_geoid, by="GEOID") %>% 
-        drop_na(category) %>% 
-        st_as_sf()
+        drop_na(category)
     })
     
     output$downloadCombinedOutputFile <- downloadHandler(
       filename = function(){
-        paste("Combined GEO Info w Access Score ",as.character(lubridate::today()), ".shp", sep = "")
+        paste("Combined GEO Info w Access Score ",as.character(lubridate::today()), ".csv", sep = "")
       },
       content = function(file){
-        sf::st_write(combined_output_file(), file)
+        write_csv(combined_output_file(), file)
       }
     )
 
