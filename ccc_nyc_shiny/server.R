@@ -20,7 +20,8 @@ shinyServer(function(input, output, session) {
       as_tibble() %>%
       left_join(x = ., y = access_score_by_geoid, by="GEOID") %>%
       filter(., category == input$select_category) %>%
-      replace_na(., list(category = "", weighted_score = 0)) %>%
+      drop_na(category) %>% 
+      # replace_na(., list(category = "", weighted_score = 0)) %>%
       st_as_sf() %>%
       leaflet() %>%
       setView(lat = 40.7128, lng = -74.0060, zoom = 10) %>%
@@ -520,41 +521,27 @@ shinyServer(function(input, output, session) {
         write_csv(access_score_file_cleaned(), file)
       }
     )
-    # 
-    # resource_ct_by_geoid_tbl <- reactive({
-    #   # new_category <- resource_input_data() %>% .$Category %>% unique() 
-    #   # 
-    #   # new_resource_tbl <- resource_tbl()
-    #   # 
-    #   # update_resource_ct_sf(current_resource_ct_table = resource_ct_by_geoid, new_resource_sf = new_resource_tbl,
-    #   #                       census_geo_sf = nyc_just_geoid_geom_sf, resource_category = new_category,
-    #   #                       travel_time_cutoff = 60)
-    # })
-    # 
-    # output$resource_ct_tbl <- DT::renderDataTable({
-    #   # resource_ct_by_geoid_tbl()
-    # })
-    # 
-    # output$resource_point_map <- renderLeaflet({
-    #   # resource_tbl() %>% leaflet() %>% addTiles() %>% 
-    #   #   addMarkers(
-    #   #     clusterOptions = markerClusterOptions()
-    #   #   )
-    # })
-    # 
-    # access_score_by_geoid <- reactive({
-    #   # new_category <- resource_input_data() %>% .$Category %>% unique()
-    #   # 
-    #   # new_resource_ct_info <- resource_ct_by_geoid_tbl()
-    #   # 
-    #   # update_access_calc_tbl(current_accesss_score_tbl = access_score_by_geoid, new_resource_category = new_category,
-    #   #                        new_resource_ct_tbl = new_resource_ct_info, travel_time_cutoff = 60)
-    # })
-    # 
-    # output$access_score_tbl <- DT::renderDataTable({
-    #   # access_score_by_geoid()
-    # })
-    # 
+    
+    combined_output_file <- reactive({
+      
+      access_score_by_geoid <- access_score_by_geoid_eventReactive()
+      
+      nyc_census_tracts_opendatanyc %>%  
+        select(., puma, boro_name, ntaname, ntacode, fips_country_code, GEOID) %>% 
+        left_join(x = ., y = access_score_by_geoid, by="GEOID") %>% 
+        drop_na(category) %>% 
+        st_as_sf()
+    })
+    
+    output$downloadCombinedOutputFile <- downloadHandler(
+      filename = function(){
+        paste("Combined GEO Info w Access Score ",as.character(lubridate::today()), ".shp", sep = "")
+      },
+      content = function(file){
+        sf::st_write(combined_output_file(), file)
+      }
+    )
+
     # ## Third spot for looking at individual areas
     # ### First we want to look at - for a given census tract the 
     # ### other census tracts that are within an hour's travel time

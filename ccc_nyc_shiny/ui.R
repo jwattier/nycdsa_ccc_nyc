@@ -43,7 +43,8 @@ shinyUI(
           icon = icon("globe"),
           downloadBttn("downloadResourceList", "Download Resource List"),
           downloadBttn("downloadResourceCtbyGEOID", "Download Resource Count by GEOID"),
-          downloadBttn("downloadAccessScore", "Download Access Data")
+          downloadBttn("downloadAccessScore", "Download Access Data"),
+          downloadBttn("downloadCombinedOutputFile", "Download Access Data")
           )
         )
       ),
