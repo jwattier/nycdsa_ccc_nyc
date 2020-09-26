@@ -76,7 +76,11 @@ shinyServer(function(input, output, session) {
       mutate(., weighted_score = if_else(is.na(minutes_bin),0, as.numeric(count * percent))) %>%
       group_by(GEOID, category) %>%
       summarise(weighted_score = sum(weighted_score))
-  })
+  },
+  # this helps to initialize this table instead of waiting for the user to clock on the Update Access Score
+  # button
+  ignoreNULL = FALSE
+  )
   
   
   # II. Second page visualizations 
